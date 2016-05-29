@@ -39,7 +39,7 @@
     "steal": "^0.16.4",
     "underscore": "^1.8.3"
   },
-  "main": "loader",
+  "main": "index",
   "system": {
     "bundleAssets": true,
     "bundle": [
