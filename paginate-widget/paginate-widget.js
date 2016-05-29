@@ -5,9 +5,9 @@ import Component from 'can/component/';
 //import './paginate-widget.css!';
 import template from './template.stache!';
 /**
- * @constructor components/paginate-widget.ViewModel ViewModel
- * @parent components/paginate-widget
- * @group components/paginate-widget.ViewModel.props Properties
+ * @constructor paginate-widget.ViewModel ViewModel
+ * @parent paginate-widget
+ * @group paginate-widget.ViewModel.props Properties
  *
  * @description A `<paginate-widget />` component's ViewModel
  */
@@ -18,8 +18,8 @@ export let ViewModel = CanMap.extend({
   define: {
     /**
      * The number of pages to show in the widget
-     * @property {Number} components/paginate-widget.ViewModel.props.pages
-     * @parent components/paginate-widget.ViewModel.props
+     * @property {Number} paginate-widget.ViewModel.props.pages
+     * @parent paginate-widget.ViewModel.props
      */
     pages: {
       type: 'number',
@@ -27,8 +27,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The active page index
-     * @property {Number} components/paginate-widget.ViewModel.props.activePageIndex
-     * @parent components/paginate-widget.ViewModel.props
+     * @property {Number} paginate-widget.ViewModel.props.activePageIndex
+     * @parent paginate-widget.ViewModel.props
      */
     activePageIndex: {
       value: 0,
@@ -36,8 +36,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The number of pages to show on either side of the currently selected page. The default is 3. For example, if the selected page is 5, the visible pages should be 2,3,4,5,6,7,8.
-     * @property {Number}  components/paginate-widget.ViewModel.props.activeOffset
-     * @parent components/paginate-widget.ViewModel.props
+     * @property {Number}  paginate-widget.ViewModel.props.activeOffset
+     * @parent paginate-widget.ViewModel.props
      */
     activeOffset: {
       value: 3,
@@ -45,8 +45,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * A virtual property used by the template to indicate whether or not there is a next page
-     * @property {Boolean} components/paginate-widget.ViewModel.props.hasNext
-     * @parent components/paginate-widget.ViewModel.props
+     * @property {Boolean} paginate-widget.ViewModel.props.hasNext
+     * @parent paginate-widget.ViewModel.props
      */
     hasNext: {
       get() {
@@ -55,8 +55,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * A virtual property used by the template to indicate whether or not there is a previous page
-     * @property {Boolean} components/paginate-widget.ViewModel.props.hasPrevious
-     * @parent components/paginate-widget.ViewModel.props
+     * @property {Boolean} paginate-widget.ViewModel.props.hasPrevious
+     * @parent paginate-widget.ViewModel.props
      */
     hasPrevious: {
       get() {
@@ -65,8 +65,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The array of currently shown pages in the widget
-     * @property {Array<Number>} components/paginate-widget.ViewModel.props.visiblePages
-     * @parent components/paginate-widget.ViewModel.props
+     * @property {Array<Number>} paginate-widget.ViewModel.props.visiblePages
+     * @parent paginate-widget.ViewModel.props
      */
     visiblePages: {
       get() {
@@ -81,8 +81,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The array of numbers 0 through number of pages. This is a helper for the visiblePages getter
-     * @property {Array<Number>} components/paginate-widget.ViewModel.props.pageArray
-     * @parent components/paginate-widget.ViewModel.props
+     * @property {Array<Number>} paginate-widget.ViewModel.props.pageArray
+     * @parent paginate-widget.ViewModel.props
      */
     pageArray: {
       get() {

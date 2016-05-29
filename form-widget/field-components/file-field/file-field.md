@@ -1,4 +1,4 @@
-@module {can.Component} components/form-widget/field-components/file-field <file-field />
+@module {can.Component} form-widget/field-components/file-field <file-field />
 @parent form-widget.fields
 
 @option {String} type Should be set to `file` for the form to use this template

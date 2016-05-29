@@ -7,9 +7,9 @@ import CanEvent from 'can/event/';
 import template from './file-field.stache!';
 
 /**
- * @constructor components/form-widget/field-components/file-field.ViewModel ViewModel
- * @parent components/form-widget/field-components/file-field
- * @group components/form-widget/field-components/file-field.ViewModel.props Properties
+ * @constructor form-widget/field-components/file-field.ViewModel ViewModel
+ * @parent form-widget/field-components/file-field
+ * @group form-widget/field-components/file-field.ViewModel.props Properties
  *
  * @description A `<file-field />` component's ViewModel
  */

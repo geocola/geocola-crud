@@ -1,6 +1,6 @@
 <!--
 
-@module {can.Component} components/form-widget <form-widget />
+@module {can.Component} form-widget <form-widget />
 @parent geocola.components
 @group form-widget.fields 1 Field Types
 
@@ -11,4 +11,4 @@ A configureable form widget to modify data. The form accepts a formObject proper
 
 ## Demo
 
-@demo components/form-widget/demo.html 500
+@demo form-widget/demo.html 500

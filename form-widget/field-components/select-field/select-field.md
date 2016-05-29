@@ -1,5 +1,5 @@
 
-@module {can.Component} components/form-widget/field-components/select-field <select-field />
+@module {can.Component} form-widget/field-components/select-field <select-field />
 @parent form-widget.fields
 
 @option {String} type This should be set to `select` to use this template in the form widget

@@ -1,6 +1,6 @@
 <!--
 
-@module {can.Component} components/property-table <property-table />
+@module {can.Component} property-table <property-table />
 @parent geocola.components
 
 -->
@@ -21,4 +21,4 @@ and capitalizing the first letter. Additional display options may be provided th
 
 ## Demo
 
-@demo components/property-table/demo.html 500
+@demo property-table/demo.html 500

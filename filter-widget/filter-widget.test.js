@@ -7,7 +7,7 @@ import q from 'steal-qunit';
 
 var vm, filter;
 
-q.module('components/filter-widget.ViewModel', {
+q.module('filter-widget.ViewModel', {
   beforeEach: function() {
     vm = new ViewModel();
     filter = new Filter({
@@ -95,7 +95,7 @@ test('fieldOptions get() with objectTemplate', assert => {
   assert.equal(vm.attr('fieldOptions').length, len, 'when no fieldOptions are provided, but objectTemplate is, fieldOptions.length should be length of objectTemplate keys');
 });
 
-q.module('components/filter-widget.Filter', {
+q.module('filter-widget.Filter', {
   beforeEach: function() {
     filter = new Filter({});
   },

@@ -8,7 +8,7 @@ import { TOPICS } from './crud-manager';
 import PubSub from 'pubsub-js';
 let vm;
 
-q.module('components/crud-manager.ViewModel', {
+q.module('crud-manager.ViewModel', {
   beforeEach: () => {
     vm = new ViewModel();
   },

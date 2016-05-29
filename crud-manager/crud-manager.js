@@ -41,13 +41,13 @@ const EDIT_BUTTONS = DEFAULT_BUTTONS.concat([{
   title: 'Remove Row'
 }]);
 /**
- * @module components/crud-manager
+ * @module crud-manager
  */
 
 /**
- * @constructor components/crud-manager.ViewModel ViewModel
- * @parent components/crud-manager
- * @group components/crud-manager.ViewModel.props Properties
+ * @constructor crud-manager.ViewModel ViewModel
+ * @parent crud-manager
+ * @group crud-manager.ViewModel.props Properties
  *
  * @description A `<crud-manager />` component's ViewModel
  */
@@ -58,15 +58,15 @@ export let ViewModel = CanMap.extend({
   define: {
     /**
      * The view object for this crud-manager
-     * @property {can.Map} components/crud-manager.ViewModel.props.view
-     * @parent components/crud-manager.ViewModel.props
+     * @property {can.Map} crud-manager.ViewModel.props.view
+     * @parent crud-manager.ViewModel.props
      */
     view: {},
     /**
      * A set of key:string values that correspond to filter parameters for the
      * current view
-     * @property {can.Map} components/crud-manager.ViewModel.props.parameters
-     * @parent components/crud-manager.ViewModel.props
+     * @property {can.Map} crud-manager.ViewModel.props.parameters
+     * @parent crud-manager.ViewModel.props
      */
     parameters: {
       Value: CanMap,
@@ -77,8 +77,8 @@ export let ViewModel = CanMap.extend({
      * * `all`: The list table page that displays all records
      * * `details`: The individual view page that shows one detailed record
      * * `edit`: The editing view that allows editing of an individual record using a form
-     * @property {String} components/crud-manager.ViewModel.props.page
-     * @parent components/crud-manager.ViewModel.props
+     * @property {String} crud-manager.ViewModel.props.page
+     * @parent crud-manager.ViewModel.props
      */
     page: {
       value: 'all',
@@ -88,8 +88,8 @@ export let ViewModel = CanMap.extend({
      * A virtual property that calculates the number of total pages to show
      * on the list page. This controls the paginator widget. It uses the property
      * `view.connectionProperties.totalItems`  and `queryPerPage` to perform this calculation.
-     * @property {String} components/crud-manager.ViewModel.props.totalPages
-     * @parent components/crud-manager.ViewModel.props
+     * @property {String} crud-manager.ViewModel.props.totalPages
+     * @parent crud-manager.ViewModel.props
      */
     totalPages: {
       get(val, setAttr) {
@@ -101,8 +101,8 @@ export let ViewModel = CanMap.extend({
     /**
      * A helper to show or hide the paginate-widget. If totalPages is less than
      * 2, the paginate widget will not be shown.
-     * @property {Boolean} components/crud-manager.ViewModel.props.showPaginate
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Boolean} crud-manager.ViewModel.props.showPaginate
+     * @parent crud-manager.ViewModel.props
      */
     showPaginate: {
       type: 'boolean',
@@ -112,8 +112,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * A promise that resolves to the objects retrieved from a can-connect.getList call
-     * @property {Promise} components/crud-manager.ViewModel.props.objects
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Promise} crud-manager.ViewModel.props.objects
+     * @parent crud-manager.ViewModel.props
      */
     objects: {
       get(prev, setAttr) {
@@ -126,8 +126,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * A promise that resolves to the object retreived from a `can-connect.get` call
-     * @property {can.Map} components/crud-manager.ViewModel.props.focusObject
-     * @parent components/crud-manager.ViewModel.props
+     * @property {can.Map} crud-manager.ViewModel.props.focusObject
+     * @parent crud-manager.ViewModel.props
      */
     focusObject: {
       get(prev, setAttr) {
@@ -147,8 +147,8 @@ export let ViewModel = CanMap.extend({
      * Buttons to use for the list table actions. If `view.disableEdit` is falsey
      * the buttons will include an edit and delete button. Otherwise, it will be
      * a simple view details button.
-     * @property {Array<geocola.types.TableButtonObject>} components/crud-manager.ViewModel.props.buttons
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Array<geocola.types.TableButtonObject>} crud-manager.ViewModel.props.buttons
+     * @parent crud-manager.ViewModel.props
      */
     buttons: {
       type: '*',
@@ -158,16 +158,16 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * A list of current query filters
-     * @property {can.List<Filter>}  components/crud-manager.ViewModel.props.queryFilters
-     * @parent components/crud-manager.ViewModel.props
+     * @property {can.List<Filter>}  crud-manager.ViewModel.props.queryFilters
+     * @parent crud-manager.ViewModel.props
      */
     queryFilters: {
       Value: List
     },
     /**
      * The current page index number. The number 0 here represents page 1.
-     * @property {Number}  components/crud-manager.ViewModel.props.queryPage
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Number}  crud-manager.ViewModel.props.queryPage
+     * @parent crud-manager.ViewModel.props
      */
     queryPage: {
       type: 'number',
@@ -183,8 +183,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The page number, this is calculated by incrementing the queryPage by one.
-     * @property {Number}  components/crud-manager.ViewModel.props.queryPageNumber
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Number}  crud-manager.ViewModel.props.queryPageNumber
+     * @parent crud-manager.ViewModel.props
      */
     queryPageNumber: {
       get() {
@@ -193,8 +193,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The number of records to show per page.
-     * @property {Number}  components/crud-manager.ViewModel.props.buttons
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Number}  crud-manager.ViewModel.props.buttons
+     * @parent crud-manager.ViewModel.props
      */
     queryPerPage: {
       type: 'number',
@@ -210,8 +210,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The current sort parameters.
-     * @property {can.Map}  components/crud-manager.ViewModel.props.sort
-     * @parent components/crud-manager.ViewModel.props
+     * @property {can.Map}  crud-manager.ViewModel.props.sort
+     * @parent crud-manager.ViewModel.props
      */
     sort: {
       Value: CanMap
@@ -219,8 +219,8 @@ export let ViewModel = CanMap.extend({
     /**
      * The current id number of the object that is being viewed in the property
      * table or edited in the form widget.
-     * @property {Number}  components/crud-manager.ViewModel.props.buttons
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Number}  crud-manager.ViewModel.props.buttons
+     * @parent crud-manager.ViewModel.props
      */
     viewId: {
       type: 'number',
@@ -229,8 +229,8 @@ export let ViewModel = CanMap.extend({
     /**
      * Current loading progress. NOT IMPLEMENTED
      * TODO: implement loading progress on lengthy processes like multi delete
-     * @property {Number}  components/crud-manager.ViewModel.props.progress
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Number}  crud-manager.ViewModel.props.progress
+     * @parent crud-manager.ViewModel.props
      */
     progress: {
       type: 'number',
@@ -238,8 +238,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * Whether or not the filter popup is visible
-     * @property {Boolean} components/crud-manager.ViewModel.props.buttons
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Boolean} crud-manager.ViewModel.props.buttons
+     * @parent crud-manager.ViewModel.props
      */
     filterVisible: {
       type: 'boolean',
@@ -248,8 +248,8 @@ export let ViewModel = CanMap.extend({
     /**
      * The internal field array that define the display of data and field types
      * for editing and filtering
-     * @property {Array<Field>} components/crud-manager.ViewModel.props._fields
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Array<Field>} crud-manager.ViewModel.props._fields
+     * @parent crud-manager.ViewModel.props
      */
     _fields: {
       get() {
@@ -265,8 +265,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * An array of currently selected objects in the list-table
-     * @property {Array<can.Map>} components/crud-manager.ViewModel.props.selectedObjects
-     * @parent components/crud-manager.ViewModel.props
+     * @property {Array<can.Map>} crud-manager.ViewModel.props.selectedObjects
+     * @parent crud-manager.ViewModel.props
      */
     selectedObjects: {
       Value: List

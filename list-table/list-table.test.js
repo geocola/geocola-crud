@@ -17,7 +17,7 @@ let vm,
     label: 'label2'
   }];
 
-q.module('components/list-table.ViewModel', {
+q.module('list-table.ViewModel', {
   beforeEach: () => {
     vm = new ViewModel({
       objects: objects

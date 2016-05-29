@@ -6,9 +6,9 @@ import CanMap from 'can/map/';
 import template from './select-field.stache!';
 
 /**
- * @constructor components/form-widget/field-components/select-field.ViewModel ViewModel
- * @parent components/form-widget/field-components/select-field
- * @group components/form-widget/field-components/select-field.ViewModel.props Properties
+ * @constructor form-widget/field-components/select-field.ViewModel ViewModel
+ * @parent form-widget/field-components/select-field
+ * @group form-widget/field-components/select-field.ViewModel.props Properties
  *
  * @description A `<select-field />` component's ViewModel
  */

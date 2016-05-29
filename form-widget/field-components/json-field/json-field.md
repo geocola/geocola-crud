@@ -1,5 +1,5 @@
 
-@module {can.Component} components/form-widget/field-components/json-field <json-field />
+@module {can.Component} form-widget/field-components/json-field <json-field />
 @parent form-widget.fields
 
 @option {String} type This should be set to `json` for the form widget to use this template

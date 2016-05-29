@@ -8,9 +8,9 @@ import 'can/map/define/';
 import can from 'can/util/library';
 
 /**
- * @constructor components/list-table.ViewModel ViewModel
- * @parent components/list-table
- * @group components/list-table.ViewModel.props Properties
+ * @constructor list-table.ViewModel ViewModel
+ * @parent list-table
+ * @group list-table.ViewModel.props Properties
  *
  * @description A `<list-table />` component's ViewModel
  */
@@ -22,8 +22,8 @@ export const ViewModel = CanMap.extend({
     /**
      * Optional promise or deferred object that will resolve to an object. Once
      * the promise resolves, the objects list will be replaced with the promise result
-     * @parent components/list-table.ViewModel.props
-     * @property {can.Deferred | Promise} components/list-table.ViewModel.props.promise
+     * @parent list-table.ViewModel.props
+     * @property {can.Deferred | Promise} list-table.ViewModel.props.promise
      */
     promise: {
       set(newVal) {
@@ -37,8 +37,8 @@ export const ViewModel = CanMap.extend({
     /**
      * A list of objects to display. These objects should generally be can.Model
      * objects but may be any can.Map or javascript object.
-     * @parent components/list-table.ViewModel.props
-     * @property {Array.<can.Model | can.Map | Object>} components/list-table.ViewModel.props.objects
+     * @parent list-table.ViewModel.props
+     * @property {Array.<can.Model | can.Map | Object>} list-table.ViewModel.props.objects
      */
     objects: {
       Value: List,
@@ -46,8 +46,8 @@ export const ViewModel = CanMap.extend({
     },
     /**
      * A list of the currently selected objects in the table
-     * @parent components/list-table.ViewModel.props
-     * @property {Array.<can.Map>} components/list-table.ViewModel.props._selectedObjects
+     * @parent list-table.ViewModel.props
+     * @property {Array.<can.Map>} list-table.ViewModel.props._selectedObjects
      */
     _selectedObjects: {
       Value: List,
@@ -55,8 +55,8 @@ export const ViewModel = CanMap.extend({
     },
     /**
      * A virtual property that helps the template determine whether all objects are selected
-     * @parent components/list-table.ViewModel.props
-     * @property {Boolean} components/list-table.ViewModel.props._allSelected
+     * @parent list-table.ViewModel.props
+     * @property {Boolean} list-table.ViewModel.props._allSelected
      */
     _allSelected: {
       type: 'boolean',
@@ -66,16 +66,16 @@ export const ViewModel = CanMap.extend({
     },
     /**
      * An array of buttonObjects
-     * @parent components/list-table.ViewModel.props
-     * @property {Array.<geocola.types.TableButtonObject>} components/list-table.ViewModel.props.buttons
+     * @parent list-table.ViewModel.props
+     * @property {Array.<geocola.types.TableButtonObject>} list-table.ViewModel.props.buttons
      */
     buttons: {
       value: List
     },
     /**
      * An array of fields
-     * @parent components/list-table.ViewModel.props
-     * @property {can.List} components/list-table.ViewModel.props.fields
+     * @parent list-table.ViewModel.props
+     * @property {can.List} list-table.ViewModel.props.fields
      */
     fields: {
       Value: List,
@@ -88,8 +88,8 @@ export const ViewModel = CanMap.extend({
     },
     /**
      * The current sort field
-     * @parent components/list-table.ViewModel.props
-     * @property {can.List} components/list-table.ViewModel.props.currentSort
+     * @parent list-table.ViewModel.props
+     * @property {can.List} list-table.ViewModel.props.currentSort
      */
     currentSort: {
       value: function() {

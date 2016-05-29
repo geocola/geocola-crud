@@ -6,7 +6,7 @@ import {Field} from '../../util/field';
 
 let vm;
 
-q.module('components/form-widget.ViewModel', {
+q.module('form-widget.ViewModel', {
   beforeEach: function() {
     vm = new ViewModel({});
   },

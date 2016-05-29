@@ -11,9 +11,9 @@ import template from './date-field.stache!';
 import './date-field.less!';
 
 /**
- * @constructor components/form-widget/field-components/date-field.ViewModel ViewModel
- * @parent components/form-widget/field-components/date-field
- * @group components/form-widget/field-components/date-field.ViewModel.props Properties
+ * @constructor form-widget/field-components/date-field.ViewModel ViewModel
+ * @parent form-widget/field-components/date-field
+ * @group form-widget/field-components/date-field.ViewModel.props Properties
  *
  * @description A `<date-field />` component's ViewModel
  */

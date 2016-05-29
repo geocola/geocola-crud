@@ -1,6 +1,6 @@
 <!--
 
-@module {can.Component} components/paginate-widget <paginate-widget />
+@module {can.Component} paginate-widget <paginate-widget />
 @parent geocola.components
 
 -->
@@ -11,4 +11,4 @@ A bootstrap style paginate navigation widget. This widget maintains an internal 
 
 ## Demo
 
-@demo components/paginate-widget/demo.html 500
+@demo paginate-widget/demo.html 500

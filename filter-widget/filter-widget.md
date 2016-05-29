@@ -1,6 +1,6 @@
 <!--
 
-@module {can.Component} components/filter-widget <filter-widget />
+@module {can.Component} filter-widget <filter-widget />
 @parent geocola.components
 @group filter-widget.props Properties
 @link http://jsonapi.org/format/#fetching-filtering JSON-API
@@ -15,4 +15,4 @@ The filters generated follow the JSON API specification implemented by Flask-Res
 
 ## Demo
 
-@demo components/filter-widget/demo.html 500
+@demo filter-widget/demo.html 500

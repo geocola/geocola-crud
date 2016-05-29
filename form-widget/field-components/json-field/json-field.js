@@ -7,9 +7,9 @@ import template from './json-field.stache!';
 import { mapToFields, parseFieldArray } from '../../../../util/field';
 
 /**
- * @constructor components/form-widget/field-components/json-field.ViewModel ViewModel
- * @parent components/form-widget/field-components/json-field
- * @group components/form-widget/field-components/json-field.ViewModel.props Properties
+ * @constructor form-widget/field-components/json-field.ViewModel ViewModel
+ * @parent form-widget/field-components/json-field
+ * @group form-widget/field-components/json-field.ViewModel.props Properties
  *
  * @description A `<json-field />` component's ViewModel
  */

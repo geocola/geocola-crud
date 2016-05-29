@@ -19,7 +19,7 @@ let cases = [{
 }];
 let fields;
 
-q.module('components/.ViewModel', {
+q.module('.ViewModel', {
   beforeEach: () => {
     let fields = cases.map(c => {
       return new Field(c);

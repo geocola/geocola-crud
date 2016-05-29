@@ -5,7 +5,7 @@ import { ViewModel } from './paginate-widget';
 
 let vm;
 
-q.module('components/paginate-widget.ViewModel', {
+q.module('paginate-widget.ViewModel', {
   beforeEach() {
     vm = new ViewModel();
   },

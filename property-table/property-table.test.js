@@ -7,7 +7,7 @@ import {Field} from '../../util/field';
 
 let vm;
 
-q.module('components/property-table.ViewModel', {
+q.module('property-table.ViewModel', {
   beforeEach: () => {
     vm = new ViewModel();
   },

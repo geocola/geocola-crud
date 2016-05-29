@@ -1,5 +1,5 @@
 
-@module {can.Component} components/form-widget/field-components/text-field <text-field />
+@module {can.Component} form-widget/field-components/text-field <text-field />
 @parent form-widget.fields
 
 @option {String} type This should be set to `text` or left blank for the form widget to use this template. The form widget defaults to `type: 'text'` if no value is provided here.

@@ -1,6 +1,6 @@
 <!--
 
-@module {can.Component} components/list-table <list-table />
+@module {can.Component} list-table <list-table />
 @parent geocola.components
 
 -->

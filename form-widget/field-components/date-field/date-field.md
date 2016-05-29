@@ -1,5 +1,5 @@
 
-@module {can.Component} components/form-widget/field-components/date-field <date-field />
+@module {can.Component} form-widget/field-components/date-field <date-field />
 @parent form-widget.fields
 
 @option {String} type This should be set to `date` for the form widget to use this template

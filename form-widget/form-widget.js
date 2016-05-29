@@ -5,11 +5,12 @@ import List from 'can/list/';
 import 'can/map/define/';
 import Component from 'can/component/';
 import template from './template.stache!';
+import {Field, parseFieldArray} from '../util/field';
 /**
- * @constructor components/form-widget.ViewModel ViewModel
- * @parent components/form-widget
- * @group components/form-widget.ViewModel.props Properties
- * @group components/form-widget.ViewModel.events Events
+ * @constructor form-widget.ViewModel ViewModel
+ * @parent form-widget
+ * @group form-widget.ViewModel.props Properties
+ * @group form-widget.ViewModel.events Events
  *
  * @description A `<form-widget />` component's ViewModel
  */
@@ -20,8 +21,8 @@ export let ViewModel = CanMap.extend({
   define: {
     /**
      * Whether or not to show the submit/cancel buttons
-     * @property {Boolean} components/form-widget.ViewModel.props.showButtons
-     * @parent components/form-widget.ViewModel.props
+     * @property {Boolean} form-widget.ViewModel.props.showButtons
+     * @parent form-widget.ViewModel.props
      */
     showButtons: {
       type: 'boolean',
@@ -29,8 +30,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * Whether or not this form should be a bootstrap inline form
-     * @property {Boolean} components/form-widget.ViewModel.props.inline
-     * @parent components/form-widget.ViewModel.props
+     * @property {Boolean} form-widget.ViewModel.props.inline
+     * @parent form-widget.ViewModel.props
      */
     inline: {
       type: 'boolean',
@@ -38,16 +39,16 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The connection info for this form's data. If this is provided, the object will be fetched using the objectId property
-     * @property {connectInfoObject} components/form-widget.ViewModel.props.connection
-     * @parent components/form-widget.ViewModel.props
+     * @property {connectInfoObject} form-widget.ViewModel.props.connection
+     * @parent form-widget.ViewModel.props
      */
     connection: {
       value: null
     },
     /**
      * The object id of the item to retrieve. If this is provided, a request will be made to the connection object with the specified id.
-     * @property {Number} components/form-widget.ViewModel.props.objectId
-     * @parent components/form-widget.ViewModel.props
+     * @property {Number} form-widget.ViewModel.props.objectId
+     * @parent form-widget.ViewModel.props
      */
     objectId: {
       type: 'number',
@@ -59,8 +60,8 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The pending promise if the object is being retrieved or null
-     * @property {Promise}  components/form-widget.ViewModel.props.promise
-     * @parent components/form-widget.ViewModel.props
+     * @property {Promise}  form-widget.ViewModel.props.promise
+     * @parent form-widget.ViewModel.props
      */
     promise: {
       value: null
@@ -69,22 +70,28 @@ export let ViewModel = CanMap.extend({
      * An object representing a can.Map or similar object. This object should have
      * a `save` method like a `can.Model` or `can-connect.superMap`. This object is
      * updated and its `save` method is called when the form is submitted.
-     * @property {can.Map} components/form-widget.ViewModel.props.formObject
-     * @parent components/form-widget.ViewModel.props
+     * @property {can.Map} form-widget.ViewModel.props.formObject
+     * @parent form-widget.ViewModel.props
      */
     formObject: {
       Value: CanMap
     },
     /**
      * The list of form fields properties. These can be specified as strings representing the field names or the object properties described in the FormFieldObject
-     * @property {Array<String|geocola.types.FormFieldObject>} components/form-widget.ViewModel.props.fields
-     * @parent components/form-widget.ViewModel.props
+     * @property {Array<String|geocola.types.FormFieldObject>} form-widget.ViewModel.props.fields
+     * @parent form-widget.ViewModel.props
      */
     fields: {
       Value: List,
       get(fields){
+        if(fields.length && !(fields[0] instanceof Field)){
+          fields = parseFieldArray(fields);
+        }
+        if (!fields.length && this.attr('formObject')) {
+          return parseFieldArray(CanMap.keys(this.attr('formObject')));
+        }
         return fields.filter(f => {
-          return !f.excludeForm;
+          return !f.attr('excludeForm');
         });
       }
     }

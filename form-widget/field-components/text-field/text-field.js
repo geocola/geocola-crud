@@ -5,9 +5,9 @@ import CanMap from 'can/map/';
 import Component from 'can/component/';
 import template from './text-field.stache!';
 /**
- * @constructor components/form-widget/field-components/text-field.ViewModel ViewModel
- * @parent components/form-widget/text-components/date-field
- * @group components/form-widget/field-components/text-field.ViewModel.props Properties
+ * @constructor form-widget/field-components/text-field.ViewModel ViewModel
+ * @parent form-widget/text-date-field
+ * @group form-widget/field-components/text-field.ViewModel.props Properties
  *
  * @description A `<text-field />` component's ViewModel
  */

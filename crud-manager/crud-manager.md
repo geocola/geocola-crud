@@ -1,6 +1,6 @@
 <!--
 
-@module {can.Component} components/crud-manager <crud-manager />
+@module {can.Component} crud-manager <crud-manager />
 @parent geocola.components
 
 -->

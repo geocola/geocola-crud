@@ -108,9 +108,9 @@ export const Filter = CanMap.extend({
 });
 
 /**
- * @constructor components/filter-widget.ViewModel ViewModel
- * @parent components/filter-widget
- * @group components/filter-widget.ViewModel.props Properties
+ * @constructor filter-widget.ViewModel ViewModel
+ * @parent filter-widget
+ * @group filter-widget.ViewModel.props Properties
  *
  * @description A `<filter-widget />` component's ViewModel
  */
@@ -121,8 +121,8 @@ export let ViewModel = CanMap.extend({
   define: {
     /**
      * A list of filterObjects currently used in this widget
-     * @property {Array<geocola.types.filterObject>} components/filter-widget.ViewModel.filters
-     * @parent components/filter-widget.ViewModel.props
+     * @property {Array<geocola.types.filterObject>} filter-widget.ViewModel.filters
+     * @parent filter-widget.ViewModel.props
      */
     filters: {
       Value: List
@@ -130,8 +130,8 @@ export let ViewModel = CanMap.extend({
     /**
      * The model-like object to render in the form
      * @link formFieldObject formFieldObject
-     * @property {form-widget.types.formFieldObject} components/filter-widget.ViewModel.formObject
-     * @parent components/filter-widget.ViewModel.props
+     * @property {form-widget.types.formFieldObject} filter-widget.ViewModel.formObject
+     * @parent filter-widget.ViewModel.props
      */
     formObject: {
       get(obj) {
@@ -146,8 +146,8 @@ export let ViewModel = CanMap.extend({
     /**
      * The buttonObjects to display in the list table. This widget only uses
      * a "Remove Filter" button
-     * @property {Array<buttonObject>} components/filter-widget.ViewModel.buttons
-     * @parent components/filter-widget.ViewModel.props
+     * @property {Array<buttonObject>} filter-widget.ViewModel.buttons
+     * @parent filter-widget.ViewModel.props
      */
     buttons: {
       value: [{
@@ -160,8 +160,8 @@ export let ViewModel = CanMap.extend({
      * An optional object template to derive field options from. If it is provided,
      * filter-widget will extract the field names and the field types and use that to create
      * filter options.
-     * @property {can.Map} components/filter-widget.ViewModel.objectTemplate
-     * @parent components/filter-widget.ViewModel.props
+     * @property {can.Map} filter-widget.ViewModel.objectTemplate
+     * @parent filter-widget.ViewModel.props
      */
     objectTemplate: {
       value: null
@@ -171,8 +171,8 @@ export let ViewModel = CanMap.extend({
      * * name - the field name, which can be either a text field or select dropdown depending on the configuration
      * * op - the operator to filter the field by (like, eq, etc)
      * * val - the value to filter the field by
-     * @property {Array.<formFieldObject>} components/filter-widget.ViewModel.fields
-     * @parent components/filter-widget.ViewModel.props
+     * @property {Array.<formFieldObject>} filter-widget.ViewModel.fields
+     * @parent filter-widget.ViewModel.props
      */
     formFields: {
       get(fields) {
@@ -227,8 +227,8 @@ export let ViewModel = CanMap.extend({
      * 2. 2f there is a defined type in the define property for the current filter field dropdown
      * If a type is found using the rules above, the returned value will be filtered to only include
      * operators for the given type.
-     * @property {Array<geocola.types.SelectOptionProperty>} components/filter-widget.ViewModel.filterOptions
-     * @parent components/filter-widget.ViewModel.props
+     * @property {Array<geocola.types.SelectOptionProperty>} filter-widget.ViewModel.filterOptions
+     * @parent filter-widget.ViewModel.props
      */
     filterOptions: {
       get() {
@@ -269,8 +269,8 @@ export let ViewModel = CanMap.extend({
      * A list of fields that will be used to create options in the field name
      * dropdown. Each field may have a property `filterFactory` which may return
      * one or more filter objects
-     * @property {List} components/filter-widget.ViewModel.fields
-     * @parent components/filter-widget.ViewModel.props
+     * @property {List} filter-widget.ViewModel.fields
+     * @parent filter-widget.ViewModel.props
      */
     fields: {
       value: null,
@@ -286,8 +286,8 @@ export let ViewModel = CanMap.extend({
      * An array of field options to display for the field selection dropdown. If not provided, the
      * viewModel will look for the objectTemplate property and display its keys. If this property does
      * not exist, the fieldOptions will be replaced with a simple text field.
-     * @property {Array<geocola.types.SelectOptionProperty>} components/filter-widget.ViewModel.fieldOptions
-     * @parent components/filter-widget.ViewModel.props
+     * @property {Array<geocola.types.SelectOptionProperty>} filter-widget.ViewModel.fieldOptions
+     * @parent filter-widget.ViewModel.props
      */
     fieldOptions: {
       value: null,

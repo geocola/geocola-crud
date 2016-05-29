@@ -1,18 +1,17 @@
-<script type="text/stache" id="demo">
+<script type="text/stache" id="demo-html">
   <h1>Property Table Demo</h1>
-    <property-table {object}="data" />
+  <property-table {object}="data" />
 </script>
-<script src="../../node_modules/steal/steal.js" main="@empty" id="demo-source">
+<script src="../node_modules/steal/steal.js" main="@empty" id="demo-source">
   import 'bootstrap/dist/css/bootstrap.min.css!';
   import 'bootstrap/dist/css/bootstrap-theme.min.css!';
   import 'font-awesome/css/font-awesome.min.css';
-  import 'components/property-table/';
+  import 'property-table/';
 
   import can from 'can/view/';
   import 'can/map/define/';
-  import mapOptions from 'app/viewer/config/default/map';
 
-  var frag = can.view('demo', {
+  var frag = can.view('demo-html', {
     data: new can.Map({
       prop_1: 'This is a property',
       another_property_value: 'Value here',
@@ -20,5 +19,5 @@
     })
   }, {});
 
-  document.body.appendChild(frag);
+  can.$('body').append(frag);
 </script>
