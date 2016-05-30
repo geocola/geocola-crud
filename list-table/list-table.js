@@ -6,6 +6,7 @@ import CanMap from 'can/map/';
 import CanEvent from 'can/event/';
 import 'can/map/define/';
 import can from 'can/util/library';
+import { Field, parseFieldArray } from '../util/field';
 
 /**
  * @constructor list-table.ViewModel ViewModel
@@ -80,7 +81,13 @@ export const ViewModel = CanMap.extend({
     fields: {
       Value: List,
       Type: List,
-      get(fields){
+      get(fields) {
+        if (fields.length && !(fields[0] instanceof Field)) {
+          fields = parseFieldArray(fields);
+        }
+        if (!fields.length && this.attr('objects')) {
+          return parseFieldArray(CanMap.keys(this.attr('objects')[0]));
+        }
         return fields.filter(f => {
           return !f.excludeListTable;
         });
@@ -101,6 +108,7 @@ export const ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function buttonClick
    * Called when a button is clicked. This dispatches the buttons event.
    * @signature
    * @param  {String} eventName The name of the event to dispatch
@@ -110,7 +118,9 @@ export const ViewModel = CanMap.extend({
     this.dispatch(eventName, [object]);
   },
   /**
+   * @function setSort
    * Helps the template the currentSort value
+   * @signature
    * @param  {String} field the field to set the sort on
    */
   setSort(field) {
@@ -124,8 +134,10 @@ export const ViewModel = CanMap.extend({
       this.attr('currentSort.type', this.attr('currentSort.type') === 'asc' ? 'desc' : 'asc');
     }
     can.batch.stop();
+    this.dispatch('sort', [this.attr('currentSort')]);
   },
   /**
+   * @function toggleSelected
    * Toggles a row as selected or not selected
    * @signature
    * @param  {can.Map} obj The row to toggle
@@ -139,6 +151,7 @@ export const ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function toggleSelectAll
    * Selects or unselects all of the objects in the table
    * @signature
    */
@@ -150,6 +163,7 @@ export const ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function isSelected
    * Determines whether or not the provided object is selected by comparing
    * it to the list of currently selected objects
    * @signature
@@ -160,13 +174,15 @@ export const ViewModel = CanMap.extend({
     return this.attr('_selectedObjects').indexOf(obj) > -1;
   },
   /**
+   * @function getFieldValue
    * Returns an objects formatted value for the template
+   * @signature
    * @param  {field} field The field object. This field object has a property
    * called  `getFormattedValue` which formats and returns a string
    * @param  {can.Map} obj   The object to retrieve the property from
    * @return {String}       The formatted value
    */
-  getFieldValue(field, obj){
+  getFieldValue(field, obj) {
     return field.getFormattedValue(obj);
   }
 });

@@ -5,7 +5,7 @@ import List from 'can/list/';
 import 'can/map/define/';
 import Component from 'can/component/';
 import template from './template.stache!';
-import {Field, parseFieldArray} from '../util/field';
+import { Field, parseFieldArray } from '../util/field';
 /**
  * @constructor form-widget.ViewModel ViewModel
  * @parent form-widget
@@ -83,8 +83,8 @@ export let ViewModel = CanMap.extend({
      */
     fields: {
       Value: List,
-      get(fields){
-        if(fields.length && !(fields[0] instanceof Field)){
+      get(fields) {
+        if (fields.length && !(fields[0] instanceof Field)) {
           fields = parseFieldArray(fields);
         }
         if (!fields.length && this.attr('formObject')) {
@@ -97,7 +97,9 @@ export let ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function fetchObject
    * Fetches and replaces the formObject with a new formObject
+   * @signature
    * @param  {superMap} con The supermap connection to the api service
    * @param  {Number} id  The id number of the object to fetch
    */
@@ -115,7 +117,9 @@ export let ViewModel = CanMap.extend({
     return promise;
   },
   /**
+   * @function submitForm
    * Called when the form is submitted. The object is updated by calling it's `save` method. The event `submit` is dispatched.
+   * @signature
    */
   submitForm() {
     let formObject = this.attr('formObject');
@@ -123,9 +127,11 @@ export let ViewModel = CanMap.extend({
     return false;
   },
   /**
+   * @function setField
    * Sets the formObject value when a field changes. This will allow for future
    * functionality where the form is much more responsive to values changing, like
    * cascading dropdowns.
+   * @signature
    * @param  {formFieldObject} field  The field object properties
    * @param  {domElement} domElement The form element that dispatched the event
    * @param  {Event} event  The event object and type
@@ -142,6 +148,7 @@ export let ViewModel = CanMap.extend({
    * An event dispatched when the cancel button is clicked. No arguments are passed.
    */
   /**
+   * @function cancelForm
    * Called when the form cancel button is clicked. Dispatches the `cancel` event.
    * @signature
    */
@@ -149,12 +156,14 @@ export let ViewModel = CanMap.extend({
     this.dispatch('cancel');
   },
   /**
+   * @function getFieldValue
    * Fetches a value from the formObject
+   * @signature
    * @param  {String} fieldName The name of the field to return
    * @return {*} The value of the object's property
    */
-  getFieldValue(field){
-    return this.attr('formObject.' +  field.attr('name'));
+  getFieldValue(field) {
+    return this.attr('formObject.' + field.attr('name'));
   }
 });
 

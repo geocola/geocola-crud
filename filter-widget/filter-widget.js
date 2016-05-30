@@ -310,7 +310,9 @@ export let ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function removeFilter
    * Removes a filter from the list of filters
+   * @signature
    * @param  {can.Map} scope The stache scope
    * @param  {event} dom   The dom event
    * @param  {event} event The can event
@@ -321,15 +323,19 @@ export let ViewModel = CanMap.extend({
     this.attr('filters').splice(index, 1);
   },
   /**
+   * @function removeFilters
    * Replaces the filter array with an empty array, clearing all existing filters
+   * @signature
    */
   removeFilters() {
     this.attr('filters').replace([]);
   },
   /**
+   * @function addFilter
    * Adds a new filter or set of filters to the list of filters in this widget.
    * A `filterFactory` may be defined on the field which may return on or several
    * filters.
+   * @signature
    * @param  {can.Map} scope The stache scope
    * @param  {event} dom   The dom event
    * @param  {event} event The can event

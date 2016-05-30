@@ -95,7 +95,9 @@ export let ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function gotoNext
    * Navigates to the next page
+   * @signature
    * @return {Boolean} returns false to prevent the link from navigating to the next page
    */
   gotoNext() {
@@ -105,7 +107,9 @@ export let ViewModel = CanMap.extend({
     return false;
   },
   /**
+   * @function gotoPrevious
    * Navigates to the previous page
+   * @signature
    * @return {Boolean} returns false to prevent the link from navigating to the next page
    */
   gotoPrevious() {
@@ -115,7 +119,9 @@ export let ViewModel = CanMap.extend({
     return false;
   },
   /**
+   * @function gotoFirst
    * Navigates to the first page
+   * @signature
    * @return {Boolean} returns false to prevent the link from navigating to the next page
    */
   gotoFirst() {
@@ -123,7 +129,9 @@ export let ViewModel = CanMap.extend({
     return false;
   },
   /**
+   * @function gotoLast
    * Navigates to the last page
+   * @signature
    * @return {Boolean} returns false to prevent the link from navigating to the next page
    */
   gotoLast() {
@@ -131,7 +139,9 @@ export let ViewModel = CanMap.extend({
     return false;
   },
   /**
+   * @function gotoPage
    * Navigates to the page
+   * @signature
    * @param {Number} p The page index to navigate to
    * @return {Boolean} returns false to prevent the link from navigating to the next page
    */
@@ -142,7 +152,9 @@ export let ViewModel = CanMap.extend({
     return false;
   },
   /**
+   * @function isActive
    * Checks to see if the passed page is the active page index
+   * @signature
    * @param {Number} p The page to check
    * @return {Boolean} Returns a boolean value that tells the template whether or not the passed page is the active page
    */

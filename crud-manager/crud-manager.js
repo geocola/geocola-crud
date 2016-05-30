@@ -22,7 +22,19 @@ import { mapToFields, parseFieldArray } from '../util/field';
 import PubSub from 'pubsub-js';
 
 export const TOPICS = {
+  /**
+   * Topic to add a new message when an object is modified or deleted. The topic
+   * published is `addMessage`
+   * @property {String} crud-manager.ViewModel.topics.ADD_MESSAGE
+   * @parent crud-manager.ViewModel.topics
+   */
   ADD_MESSAGE: 'addMessage',
+  /**
+   * topic to clear existing messages. The topic
+   * published is `clearMessages`
+   * @property {String} crud-manager.ViewModel.topics.CLEAR_MESSAGES
+   * @parent crud-manager.ViewModel.topics
+   */
   CLEAR_MESSAGES: 'clearMessages'
 };
 
@@ -48,6 +60,7 @@ const EDIT_BUTTONS = DEFAULT_BUTTONS.concat([{
  * @constructor crud-manager.ViewModel ViewModel
  * @parent crud-manager
  * @group crud-manager.ViewModel.props Properties
+ * @group crud-manager.ViewModel.topics Topics
  *
  * @description A `<crud-manager />` component's ViewModel
  */
@@ -273,7 +286,8 @@ export let ViewModel = CanMap.extend({
     }
   },
   /**
-   * Initializes queryFilters
+   * @function init
+   * Initializes queryFilters and other parameters
    */
   init() {
     can.batch.start();
@@ -300,8 +314,10 @@ export let ViewModel = CanMap.extend({
     can.batch.stop();
   },
   /**
+   * @function editObject
    * Sets the current viewId to the object's id and sets the page to edit
    * to start editing the object provided.
+   * @signature
    * @param  {can.Map} scope The stache scope (not used)
    * @param  {domNode} dom   The domNode that triggered the event (not used)
    * @param  {Event} event The event that was triggered (not used)
@@ -312,8 +328,10 @@ export let ViewModel = CanMap.extend({
     this.attr('page', 'edit');
   },
   /**
+   * @function viewObject
    * Sets the current viewId to the object's id and sets the page to details
    * to display a detailed view of the object provided.
+   * @signature
    * @param  {can.Map} scope The stache scope (not used)
    * @param  {domNode} dom   The domNode that triggered the event (not used)
    * @param  {Event} event The event that was triggered (not used)
@@ -324,12 +342,14 @@ export let ViewModel = CanMap.extend({
     this.attr('page', 'details');
   },
   /**
+   * @function saveObject
    * Saves the provided object and sets the current viewId to the object's
    * id once it is returned. We then switch the page to the detail view to
    * display the created or updated object.
    *
    * This method also adds notifications once the object is saved using PubSub.
    *
+   * @signature
    * @param  {can.Map} scope The stache scope (not used)
    * @param  {domNode} dom   The domNode that triggered the event (not used)
    * @param  {Event} event The event that was triggered (not used)
@@ -365,7 +385,9 @@ export let ViewModel = CanMap.extend({
     return deferred;
   },
   /**
+   * @function setPage
    * Changes the page and resets the viewId to 0
+   * @signature
    * @param {String} page The name of the page to switch to
    */
   setPage(page) {
@@ -373,7 +395,9 @@ export let ViewModel = CanMap.extend({
     this.attr('viewId', 0);
   },
   /**
+   * @function getNewObject
    * Creates and returns a new object from the view's objectTemplate
+   * @signature
    * @return {can.map} A new object created from the `view.objectTemplate`
    */
   getNewObject() {
@@ -382,8 +406,10 @@ export let ViewModel = CanMap.extend({
     return this.attr('view.objectTemplate')();
   },
   /**
+   * @function deleteObject
    * Displays a confirm dialog box and if confirmed, deletes the object provided.
    * Once the object is deleted, a message is published using PubSub.
+   * @signature
    * @param  {can.Map} scope The stache scope (not used)
    * @param  {domNode} dom   The domNode that triggered the event (not used)
    * @param  {Event} event The event that was triggered (not used)
@@ -415,9 +441,11 @@ export let ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function deleteMultiple
    * Iterates through the objects in the `selectedObjects` array
    * and deletes each one individually.
    * //TODO implement batch deleting to avoid many ajax calls
+   * @signature
    * @param {Boolean} skipConfirm If true, the method will not display a confirm dialog
    * and will immediately attempt to remove the selected objects
    */
@@ -433,10 +461,12 @@ export let ViewModel = CanMap.extend({
     return null;
   },
   /**
+   * @function setFilterParameter
    * Sets the filter parameter `filter[objects]`. This method should be called
    * whenever the queryFilters are changed.
    * The filters are serialized and converted into a JSON string.
    * //TODO make the filter object more generic for different types rest apis
+   * @signature
    * @param {can.List<Filter>} filters The new set of filters to apply
    */
   setFilterParameter(filters) {
@@ -452,9 +482,11 @@ export let ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function setSortParameter
    * sets the sort parameter `sort`. This method should be called any time the
    * sorting of the data is changed
    * //TODO make the sort parameter type more generic to allow for different rest apis
+   * @signature
    * @param {can.Map} sort A special sort object that contains a field to sort on
    * and a type of sort, like `asc` or `desc`
    */
@@ -467,7 +499,9 @@ export let ViewModel = CanMap.extend({
     this.attr('parameters.sort', sort.type === 'asc' ? sort.fieldName : '-' + sort.fieldName);
   },
   /**
+   * @function toggleFilter
    * Toggles the display of the filter dialog
+   * @signature
    * @param  {Boolean} val (Optional) whether or not to display the dialog
    */
   toggleFilter(val) {
@@ -478,7 +512,9 @@ export let ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function getRelatedValue
    * Retrieves a value from an object based on the key provided
+   * @signature
    * @param  {String} foreignKey  The name of the field to retrieve from the object
    * @param  {can.Map} focusObject The object to retrieve the property from
    * @return {*} The object's property

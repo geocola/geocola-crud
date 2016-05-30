@@ -14,10 +14,8 @@ function getNextId() {
 /**
  * @typedef {connectInfoObject} apiProvider.types.connectInfoObject ConnectInfoObject
  * @parent apiProvider.types
- * @option {can.Model | superMap} connection The data model used to create, update and delete objects.
- * @option {can.Map | object} map The object used to create new objects. This object can be used to specify default values and properties when creating new empty objects.
- *  @option {can.List | Array} list The list used internally by can-connect
- * @option {Object} properties Additional metadata about the api and data
+ * @option {Number} totalItems The total number of items available through this api
+ * @option {can.Map} relationships Keys that represent field names where relationships exist. Each key's value in this object is set to `true` to keep track of which fields are relationships. 
  */
 const PropertiesObject = CanMap.extend({
   define: {

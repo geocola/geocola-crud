@@ -99,12 +99,13 @@ export const ViewModel = CanMap.extend({
     }
   },
   /**
+   * @function fetchObject
    * Asynchronously fetches an object using a can-connect model and an id
+   * @signature
    * @param  {can-connect.model} con The connection object to an api resource
    * @param  {Number} id  The id number of the object to retrieve
    * @return {can.Deferred}     A deferred object that is resolved once the object is retreived
    * @link https://connect.canjs.com/ can-connect
-   * @prototype
    */
   fetchObject(con, id) {
     if (!con || !id) {
@@ -122,7 +123,9 @@ export const ViewModel = CanMap.extend({
     return def;
   },
   /**
+   * @function getValue
    * A helper for the template that gets an object's property using the field
+   * @signature
    * @param  {field} field The field object
    * @return {string}       The formatted string
    */
