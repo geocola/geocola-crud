@@ -5,7 +5,7 @@ import CanMap from 'can/map/';
 import Component from 'can/component/';
 import CanEvent from 'can/event/';
 import { makeSentenceCase } from '../../util/string';
-import { parseFieldArray } from '../../util/field';
+import { parseFieldArray, Field } from '../../util/field';
 /**
  * @constructor property-table.ViewModel ViewModel
  * @parent property-table
