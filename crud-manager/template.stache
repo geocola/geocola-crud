@@ -97,6 +97,19 @@
     {{#if showPaginate}}
       <div class="hidden-print">
         <paginate-widget {(active-page-index)}="queryPage" {pages}="totalPages" />
+
+        <form class="form-inline">
+          <div class="form-group">
+            <label for="perPageSelect">Items per page:</label>
+            <select {($value)}="queryPerPage" class="form-control">
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </form>
+
       </div>
     {{/if}}
 
@@ -130,7 +143,7 @@
 
       {{#if view.relatedViews}}
         <hr />
-        <h2>Related Data</h2>
+        <h3>Related Data</h3>
         <tab-container>
           {{#each view.relatedViews}}
             <panel-container title="{{./view.title}}" collapsible="false">
@@ -150,13 +163,26 @@
     </button>
     {{#each selectedObjects}}
       <property-table {object}="." {fields}="_fields" />
-      <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-        {{#unless view.disableEdit}}
+      {{#unless view.disableEdit}}
+        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
           <button class="btn btn-default" ($click)="editObject(null, null null, .)">
             <i class="fa fa-wrench"></i> Edit
           </button>
-        {{/unless}}
-      </div>
+        </div>
+      {{/unless}}
+
+      {{#if view.relatedViews}}
+        <hr />
+        <h3>Related Data</h3>
+        <tab-container>
+          {{#each view.relatedViews}}
+            <panel-container title="{{./view.title}}" collapsible="false">
+              <crud-manager {view}="../view" {parameters}="../view.parameters" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
+            </panel-container>
+          {{/each}}
+        </tab-container>
+      {{/if}}
+
     {{/each}}
   {{/case}}
 
