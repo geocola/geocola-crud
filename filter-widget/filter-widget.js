@@ -29,7 +29,7 @@ export const FilterOptions = [{
   types: ['string'],
   filterFactory(filter) {
     filter.attr('val', ['%', filter.attr('val'), '%'].join(''));
-    return [filter];
+    return filter;
   }
 }, {
   label: 'Does not contain',
@@ -43,7 +43,7 @@ export const FilterOptions = [{
   types: ['number'],
   filterFactory(filter) {
     filter.attr('val', parseFloat(filter.attr('val')));
-    return [filter];
+    return filter;
   }
 }, {
   label: 'Less Than',
@@ -52,7 +52,7 @@ export const FilterOptions = [{
   types: ['number'],
   filterFactory(filter) {
     filter.attr('val', parseFloat(filter.attr('val')));
-    return [filter];
+    return filter;
   }
 }, {
   label: 'Before',
@@ -60,8 +60,8 @@ export const FilterOptions = [{
   value: 'before',
   types: ['date'],
   valueField: {
-      name: 'val',
-      alias: 'Value',
+    name: 'val',
+    alias: 'Value',
     type: 'date',
     properties: {
       placeholder: 'Select a date'
@@ -73,8 +73,8 @@ export const FilterOptions = [{
   value: 'after',
   types: ['date'],
   valueField: {
-      name: 'val',
-      alias: 'Value',
+    name: 'val',
+    alias: 'Value',
     type: 'date',
     properties: {
       placeholder: 'Select a date'
@@ -206,7 +206,7 @@ export let ViewModel = CanMap.extend({
       }
     },
     valueField: {
-      get(){
+      get() {
         let defaultField = {
           name: 'val',
           alias: 'Value',
@@ -333,7 +333,7 @@ export let ViewModel = CanMap.extend({
   /**
    * @function addFilter
    * Adds a new filter or set of filters to the list of filters in this widget.
-   * A `filterFactory` may be defined on the field which may return on or several
+   * A `filterFactory` may be defined on the field which may return one filter or an array of
    * filters.
    * @signature
    * @param  {can.Map} scope The stache scope
@@ -357,17 +357,24 @@ export let ViewModel = CanMap.extend({
 
     //get the filters
     //try a filterFactory on the field object
+    //which should return one or an array of filters
     if (field && typeof field.filterFactory === 'function') {
       filters = field.filterFactory(obj);
     }
 
-    //next try a filterFactory on the filter option
-    else if (filterOption.filterFactory) {
-      filters = filterOption.filterFactory(obj);
+    //next try a filterFactory on each filter option
+    if (filterOption.filterFactory) {
+      if (filters && filters.length) {
+        filters = filters.map(f => {
+          return filterOption.filterFactory(f);
+        });
+      } else {
+        filters = [filterOption.filterFactory(filters || obj)];
+      }
     }
 
     //otherwise just use the filter as is
-    else {
+    if(!filters) {
       filters = [obj];
     }
 
