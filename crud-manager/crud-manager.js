@@ -17,7 +17,7 @@ import 'geocola-ui/tab-container/';
 import 'geocola-ui/panel-container/';
 import { Message } from 'geocola-ui/alert-widget/message';
 
-import { Filter } from '../filter-widget/';
+import { Filter } from '../filter-widget/Filter';
 import { mapToFields, parseFieldArray } from '../util/field';
 import PubSub from 'pubsub-js';
 

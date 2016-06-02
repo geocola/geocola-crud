@@ -1,7 +1,5 @@
-import {
-  Filter,
-  ViewModel
-} from './filter-widget';
+import { ViewModel } from './filter-widget';
+import { Filter } from './Filter';
 
 import q from 'steal-qunit';
 
