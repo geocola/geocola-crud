@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label for="{{name}}">{{alias}}</label>
+    <label {{#inline}}class="sr-only" {{/inline}}for="{{name}}">{{alias}}</label>
     {{#if properties.textarea}}
       <textarea ($change)="onChange(%element)" placeholder="{{properties.placeholder}}" id="{{name}}" class="form-control" name="{{name}}">{{value}}</textarea>
     {{else}}

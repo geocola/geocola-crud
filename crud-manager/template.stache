@@ -105,17 +105,19 @@
       <div class="hidden-print">
         <paginate-widget {(active-page-index)}="queryPage" {pages}="totalPages" />
 
-        <form class="form-inline">
-          <div class="form-group">
-            <label for="perPageSelect">Items per page:</label>
-            <select {($value)}="queryPerPage" class="form-control">
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-          </div>
-        </form>
+        <div class="per-page-form">
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="perPageSelect">Items per page:</label>
+              <select {($value)}="queryPerPage" class="form-control">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+          </form>
+        </div>
 
       </div>
     {{/if}}

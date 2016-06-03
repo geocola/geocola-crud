@@ -5,6 +5,7 @@ import List from 'can/list/';
 import Component from 'can/component/';
 import Route from 'can/route/';
 import template from './template.stache!';
+import './widget.less!';
 
 import '../list-table/';
 import '../property-table/';
