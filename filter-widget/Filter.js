@@ -1,64 +1,53 @@
 import CanMap from 'can/map/';
+import 'can/map/define/';
+import List from 'can/list/';
 export const Filter = CanMap.extend({
   define: {
-    val: {},
+    value: {},
     name: {
       type: 'string',
       value: ''
     },
-    op: {
-      value: 'like',
-      type: 'string'
-    },
     operator: {
-      value: 'like',
-      set(val) {
-        let op = FilterOptions.filter(f => {
-          return f.value === val;
-        })[0].operator;
-        this.attr('op', op);
-        return val;
-      },
-      serialize: false
+      value: 'like'
     }
   }
 });
 
+export const FilterList = List.extend({
+  'Map': CanMap
+});
+
 export const FilterOptions = [{
   label: 'Does not contain',
-  operator: 'not_like',
   value: 'not_like',
   types: ['string']
 }, {
   label: 'Contains',
-  operator: 'like',
   value: 'like',
   types: ['string'],
   filterFactory(filter) {
-    filter.attr('val', ['%', filter.attr('val'), '%'].join(''));
+    filter.attr('value', ['%', filter.attr('value'), '%'].join(''));
     return filter;
   }
 }, {
   label: 'Starts with',
-  operator: 'like',
-  value: 'like',
+  value: 'starts_with',
   types: ['string'],
   filterFactory(filter) {
-    filter.attr('val', [filter.attr('val'), '%'].join(''));
+    filter.attr('value', [filter.attr('value'), '%'].join(''));
     return filter;
   }
 }, {
   label: 'Ends with',
-  operator: 'like',
-  value: 'like',
+  value: 'ends_with',
   types: ['string'],
   filterFactory(filter) {
-    filter.attr('val', ['%', filter.attr('val')].join(''));
+    filter.attr('value', ['%', filter.attr('value')].join(''));
     return filter;
   }
 }, {
   label: 'Exactly equal to',
-  operator: 'equals',
   value: 'equals',
   types: ['string', 'number', 'boolean', 'date']
 }, {
@@ -68,29 +57,26 @@ export const FilterOptions = [{
   types: ['string', 'number', 'boolean', 'date']
 }, {
   label: 'Greater Than',
-  operator: '>',
   value: 'greater_than',
   types: ['number'],
   filterFactory(filter) {
-    filter.attr('val', parseFloat(filter.attr('val')));
+    filter.attr('value', parseFloat(filter.attr('value')));
     return filter;
   }
 }, {
   label: 'Less Than',
-  operator: '<',
   value: 'less_than',
   types: ['number'],
   filterFactory(filter) {
-    filter.attr('val', parseFloat(filter.attr('val')));
+    filter.attr('value', parseFloat(filter.attr('value')));
     return filter;
   }
 }, {
   label: 'Before',
-  operator: '<',
   value: 'before',
   types: ['date'],
   valueField: {
-    name: 'val',
+    name: 'value',
     alias: 'Value',
     type: 'date',
     properties: {
@@ -99,11 +85,10 @@ export const FilterOptions = [{
   }
 }, {
   label: 'After',
-  operator: '>',
   value: 'after',
   types: ['date'],
   valueField: {
-    name: 'val',
+    name: 'value',
     alias: 'Value',
     type: 'date',
     properties: {

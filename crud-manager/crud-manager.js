@@ -18,7 +18,7 @@ import 'geocola-ui/tab-container/';
 import 'geocola-ui/panel-container/';
 import { Message } from 'geocola-ui/alert-widget/message';
 
-import { Filter } from '../filter-widget/Filter';
+import { FilterList } from '../filter-widget/Filter';
 import { mapToFields, parseFieldArray } from '../util/field';
 import PubSub from 'pubsub-js';
 
@@ -53,6 +53,11 @@ const EDIT_BUTTONS = DEFAULT_BUTTONS.concat([{
   eventName: 'delete',
   title: 'Remove Row'
 }]);
+
+export const SortMap = CanMap.extend({
+  fieldName: null,
+  type: 'asc'
+});
 /**
  * @module crud-manager
  */
@@ -77,16 +82,6 @@ export let ViewModel = CanMap.extend({
      */
     view: {},
     /**
-     * A set of key:string values that correspond to filter parameters for the
-     * current view
-     * @property {can.Map} crud-manager.ViewModel.props.parameters
-     * @parent crud-manager.ViewModel.props
-     */
-    parameters: {
-      Value: CanMap,
-      Type: CanMap
-    },
-    /**
      * The current page to display in this view. Options include:
      * * `all`: The list table page that displays all records
      * * `details`: The individual view page that shows one detailed record
@@ -109,7 +104,7 @@ export let ViewModel = CanMap.extend({
       get(val, setAttr) {
         //round up to the nearest integer
         return Math.ceil(this.attr('view.connectionProperties.totalItems') /
-          this.attr('queryPerPage'));
+          this.attr('parameters.perPage'));
       }
     },
     /**
@@ -124,14 +119,24 @@ export let ViewModel = CanMap.extend({
         return this.attr('totalPages') > 1;
       }
     },
+    parameters: {
+      Value: CanMap.extend({
+        define: {
+          filters: { Type: FilterList, Value: FilterList },
+          perPage: { type: 'number', value: 10 },
+          page: { type: 'number', value: 0 },
+          sort: { Type: SortMap, Value: SortMap }
+        }
+      })
+    },
     /**
      * A promise that resolves to the objects retrieved from a can-connect.getList call
-     * @property {Promise} crud-manager.ViewModel.props.objects
+     * @property {can.Deferred} crud-manager.ViewModel.props.objects
      * @parent crud-manager.ViewModel.props
      */
     objects: {
       get(prev, setAttr) {
-        var promise = this.attr('view.connection').getList(this.attr('parameters').serialize());
+        var promise = this.attr('view.connection').getList(this.attr('parameters') ? this.attr('parameters').serialize() : {});
         promise.catch(function(err) {
           console.error('unable to complete objects request', err);
         });
@@ -171,64 +176,14 @@ export let ViewModel = CanMap.extend({
       }
     },
     /**
-     * A list of current query filters
-     * @property {can.List<Filter>}  crud-manager.ViewModel.props.queryFilters
-     * @parent crud-manager.ViewModel.props
-     */
-    queryFilters: {
-      Value: List
-    },
-    /**
-     * The current page index number. The number 0 here represents page 1.
-     * @property {Number}  crud-manager.ViewModel.props.queryPage
-     * @parent crud-manager.ViewModel.props
-     */
-    queryPage: {
-      type: 'number',
-      value: 0,
-      set(page, set) {
-        var params = this.attr('parameters');
-        if (!params) {
-          return page;
-        }
-        params.attr('page[number]', page + 1);
-        return page;
-      }
-    },
-    /**
      * The page number, this is calculated by incrementing the queryPage by one.
-     * @property {Number}  crud-manager.ViewModel.props.queryPageNumber
+     * @property {Number}  crud-manager.ViewModel.props.pageNumber
      * @parent crud-manager.ViewModel.props
      */
-    queryPageNumber: {
+    pageNumber: {
       get() {
-        return this.attr('queryPage') + 1;
+        return this.attr('parameters.page') + 1;
       }
-    },
-    /**
-     * The number of records to show per page.
-     * @property {Number}  crud-manager.ViewModel.props.buttons
-     * @parent crud-manager.ViewModel.props
-     */
-    queryPerPage: {
-      type: 'number',
-      value: 10,
-      set(perPage) {
-        var params = this.attr('parameters');
-        if (!params) {
-          return perPage;
-        }
-        params.attr('page[size]', perPage);
-        return perPage;
-      }
-    },
-    /**
-     * The current sort parameters.
-     * @property {can.Map}  crud-manager.ViewModel.props.sort
-     * @parent crud-manager.ViewModel.props
-     */
-    sort: {
-      Value: CanMap
     },
     /**
      * The current id number of the object that is being viewed in the property
@@ -288,31 +243,20 @@ export let ViewModel = CanMap.extend({
   },
   /**
    * @function init
-   * Initializes queryFilters and other parameters
+   * Initializes filters and other parameters
    */
   init() {
-    can.batch.start();
-
-    //set up view's filters
-    if (this.attr('view.queryFilters')) {
-      this.attr('view.queryFilters').forEach(f => {
-        this.attr('queryFilters').push(new Filter(f));
-      });
+    if(this.attr('view.parameters')){
+      this.attr('parameters').attr(this.attr('view.parameters').attr());
     }
-
     //set up related filters
     if (this.attr('relatedField') && this.attr('relatedValue')) {
-      let f = new Filter({
+      this.attr('parameters.filters').push({
         name: this.attr('relatedField'),
         operator: 'equals',
-        val: this.attr('relatedValue')
+        value: this.attr('relatedValue')
       });
-      this.attr('queryFilters').push(f);
     }
-
-    //set the parameters correctly
-    this.setFilterParameter(this.attr('queryFilters'));
-    can.batch.stop();
   },
   /**
    * @function editObject
@@ -325,8 +269,10 @@ export let ViewModel = CanMap.extend({
    * @param  {can.Map} obj   The object to start editing
    */
   editObject(scope, dom, event, obj) {
-    this.attr('viewId', this.attr('view.connection').id(obj));
-    this.attr('page', 'edit');
+    this.attr({
+      'viewId': this.attr('view.connection').id(obj),
+      'page': 'edit'
+    });
   },
   /**
    * @function viewObject
@@ -339,8 +285,10 @@ export let ViewModel = CanMap.extend({
    * @param  {can.Map} obj   The object to view
    */
   viewObject(scope, dom, event, obj) {
-    this.attr('viewId', this.attr('view.connection').id(obj));
-    this.attr('page', 'details');
+    this.attr({
+      'viewId': this.attr('view.connection').id(obj),
+      'page': 'details'
+    });
   },
   /**
    * @function saveObject
@@ -392,8 +340,10 @@ export let ViewModel = CanMap.extend({
    * @param {String} page The name of the page to switch to
    */
   setPage(page) {
-    this.attr('page', page);
-    this.attr('viewId', 0);
+    this.attr({
+      'viewId': 0,
+      'page': page
+    });
   },
   /**
    * @function getNewObject
@@ -462,44 +412,6 @@ export let ViewModel = CanMap.extend({
     return null;
   },
   /**
-   * @function setFilterParameter
-   * Sets the filter parameter `filter[objects]`. This method should be called
-   * whenever the queryFilters are changed.
-   * The filters are serialized and converted into a JSON string.
-   * //TODO make the filter object more generic for different types rest apis
-   * @signature
-   * @param {can.List<Filter>} filters The new set of filters to apply
-   */
-  setFilterParameter(filters) {
-    var params = this.attr('parameters');
-    //reset the page filter
-    this.attr('queryPage', 0);
-    if (filters && filters.length) {
-      //if there are filters in the list, set the filter parameter
-      params.attr('filter[objects]', JSON.stringify(filters.serialize()));
-    } else {
-      //remove the filter parameter
-      params.removeAttr('filter[objects]');
-    }
-  },
-  /**
-   * @function setSortParameter
-   * sets the sort parameter `sort`. This method should be called any time the
-   * sorting of the data is changed
-   * //TODO make the sort parameter type more generic to allow for different rest apis
-   * @signature
-   * @param {can.Map} sort A special sort object that contains a field to sort on
-   * and a type of sort, like `asc` or `desc`
-   */
-  setSortParameter(sort) {
-    var params = this.attr('parameters');
-    if (!sort.attr('fieldName')) {
-      params.removeAttr('sort');
-      return sort;
-    }
-    this.attr('parameters.sort', sort.type === 'asc' ? sort.fieldName : '-' + sort.fieldName);
-  },
-  /**
    * @function toggleFilter
    * Toggles the display of the filter dialog
    * @signature
@@ -529,15 +441,7 @@ Component.extend({
   tag: 'crud-manager',
   viewModel: ViewModel,
   template: template,
-  leakScope: false,
-  events: {
-    //bind to the change event of the entire list
-    '{viewModel.queryFilters} change' (filters) {
-      this.viewModel.setFilterParameter(filters);
-    },
-    //bind to the change event of the entire map
-    '{viewModel.sort} change' (sort) {
-      this.viewModel.setSortParameter(sort);
-    }
-  }
+  //since this is a recursive component, don't leak the scope.
+  //this prevents infinite nesting of the components.
+  leakScope: false
 });

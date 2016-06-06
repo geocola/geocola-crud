@@ -75,7 +75,7 @@ export let ViewModel = CanMap.extend({
     /**
      * The fields to render in the form. These fields are:
      * * name - the field name, which can be either a text field or select dropdown depending on the configuration
-     * * op - the operator to filter the field by (like, eq, etc)
+     * * operator - the operator to filter the field by (like, eq, etc)
      * * val - the value to filter the field by
      * @property {Array.<formFieldObject>} filter-widget.ViewModel.fields
      * @parent filter-widget.ViewModel.props
@@ -114,7 +114,7 @@ export let ViewModel = CanMap.extend({
     valueField: {
       get() {
         let defaultField = {
-          name: 'val',
+          name: 'value',
           alias: 'Value',
           type: 'text',
           properties: {
@@ -250,7 +250,7 @@ export let ViewModel = CanMap.extend({
   addFilter(scope, dom, event, obj) {
     let name = obj.attr('name');
     let filters;
-    if (!name || !obj.attr('val')) {
+    if (!name || !obj.attr('value')) {
       return false;
     }
     let fields = this.attr('fields');
@@ -268,17 +268,6 @@ export let ViewModel = CanMap.extend({
       filters = field.filterFactory(obj);
     }
 
-    //next try a filterFactory on each filter option
-    if (filterOption.filterFactory) {
-      if (filters && filters.length) {
-        filters = filters.map(f => {
-          return filterOption.filterFactory(f);
-        });
-      } else {
-        filters = [filterOption.filterFactory(filters || obj)];
-      }
-    }
-
     //otherwise just use the filter as is
     if (!filters) {
       filters = [obj];
@@ -289,7 +278,7 @@ export let ViewModel = CanMap.extend({
     filters.forEach(f => {
       this.attr('filters').push(f);
     });
-    this.attr('formObject', new Filter({}));
+    this.attr('formObject', null);
     //end batch process
     can.batch.stop();
 
