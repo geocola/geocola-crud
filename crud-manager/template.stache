@@ -61,7 +61,7 @@
         {{/each}}
 
     {{else}}
-      <list-table {objects}="objects.value" {^_selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
+      <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
       {{/is}}{{!view.ListType 'property-table'}}
     {{/if}}{{!objects.isPending}}
 
@@ -76,14 +76,12 @@
           <i class="fa fa-plus"></i> Add New
         </button>
       {{/unless}}
-      {{#unless view.disableDelete}}
-        {{#if selectedObjects.length}}
+      {{#if selectedObjects.length}}
+        {{#unless view.disableDelete}}
           <button class="btn btn-default" ($click)="deleteMultiple">
             <i class="fa fa-trash"></i> Remove Selected
           </button>
-        {{/if}}
-      {{/unless}}
-      {{#if selectedObjects.length}}
+        {{/unless}}
         <button class="btn btn-default" ($click)="setPage('selection')">
           <i class="fa fa-list"></i> View Selected
         </button>
@@ -158,7 +156,7 @@
     </button>
     {{#each selectedObjects}}
       <property-table {object}="." {fields}="_fields" />
-      {{#unless view.disableEdit}}
+      {{#unless ../view.disableEdit}}
         <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
           <button class="btn btn-default" ($click)="editObject(null, null null, .)">
             <i class="fa fa-wrench"></i> Edit
@@ -166,13 +164,13 @@
         </div>
       {{/unless}}
 
-      {{#if view.relatedViews}}
+      {{#if ../view.relatedViews}}
         <hr />
         <h3>Related Data</h3>
         <tab-container>
-          {{#each view.relatedViews}}
+          {{#each ../view.relatedViews}}
             <panel-container title="{{./view.title}}" collapsible="false">
-              <crud-manager {view}="../view" {parameters}="../view.parameters" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
+              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
             </panel-container>
           {{/each}}
         </tab-container>
