@@ -136,10 +136,16 @@ export let ViewModel = CanMap.extend({
      */
     objects: {
       get(prev, setAttr) {
-        var promise = this.attr('view.connection').getList(this.attr('parameters') ? this.attr('parameters').serialize() : {});
-        promise.catch(function(err) {
-          console.error('unable to complete objects request', err);
-        });
+        let params = this.attr('parameters') ? this.attr('parameters').serialize() : {};
+        let promise = this.attr('view.connection').getList(params);
+        //handle promise.fail for deferreds
+        let dummy = promise.fail ? promise.fail(err => {
+            console.error('unable to complete objects request', err);
+          }) :
+          //and handle promise.catch for local-storage deferreds...
+          promise.catch(err => {
+            console.error('unable to complete objects request', err);
+          });
         return promise;
       }
     },
@@ -151,10 +157,12 @@ export let ViewModel = CanMap.extend({
     focusObject: {
       get(prev, setAttr) {
         if (this.attr('viewId')) {
-          var params = {};
+          let params = {};
           params[this.attr('view.connection').idProp] = this.attr('viewId');
-          var promise = this.attr('view.connection').get(params);
-          promise.catch(function(err) {
+          let promise = this.attr('view.connection').get(params);
+          let dummy = promise.fail ? promise.fail(function(err) {
+            console.error('unable to complete focusObject request', err);
+          }) : promise.catch(function(err) {
             console.error('unable to complete focusObject request', err);
           });
           return promise;
@@ -246,8 +254,8 @@ export let ViewModel = CanMap.extend({
    * Initializes filters and other parameters
    */
   init() {
-    if(this.attr('view.parameters')){
-      this.attr('parameters').attr(this.attr('view.parameters').attr());
+    if (this.attr('view.parameters')) {
+      this.attr('parameters').attr(this.attr('view.parameters').serialize());
     }
     //set up related filters
     if (this.attr('relatedField') && this.attr('relatedValue')) {
@@ -257,6 +265,7 @@ export let ViewModel = CanMap.extend({
         value: this.attr('relatedValue')
       });
     }
+
   },
   /**
    * @function editObject
@@ -354,7 +363,11 @@ export let ViewModel = CanMap.extend({
   getNewObject() {
     //create a new empty object with the defaults provided
     //from the objectTemplate property which is a map
-    return this.attr('view.objectTemplate')();
+    let props = {};
+    if (this.attr('relatedField')) {
+      props[this.attr('relatedField')] = this.attr('relatedValue');
+    }
+    return new(this.attr('view.objectTemplate'))(props);
   },
   /**
    * @function deleteObject
