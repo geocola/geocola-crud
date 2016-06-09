@@ -254,6 +254,7 @@ export let ViewModel = CanMap.extend({
    * Initializes filters and other parameters
    */
   init() {
+    //if parameters are in the view, mix them in to the crud parameters
     if (this.attr('view.parameters')) {
       this.attr('parameters').attr(this.attr('view.parameters').serialize());
     }

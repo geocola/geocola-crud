@@ -1,6 +1,6 @@
 import { ViewModel } from './filter-widget';
 import { Filter } from './Filter';
-
+import CanMap from 'can/map/';
 import q from 'steal-qunit';
 
 var vm, filter;
@@ -10,14 +10,30 @@ q.module('filter-widget.ViewModel', {
     vm = new ViewModel();
     filter = new Filter({
       name: 'test',
-      op: 'equals',
-      val: 'test'
+      operator: 'equals',
+      value: 'test'
     });
   },
   afterEach: function() {
     filter = null;
     vm = null;
   }
+});
+
+test('fields get()', assert => {
+  let fields = [{
+    name: 'test',
+    excludeFilter: true
+  }, {
+    name: 'test2'
+  }];
+  vm.attr('fields', fields);
+  assert.equal(vm.attr('fields').length, 1, 'With excludeFilter true, only one field should be retreived from the getter');
+});
+
+test('formObject get()', assert => {
+  vm.attr('fields', [{ name: 'test', label: 'alias' }]);
+  assert.equal(vm.attr('formObject.name'), 'test', 'formobject should default to the first fields name');
 });
 
 test('formFields get()', assert => {
@@ -31,15 +47,46 @@ test('formFields get()', assert => {
   assert.equal(vm.attr('formFields')[0].type, 'select', 'name field type should be select when there are fieldOptions');
 });
 
-test('fields get()', assert => {
+test('valueField get()', assert => {
+  assert.equal(vm.attr('valueField').type, 'text', 'default valueField type should be text');
+
+  let obj = vm.attr('formObject');
+  obj.attr('operator', 'after');
+  vm.attr('formObject', obj);
+  assert.equal(vm.attr('valueField').type, 'date', 'when using a date operator, valueField type should be date');
+});
+
+test('filterOptions get()', assert => {
+  let obj = vm.attr('formObject');
+  obj.attr('name', 'test');
+  vm.attr('formObject', obj);
+
+  vm.attr('fields', [{name: 'test', label: 'test', dataType: 'date'}]);
+  vm.attr('filterOptions').forEach(f => {
+    assert.ok(f.types.indexOf('date') !== -1 , 'each filter should have type date');
+  });
+
+
+});
+
+test('fieldOptions get() with fields', assert => {
   let fields = [{
     name: 'test',
-    excludeFilter: true
-  }, {
-    name: 'test2'
+    alias: 'Other'
   }];
   vm.attr('fields', fields);
-  assert.equal(vm.attr('fields').length, 1, 'With excludeFilter true, only one field should be retreived from the getter');
+  assert.equal(vm.attr('fieldOptions').length, fields.length, 'when fields are provided, fieldOptions should be created from the value');
+});
+
+test('fieldOptions get() with objectTemplate', assert => {
+  let template = can.Map.extend({
+    test1: null,
+    test2: null,
+    test3: null
+  });
+  let len = can.Map.keys(new template()).length;
+  vm.attr('objectTemplate', template);
+  assert.equal(vm.attr('fieldOptions').length, len, 'when no fieldOptions are provided, but objectTemplate is, fieldOptions.length should be length of objectTemplate keys');
 });
 
 test('addFilter()', assert => {
@@ -70,27 +117,6 @@ test('removeFilter()', assert => {
   vm.addFilter(null, null, null, filter);
   vm.removeFilter(null, null, null, filter);
   assert.equal(vm.attr('filters').length, 0, 'filters should have been removed');
-});
-
-
-test('fieldOptions get() with fields', assert => {
-  let fields = [{
-    name: 'test',
-    alias: 'Other'
-  }];
-  vm.attr('fields', fields);
-  assert.equal(vm.attr('fieldOptions').length, fields.length, 'when fields are provided, fieldOptions should be created from the value');
-});
-
-test('fieldOptions get() with objectTemplate', assert => {
-  let template = can.Map.extend({
-    test1: null,
-    test2: null,
-    test3: null
-  });
-  let len = can.Map.keys(new template()).length;
-  vm.attr('objectTemplate', template);
-  assert.equal(vm.attr('fieldOptions').length, len, 'when no fieldOptions are provided, but objectTemplate is, fieldOptions.length should be length of objectTemplate keys');
 });
 
 q.module('filter-widget.Filter', {

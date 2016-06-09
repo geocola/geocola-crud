@@ -51,9 +51,9 @@ test('showPaginate get()', assert => {
       connectionProperties: {
         totalItems: 10
       }
-    },
-    queryPerPage: 20
+    }
   });
+  vm.attr('parameters.perPage', 25);
   assert.equal(vm.attr('showPaginate'), false, 'pagination should not be shown with one page');
 
   vm.attr({
@@ -61,9 +61,9 @@ test('showPaginate get()', assert => {
       connectionProperties: {
         totalItems: 10
       }
-    },
-    queryPerPage: 5
+    }
   });
+  vm.attr('parameters.perPage', 5);
   assert.equal(vm.attr('showPaginate'), true, 'pagination should be shown with more than one page');
 });
 
@@ -100,21 +100,6 @@ test('buttons get()', assert => {
   assert.equal(vm.attr('buttons').length, 1, 'buttons should be default buttons');
 });
 
-test('queryPage set()', assert => {
-  vm.attr('queryPage', 4);
-  assert.ok(vm.attr('parameters.page[number]'), 'setting the queryPage should set the page number parameter');
-});
-
-test('queryPageNumber get()', assert => {
-  vm.attr('queryPage', 4);
-  assert.equal(vm.attr('queryPageNumber'), 5, 'page number should be one more than the queryPage (index)');
-});
-
-test('queryPerPage set()', assert => {
-  vm.attr('queryPerPage', 20);
-  assert.ok(vm.attr('parameters.page[size]'), 'setting the queryPerPage should set the page size parameter');
-});
-
 test('_fields get()', assert => {
   vm.attr('view', {
     objectTemplate: TaskMap
@@ -127,23 +112,19 @@ test('_fields get()', assert => {
   assert.equal(vm.attr('_fields').length, 4, 'if fields do exist on the view, they should be created correctly');
 });
 
-test('init()', assert => {
+test('init() with parameters', assert => {
   vm = new ViewModel({
     view: {
-      queryFilters: [{
-        name: 'test',
-        operator: 'equals',
-        val: 'testVal'
-      }]
+      parameters: {test: 'text'}
     }
   });
-  assert.ok(vm.attr('parameters.filter[objects]', 'should create filter[objects] parmameter when initialized with queryFilters'));
+  assert.equal(vm.attr('parameters.test'), 'text','parameters should be mixed in');
 
   vm = new ViewModel({
     relatedField: 'test',
     relatedValue: 'testVal'
   });
-  assert.ok(vm.attr('parameters.filter[objects]'), 'should create filter[objects] parameter when initialized with related field and value');
+  assert.equal(vm.attr('parameters.filters.length'), 1, 'should create filters parameter when initialized with related field and value');
 });
 
 test('editObject(scope, dom, event, obj)', assert => {
@@ -281,37 +262,6 @@ test('deleteMmultiple()', assert => {
       done();
     });
   });
-});
-
-test('setFilterParameter(filters)', assert => {
-  vm.attr('queryPage', 5);
-  vm.setFilterParameter(new can.List([new can.Map({
-    operator: 'equals',
-    name: 'test',
-    val: 'testValue'
-  })]));
-  assert.ok(vm.attr('parameters.filter[objects]'), 'filter parameter should be created');
-
-  vm.setFilterParameter([]);
-  assert.notOk(vm.attr('parameters.filter[objects]'), 'filter parameter should be removed');
-});
-
-test('setSortParameter(sort)', assert => {
-  vm.setSortParameter(new can.Map({
-    fieldName: 'test',
-    type: 'asc'
-  }));
-  assert.equal(vm.attr('parameters.sort'), 'test', 'ascending sort parameter should be the field name');
-
-  vm.setSortParameter(new can.Map({
-    fieldName: 'test',
-    type: 'desc'
-  }));
-  assert.equal(vm.attr('parameters.sort'), '-test', 'descending sort parameter should be the field name with minus');
-
-  vm.setSortParameter(new can.Map());
-  assert.notOk(vm.attr('parameters.sort'), 'when no field name is passed, sort paramter should be removed');
-
 });
 
 test('toggleFilter(val)', assert => {
