@@ -34,15 +34,10 @@
           <span>Refreshing Data...</span>
         </div>
       </div>
+
     {{else}}
-      {{#unless objects.value.length}}
-        <p>There are currently no items here.</p>
-      {{/unless}}
-    {{/if}}
 
-    {{#if objects.value.length}}
-
-      <p><small>{{view.connection.metadata.totalItems}} rows found. Page {{queryPageNumber}} of {{totalPages}}</small></p>
+      <p><small>{{view.connection.metadata.totalItems}} rows found. Page {{pageNumber}} of {{totalPages}}</small></p>
 
       {{#is view.listType 'property-table'}}
 
@@ -66,29 +61,27 @@
         {{/each}}
 
     {{else}}
-      <list-table {objects}="objects.value" {^_selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="sort" {fields}="_fields" {buttons}="buttons" />
-      {{/is}}
-    {{/if}}
+      <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
+      {{/is}}{{!view.ListType 'property-table'}}
+    {{/if}}{{!objects.isPending}}
 
     <hr />
 
     <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
       <button class="btn btn-default" ($click)="toggleFilter()">
-        <i class="fa fa-search"></i> Search ({{queryFilters.length}})
+        <i class="fa fa-search"></i> Search ({{parameters.filters.length}})
       </button>
       {{#unless view.disableAdd}}
         <button class="btn btn-default" ($click)="setPage('add')">
           <i class="fa fa-plus"></i> Add New
         </button>
       {{/unless}}
-      {{#unless view.disableDelete}}
-        {{#if selectedObjects.length}}
+      {{#if selectedObjects.length}}
+        {{#unless view.disableDelete}}
           <button class="btn btn-default" ($click)="deleteMultiple">
             <i class="fa fa-trash"></i> Remove Selected
           </button>
-        {{/if}}
-      {{/unless}}
-      {{#if selectedObjects.length}}
+        {{/unless}}
         <button class="btn btn-default" ($click)="setPage('selection')">
           <i class="fa fa-list"></i> View Selected
         </button>
@@ -97,19 +90,18 @@
 
     {{#if filterVisible}}
       <panel-container>
-        <filter-widget {(filters)}="queryFilters" {fields}="_fields" {object-template}="view.objectTemplate" />
+        <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
       </panel-container>
     {{/if}}
 
     {{#if showPaginate}}
       <div class="hidden-print">
-        <paginate-widget {(active-page-index)}="queryPage" {pages}="totalPages" />
-
+        <paginate-widget {(active-page-index)}="parameters.page" {pages}="totalPages" />
         <div class="per-page-form">
           <form class="form-inline">
             <div class="form-group">
               <label for="perPageSelect">Items per page:</label>
-              <select {($value)}="queryPerPage" class="form-control">
+              <select {($value)}="parameters.perPage" class="form-control">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
@@ -118,7 +110,6 @@
             </div>
           </form>
         </div>
-
       </div>
     {{/if}}
   {{/case}}
@@ -149,7 +140,7 @@
         <tab-container>
           {{#each view.relatedViews}}
             <panel-container title="{{./view.title}}" collapsible="false">
-              <crud-manager {view}="../view" {parameters}="../view.parameters" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
+              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
             </panel-container>
           {{/each}}
         </tab-container>
@@ -165,7 +156,7 @@
     </button>
     {{#each selectedObjects}}
       <property-table {object}="." {fields}="_fields" />
-      {{#unless view.disableEdit}}
+      {{#unless ../view.disableEdit}}
         <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
           <button class="btn btn-default" ($click)="editObject(null, null null, .)">
             <i class="fa fa-wrench"></i> Edit
@@ -173,13 +164,13 @@
         </div>
       {{/unless}}
 
-      {{#if view.relatedViews}}
+      {{#if ../view.relatedViews}}
         <hr />
         <h3>Related Data</h3>
         <tab-container>
-          {{#each view.relatedViews}}
+          {{#each ../view.relatedViews}}
             <panel-container title="{{./view.title}}" collapsible="false">
-              <crud-manager {view}="../view" {parameters}="../view.parameters" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
+              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
             </panel-container>
           {{/each}}
         </tab-container>

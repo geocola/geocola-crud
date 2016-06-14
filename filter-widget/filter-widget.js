@@ -26,6 +26,33 @@ export let ViewModel = CanMap.extend({
    */
   define: {
     /**
+     * A list of fields that will be used to create options in the field name
+     * dropdown. Each field may have a property `filterFactory` which may return
+     * one or more filter objects
+     * @property {List} filter-widget.ViewModel.fields
+     * @parent filter-widget.ViewModel.props
+     */
+    fields: {
+      value: null,
+      get(fields) {
+        if (fields) {
+          return fields.filter(f => {
+            return !f.excludeFilter;
+          });
+        }
+      }
+    },
+    /**
+     * An optional object template to derive field options from. If it is provided,
+     * filter-widget will extract the field names and the field types and use that to create
+     * filter options.
+     * @property {can.Map} filter-widget.ViewModel.objectTemplate
+     * @parent filter-widget.ViewModel.props
+     */
+    objectTemplate: {
+      value: null
+    },
+    /**
      * A list of filterObjects currently used in this widget
      * @property {Array<geocola.types.filterObject>} filter-widget.ViewModel.filters
      * @parent filter-widget.ViewModel.props
@@ -63,19 +90,9 @@ export let ViewModel = CanMap.extend({
       }]
     },
     /**
-     * An optional object template to derive field options from. If it is provided,
-     * filter-widget will extract the field names and the field types and use that to create
-     * filter options.
-     * @property {can.Map} filter-widget.ViewModel.objectTemplate
-     * @parent filter-widget.ViewModel.props
-     */
-    objectTemplate: {
-      value: null
-    },
-    /**
      * The fields to render in the form. These fields are:
      * * name - the field name, which can be either a text field or select dropdown depending on the configuration
-     * * op - the operator to filter the field by (like, eq, etc)
+     * * operator - the operator to filter the field by (like, eq, etc)
      * * val - the value to filter the field by
      * @property {Array.<formFieldObject>} filter-widget.ViewModel.fields
      * @parent filter-widget.ViewModel.props
@@ -111,10 +128,17 @@ export let ViewModel = CanMap.extend({
         }, this.attr('valueField')]);
       }
     },
+    /**
+     * A custom field type for the value field to aid in entering a value to filter on
+     * For example: a date type field can be specified for the value to aid
+     * the user in picking a date.
+     * @property {geocola.types.FormFieldObject} filter-widget.ViewModel.valueField
+     * @parent filter-widget.ViewModel.props
+     */
     valueField: {
       get() {
         let defaultField = {
-          name: 'val',
+          name: 'value',
           alias: 'Value',
           type: 'text',
           properties: {
@@ -169,23 +193,6 @@ export let ViewModel = CanMap.extend({
         return FilterOptions.filter(f => {
           return f.types.indexOf(type) !== -1;
         });
-      }
-    },
-    /**
-     * A list of fields that will be used to create options in the field name
-     * dropdown. Each field may have a property `filterFactory` which may return
-     * one or more filter objects
-     * @property {List} filter-widget.ViewModel.fields
-     * @parent filter-widget.ViewModel.props
-     */
-    fields: {
-      value: null,
-      get(fields) {
-        if (fields) {
-          return fields.filter(f => {
-            return !f.excludeFilter;
-          });
-        }
       }
     },
     /**
@@ -250,7 +257,7 @@ export let ViewModel = CanMap.extend({
   addFilter(scope, dom, event, obj) {
     let name = obj.attr('name');
     let filters;
-    if (!name || !obj.attr('val')) {
+    if (!name || !obj.attr('value')) {
       return false;
     }
     let fields = this.attr('fields');
@@ -268,17 +275,6 @@ export let ViewModel = CanMap.extend({
       filters = field.filterFactory(obj);
     }
 
-    //next try a filterFactory on each filter option
-    if (filterOption.filterFactory) {
-      if (filters && filters.length) {
-        filters = filters.map(f => {
-          return filterOption.filterFactory(f);
-        });
-      } else {
-        filters = [filterOption.filterFactory(filters || obj)];
-      }
-    }
-
     //otherwise just use the filter as is
     if (!filters) {
       filters = [obj];
@@ -289,7 +285,7 @@ export let ViewModel = CanMap.extend({
     filters.forEach(f => {
       this.attr('filters').push(f);
     });
-    this.attr('formObject', new Filter({}));
+    this.attr('formObject', null);
     //end batch process
     can.batch.stop();
 

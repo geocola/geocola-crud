@@ -48,9 +48,9 @@ export const ViewModel = CanMap.extend({
     /**
      * A list of the currently selected objects in the table
      * @parent list-table.ViewModel.props
-     * @property {Array.<can.Map>} list-table.ViewModel.props._selectedObjects
+     * @property {Array.<can.Map>} list-table.ViewModel.props.selectedObjects
      */
-    _selectedObjects: {
+    selectedObjects: {
       Value: List,
       Type: List
     },
@@ -62,7 +62,7 @@ export const ViewModel = CanMap.extend({
     _allSelected: {
       type: 'boolean',
       get() {
-        return this.attr('_selectedObjects').length === this.attr('objects').length;
+        return this.attr('selectedObjects').length === this.attr('objects').length;
       }
     },
     /**
@@ -143,11 +143,11 @@ export const ViewModel = CanMap.extend({
    * @param  {can.Map} obj The row to toggle
    */
   toggleSelected(obj) {
-    var index = this.attr('_selectedObjects').indexOf(obj);
+    var index = this.attr('selectedObjects').indexOf(obj);
     if (index > -1) {
-      this.attr('_selectedObjects').splice(index, 1);
+      this.attr('selectedObjects').splice(index, 1);
     } else {
-      this.attr('_selectedObjects').push(obj);
+      this.attr('selectedObjects').push(obj);
     }
   },
   /**
@@ -156,10 +156,11 @@ export const ViewModel = CanMap.extend({
    * @signature
    */
   toggleSelectAll() {
-    if (this.attr('_selectedObjects').length < this.attr('objects').length) {
-      this.attr('_selectedObjects').replace(this.attr('objects'));
+    console.log(arguments);
+    if (this.attr('selectedObjects').length < this.attr('objects').length) {
+      this.attr('selectedObjects').replace(this.attr('objects'));
     } else {
-      this.attr('_selectedObjects').replace([]);
+      this.attr('selectedObjects').replace([]);
     }
   },
   /**
@@ -171,7 +172,7 @@ export const ViewModel = CanMap.extend({
    * @return {Boolean}     Whether or not it is selected
    */
   isSelected(obj) {
-    return this.attr('_selectedObjects').indexOf(obj) > -1;
+    return this.attr('selectedObjects').indexOf(obj) > -1;
   },
   /**
    * @function getFieldValue
