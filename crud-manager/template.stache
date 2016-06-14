@@ -88,11 +88,9 @@
       {{/if}}
     </div>
 
-    {{#if filterVisible}}
-      <panel-container>
+      <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
         <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
       </panel-container>
-    {{/if}}
 
     {{#if showPaginate}}
       <div class="hidden-print">

@@ -156,7 +156,6 @@ export const ViewModel = CanMap.extend({
    * @signature
    */
   toggleSelectAll() {
-    console.log(arguments);
     if (this.attr('selectedObjects').length < this.attr('objects').length) {
       this.attr('selectedObjects').replace(this.attr('objects'));
     } else {
