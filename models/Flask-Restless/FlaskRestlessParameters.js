@@ -60,10 +60,10 @@ export const FilterMap = CanMap.extend({
       }
     },
     val: {
-      serialize(val){
-        if(val && this.attr('operator')){
+      serialize(val) {
+        if (val && this.attr('operator')) {
           let op = FilterSerializers[this.attr('operator')];
-          if(op && op.serialize){
+          if (op && op.serialize) {
             return op.serialize(val);
           }
         }
@@ -79,11 +79,11 @@ export const FilterMap = CanMap.extend({
       type: 'string'
     },
     operator: {
-    serialize: false,
+      serialize: false,
       value: 'like',
       set(val) {
         let op = FilterSerializers[val];
-        if(op){
+        if (op) {
           val = op.operator;
         }
         this.attr('op', val);
@@ -124,35 +124,39 @@ export const ParameterMap = CanMap.extend({
     filters: {
       Type: FilterList,
       Value: FilterList,
-      serialize: false,
-      set(filters) {
+      serialize: false
+    },
+    'filter[objects]': {
+      serialize(val) {
+        let filters = this.attr('filters');
         if (filters && filters.length) {
           //if there are filters in the list, set the filter parameter
-          this.attr('filter[objects]', JSON.stringify(filters.serialize()));
+          return JSON.stringify(filters.serialize());
         } else {
-          //remove the filter parameter
-          this.removeAttr('filter[objects]');
+          //don't include the filter parameter
+          return undefined;
         }
-        return filters;
+      }
+    },
+    'page[number]': {
+      serialize() {
+        return this.attr('page') + 1;
+      }
+    },
+    'page[size]': {
+      serialize() {
+        return this.attr('perPage');
       }
     },
     page: {
       type: 'number',
       value: 0,
-      serialize: false,
-      set(page) {
-        this.attr('page[number]', page + 1);
-        return page;
-      }
+      serialize: false
     },
     perPage: {
       type: 'number',
       value: 10,
-      serialize: false,
-      set(items) {
-        this.attr('page[size]', items);
-        return items;
-      }
+      serialize: false
     }
   }
 });
