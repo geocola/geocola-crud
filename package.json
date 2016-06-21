@@ -1,8 +1,8 @@
 {
-  "name": "geocola-crud",
+  "name": "can-crud",
   "version": "0.1.0",
-  "description": "Data management and crud operation components used by geocola",
-  "repository": "https://github.com/geocola/geocola-crud",
+  "description": "Data management and crud operation components built using CanJS",
+  "repository": "https://github.com/roemhildtg/can-crud",
   "watch": {
     "lint": "**/*.js",
     "test": "**/*.js"
@@ -33,7 +33,7 @@
     "can-set": "^0.6.0-pre.3",
     "date-selector": "^2.0.0",
     "font-awesome": "^4.5.0",
-    "geocola-ui": "git+https://github.com/geocola/geocola-ui.git",
+    "can-ui": "git+https://github.com/roemhildtg/can-ui.git",
     "jquery": "^2.2.3",
     "pubsub-js": "^1.5.3",
     "steal": "^0.16.17",
