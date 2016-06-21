@@ -6,8 +6,8 @@
 -->
 
 
-# geocola-crud
+# can-crud
 
-[![Build Status](https://travis-ci.org/geocola/geocola-crud.svg?branch=master)](https://travis-ci.org/geocola/geocola-crud)
+[![Build Status](https://travis-ci.org/roemhildtg/can-crud.svg?branch=master)](https://travis-ci.org/roemhildtg/can-crud)
 
-Data management and crud operation components used by geocola
+Data management and crud operation components built using CanJS

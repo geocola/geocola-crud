@@ -13,10 +13,10 @@ import '../form-widget/';
 import '../filter-widget/';
 import '../paginate-widget/';
 
-import 'geocola-ui/modal-container/';
-import 'geocola-ui/tab-container/';
-import 'geocola-ui/panel-container/';
-import { Message } from 'geocola-ui/alert-widget/message';
+import 'can-ui/modal-container/';
+import 'can-ui/tab-container/';
+import 'can-ui/panel-container/';
+import { Message } from 'can-ui/alert-widget/message';
 
 import { FilterList } from '../filter-widget/Filter';
 import { mapToFields, parseFieldArray } from '../util/field';
