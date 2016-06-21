@@ -94,6 +94,16 @@ test('addFilter()', assert => {
   assert.equal(vm.attr('filters').length, 1, 'filters should been added');
 });
 
+test('addFilter() with replaceExisting', assert => {
+  vm.addFilter(null, null, null, filter);
+  vm.addFilter(null, null, null, filter);
+  assert.equal(vm.attr('filters').length, 2, 'filters should been added');
+
+  vm.attr('replaceExisting', true);
+  vm.addFilter(null, null, null, filter);
+  assert.equal(vm.attr('filters').length, 1, 'filters should been replaced');
+});
+
 test('addFilter() with filterFactory', assert => {
   vm.attr('fields', [{
     name: 'test',

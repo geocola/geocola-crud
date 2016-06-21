@@ -220,6 +220,16 @@ export let ViewModel = CanMap.extend({
           };
         }) : null;
       }
+    },
+    /**
+     * If true, existing filters will be replaced rather than concatenated
+     * when the addFilter method is called
+     * @property {Boolean} filter-widget.ViewModel.replaceExisting
+     * @parent filter-widget.ViewModel.props
+     */
+    replaceExisting: {
+      value: false,
+      type: 'boolean'
     }
   },
   /**
@@ -280,14 +290,20 @@ export let ViewModel = CanMap.extend({
       filters = [obj];
     }
 
-    //start batch process
-    can.batch.start();
-    filters.forEach(f => {
-      this.attr('filters').push(f);
-    });
-    this.attr('formObject', null);
-    //end batch process
-    can.batch.stop();
+    if (this.attr('replaceExisting')) {
+      this.attr('filters').replace(filters);
+    } else {
+
+      //start batch process
+      //concat array doesn't seem to update correctly
+      can.batch.start();
+      filters.forEach(f => {
+        this.attr('filters').push(f);
+      });
+      this.attr('formObject', null);
+      //end batch process
+      can.batch.stop();
+    }
 
     return false;
   }

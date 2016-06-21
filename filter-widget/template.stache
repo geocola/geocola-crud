@@ -1,7 +1,13 @@
 <div class="filter-widget container-fluid">
   <h4>Add Filter</h4>
-  <form-widget inline="true" {fields}="formFields" {(form-object)}="formObject" (submit)="addFilter" />
 
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" {($checked)}="replaceExisting"> Replace existing filters
+    </label>
+  </div>
+  
+  <form-widget inline="true" {fields}="formFields" {(form-object)}="formObject" (submit)="addFilter" />
   {{#if filters.length}}
     <h4>Current Filters
       <button class="btn btn-default" ($click)="removeFilters">
