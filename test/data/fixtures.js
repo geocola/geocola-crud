@@ -11,7 +11,7 @@ fixture({
     data.push(can.extend({
       id: newId
     }, params.data));
-    response(data[data.length - 1])
+    response(data[data.length - 1]);
   },
   'GET /tasks/{id}' (params, response) {
     let items = data.filter((item) => {
