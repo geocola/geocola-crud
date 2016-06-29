@@ -4,7 +4,6 @@ import List from 'can/list/';
 import './fixtures';
 
 export const TaskMap = CanMap.extend({
-  "id": 1,
   "name": "name of task",
   "description": "description of task"
 });
