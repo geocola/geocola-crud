@@ -5,3 +5,4 @@ import 'property-table/property-table.test';
 import 'crud-manager/crud-manager.test';
 import 'util/string.test';
 import 'paginate-widget/paginate-widget.test';
+import 'form-widget/form-widget.test';
