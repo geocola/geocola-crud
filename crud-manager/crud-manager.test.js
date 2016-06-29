@@ -8,13 +8,17 @@ import { TOPICS } from './crud-manager';
 import PubSub from 'pubsub-js';
 let vm;
 
+q.config.testTimeout = 2000;
+
 q.module('crud-manager.ViewModel', {
   beforeEach: () => {
+    localStorage.clear();
     vm = new ViewModel();
   },
   afterEach: () => {
     vm = null;
     PubSub.clearAllSubscriptions();
+    localStorage.clear();
   }
 });
 
@@ -104,7 +108,7 @@ test('_fields get()', assert => {
   vm.attr('view', {
     objectTemplate: TaskMap
   });
-  assert.equal(vm.attr('_fields').length, 3, 'if no fields exist on the view, they should be created from the objectTemplate');
+  assert.equal(vm.attr('_fields').length, 2, 'if no fields exist on the view, they should be created from the objectTemplate');
 
   vm.attr('view', {
     fields: ['test1', 'test2', 'test3', 'test4']
@@ -115,10 +119,10 @@ test('_fields get()', assert => {
 test('init() with parameters', assert => {
   vm = new ViewModel({
     view: {
-      parameters: {test: 'text'}
+      parameters: { test: 'text' }
     }
   });
-  assert.equal(vm.attr('parameters.test'), 'text','parameters should be mixed in');
+  assert.equal(vm.attr('parameters.test'), 'text', 'parameters should be mixed in');
 
   vm = new ViewModel({
     relatedField: 'test',
@@ -156,11 +160,11 @@ test('viewObject(scope, dom, event, obj)', assert => {
   });
 });
 
-test('saveObject(scope, dom, event, obj) success', assert => {
-  let done = assert.async(4);
-  let view = new ViewMap({
+test('saveObject(obj) success', assert => {
+  let done = assert.async(3);
+  let view = {
     connection: Connection
-  });
+  };
   let token = PubSub.subscribe(TOPICS.ADD_MESSAGE, (name, message) => {
     assert.ok(message.attr('message'), 'message should be published');
     done();
@@ -170,7 +174,7 @@ test('saveObject(scope, dom, event, obj) success', assert => {
   let obj = Connection.get({ id: id }).then(obj => {
     vm.attr('view', view);
 
-    let def = vm.saveObject(null, null, null, obj);
+    let def = vm.saveObject(obj);
     def.then(result => {
       assert.ok(result, 'deferred should be resolved');
       done();
@@ -180,11 +184,41 @@ test('saveObject(scope, dom, event, obj) success', assert => {
   id = 999;
   vm.attr('view', view);
 
-  let def = vm.saveObject(null, null, null, new can.Map({ id: id }));
+  let def = vm.saveObject(new TaskMap({ id: id }));
   def.fail(result => {
     assert.ok(result, 'deferred should be resolved');
     done();
   });
+});
+
+test('beforeCreate and afterCreate events', assert => {
+  let done = assert.async(4);
+  let myMap = new TaskMap({ name: 'do stuff' });
+  let view = {
+    connection: Connection,
+    beforeCreate(obj) {
+      assert.notOk(obj.attr('id'), 'event should pass object not yet be saved with id');
+      done();
+    },
+    afterCreate(obj) {
+      assert.ok(typeof obj.attr('id') === 'number', 'event should have object passed with a new id');
+      done();
+    }
+  };
+  vm.attr('view', view);
+
+  vm.on('beforeCreate', (event, obj) => {
+    assert.notOk(obj.attr('id'), 'event should pass object not yet be saved with id');
+    done();
+  });
+
+  vm.on('afterCreate', (event, obj) => {
+    assert.ok(typeof obj.attr('id') === 'number', 'event should have object passed with a new id');
+    done();
+  });
+
+  vm.setPage('add');
+  vm.saveObject(myMap);
 });
 
 test('setPage(page)', assert => {
@@ -205,11 +239,19 @@ test('getNewObject()', assert => {
   assert.deepEqual(vm.getNewObject().attr(), new TaskMap().attr(), 'new object should be created');
 });
 
-test('deleteObjects(scope, dom, event, obj, skipConfirm)', assert => {
-  let done = assert.async(4);
-  let view = new ViewMap({
-    connection: Connection
-  });
+test('deleteObject(obj, skipConfirm)', assert => {
+  let done = assert.async(7);
+  let view = {
+    connection: Connection,
+    beforeDelete(obj) {
+      assert.equal(obj.attr('id'), id, 'object should be passed with before delete event');
+      done();
+    },
+    afterDelete(obj) {
+      assert.equal(obj.attr('id'), id, 'object should be passed with after delete event');
+      done();
+    }
+  };
   let token = PubSub.subscribe(TOPICS.ADD_MESSAGE, (name, message) => {
     assert.ok(message.attr('message'), 'message should be published');
     done();
@@ -218,10 +260,19 @@ test('deleteObjects(scope, dom, event, obj, skipConfirm)', assert => {
   let id = 11;
   vm.attr('view', view);
 
+  vm.on('beforeDelete', (event, obj) => {
+    assert.equal(obj.attr('id'), id, 'object should be passed with before delete event');
+    done();
+  });
+  vm.on('afterDelete', (event, obj) => {
+    assert.equal(obj.attr('id'), id, 'object should be passed with after delete event');
+    done();
+  });
+
   //delete the object skip confirm
-  let def = vm.deleteObject(null, null, null, new can.Map({ id: id }), true);
+  let def = vm.deleteObject(new TaskMap({ id: id }), true);
   def.then(result => {
-    assert.ok(result, 'deferred should be resolved');
+    assert.ok(result, 'success deferred should be resolved');
     done();
   });
 
@@ -229,18 +280,18 @@ test('deleteObjects(scope, dom, event, obj, skipConfirm)', assert => {
   vm.attr('view', view);
 
   //delete the object skip confirm
-  def = vm.deleteObject(null, null, null, new can.Map({ id: id }), true);
+  def = vm.deleteObject(new TaskMap({ id: id }), true);
   def.fail(result => {
-    assert.ok(result, 'deferred should be resolved');
+    assert.ok(result, 'fail deferred should be resolved');
     done();
   });
 });
 
 test('deleteMmultiple()', assert => {
-  let done = assert.async(4);
-  let view = new ViewMap({
+  let done = assert.async(2);
+  let view = {
     connection: Connection
-  });
+  };
   let token = PubSub.subscribe(TOPICS.ADD_MESSAGE, (name, message) => {
     assert.ok(message.attr('message'), 'message should be published');
     done();
@@ -249,14 +300,14 @@ test('deleteMmultiple()', assert => {
   let id = 11;
   vm.attr({
     view: view,
-    selectedObjects: new can.List([new can.Map({
+    selectedObjects: new can.List([new TaskMap({
       id: 11
-    }), new can.Map({
+    }), new TaskMap({
       id: 1
     })])
   });
-  let d = vm.deleteMultiple(true);
-  d.forEach(def => {
+  let defs = vm.deleteMultiple(true);
+  defs.forEach(def => {
     def.then(r => {
       assert.ok(r, 'deferred should be resolved');
       done();
@@ -276,7 +327,7 @@ test('toggleFilter(val)', assert => {
 });
 
 test('getRelatedValue(foreignKey, focusObject)', assert => {
-  let map = new can.Map({
+  let map = new TaskMap({
     test: 'testValue'
   });
   assert.equal(vm.getRelatedValue('test', map), 'testValue', 'related value should be returned');

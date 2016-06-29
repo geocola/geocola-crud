@@ -21,6 +21,7 @@ import { Message } from 'can-ui/alert-widget/message';
 import { FilterList } from '../filter-widget/Filter';
 import { mapToFields, parseFieldArray } from '../util/field';
 import PubSub from 'pubsub-js';
+import { ViewMap } from './ViewMap';
 
 export const TOPICS = {
   /**
@@ -77,10 +78,12 @@ export let ViewModel = CanMap.extend({
   define: {
     /**
      * The view object for this crud-manager
-     * @property {can.Map} crud-manager.ViewModel.props.view
+     * @property {crud-manager.ViewMap} crud-manager.ViewModel.props.view
      * @parent crud-manager.ViewModel.props
      */
-    view: {},
+    view: {
+      Type: ViewMap
+    },
     /**
      * The current page to display in this view. Options include:
      * * `all`: The list table page that displays all records
@@ -269,6 +272,18 @@ export let ViewModel = CanMap.extend({
 
   },
   /**
+   * @function setPage
+   * Changes the page and resets the viewId to 0
+   * @signature
+   * @param {String} page The name of the page to switch to
+   */
+  setPage(page) {
+    this.attr({
+      'viewId': 0,
+      'page': page
+    });
+  },
+  /**
    * @function editObject
    * Sets the current viewId to the object's id and sets the page to edit
    * to start editing the object provided.
@@ -308,17 +323,47 @@ export let ViewModel = CanMap.extend({
    *
    * This method also adds notifications once the object is saved using PubSub.
    *
-   * @signature
+   * @signature `saveObject(obj)`
+   * @param  {can.Map} obj   The object to save
+   *
+   * @signature `saveObject(scope, dom, event, obj)`
    * @param  {can.Map} scope The stache scope (not used)
    * @param  {domNode} dom   The domNode that triggered the event (not used)
    * @param  {Event} event The event that was triggered (not used)
    * @param  {can.Map} obj   The object to save
    */
-  saveObject(scope, dom, event, obj) {
+  saveObject() {
+    let obj;
+    //accept 4 params from the template or just one
+    if(arguments.length === 4){
+      obj = arguments[3];
+    } else {
+      obj = arguments[0];
+    }
+    let page = this.attr('page');
+
+    //trigger events beforeCreate/beforeSave depending on if we're adding or
+    //updating an object
+    if (page === 'add') {
+      this.onEvent(obj, 'beforeCreate');
+    } else {
+      this.onEvent(obj, 'beforeSave');
+    }
+
+    //display a loader
+    //TODO: add loading progress?
     this.attr('progress', 100);
     this.attr('page', 'loading');
+
+    //save the object
     var deferred = this.attr('view.connection').save(obj);
     deferred.then(result => {
+      if (page === 'add') {
+        this.onEvent(obj, 'afterCreate');
+      } else {
+        this.onEvent(obj, 'afterSave');
+      }
+
       //add a message
       PubSub.publish(TOPICS.ADD_MESSAGE, new Message({
         message: this.attr('view.saveSuccessMessage'),
@@ -326,10 +371,11 @@ export let ViewModel = CanMap.extend({
       }));
 
       //update the view id
-      this.attr('viewId', result.attr('id'));
-
       //set page to the details view by default
-      this.attr('page', 'details');
+      this.attr({
+        viewId: result.attr('id'),
+        page: 'details'
+      });
 
     }).fail(e => {
       console.warn(e);
@@ -339,21 +385,9 @@ export let ViewModel = CanMap.extend({
         level: 'danger',
         timeout: 20000
       }));
-      this.attr('page', 'all');
+      // this.attr('page', 'all');
     });
     return deferred;
-  },
-  /**
-   * @function setPage
-   * Changes the page and resets the viewId to 0
-   * @signature
-   * @param {String} page The name of the page to switch to
-   */
-  setPage(page) {
-    this.attr({
-      'viewId': 0,
-      'page': page
-    });
   },
   /**
    * @function getNewObject
@@ -374,7 +408,12 @@ export let ViewModel = CanMap.extend({
    * @function deleteObject
    * Displays a confirm dialog box and if confirmed, deletes the object provided.
    * Once the object is deleted, a message is published using PubSub.
-   * @signature
+   *
+   * @signature `deleteObject(obj, skipConfirm)`
+   * @param  {can.Map} obj   The object to delete
+   * @param {Boolean} skipConfirm If true, the method will not display a confirm dialog
+   *
+   * @signature `deleteObject( scope, dom, event, obj, skipConfirm )`
    * @param  {can.Map} scope The stache scope (not used)
    * @param  {domNode} dom   The domNode that triggered the event (not used)
    * @param  {Event} event The event that was triggered (not used)
@@ -382,10 +421,29 @@ export let ViewModel = CanMap.extend({
    * @param {Boolean} skipConfirm If true, the method will not display a confirm dialog
    * and will immediately attempt to remove the object
    */
-  deleteObject(scope, dom, event, obj, skipConfirm) {
+  deleteObject() {
+    let obj, skipConfirm;
+    //arguments can be ( scope, dom, event, obj, skipConfirm )
+    //OR (obj, skipConfirm)
+    if (arguments.length > 2) {
+      obj = arguments[3];
+      skipConfirm = arguments[4];
+    } else {
+      obj = arguments[0];
+      skipConfirm = arguments[1];
+    }
     if (obj && (skipConfirm || confirm('Are you sure you want to delete this record?'))) {
+
+      //beforeDelete handler
+      this.onEvent(obj, 'beforeDelete');
+
+      //destroy the object using the connection
       let deferred = this.attr('view.connection').destroy(obj);
       deferred.then(result => {
+
+        //afterDelete handler
+        this.onEvent(obj, 'afterDelete');
+
         //add a message
         PubSub.publish(TOPICS.ADD_MESSAGE, new Message({
           message: this.attr('view.deleteSuccessMessage'),
@@ -448,6 +506,19 @@ export let ViewModel = CanMap.extend({
    */
   getRelatedValue(foreignKey, focusObject) {
     return focusObject.attr(foreignKey);
+  },
+  onEvent(obj, eventName) {
+
+    //get the view method
+    let prop = this.attr(['view', eventName].join('.'));
+
+    //if it is a function, call it passing the object
+    if (typeof prop === 'function') {
+      prop(obj);
+    }
+
+    //dispatch an event
+    this.dispatch(eventName, [obj]);
   }
 });
 
