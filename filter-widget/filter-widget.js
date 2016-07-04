@@ -54,7 +54,7 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * A list of filterObjects currently used in this widget
-     * @property {Array<geocola.types.filterObject>} filter-widget.ViewModel.filters
+     * @property {Array<crud.types.filterObject>} filter-widget.ViewModel.filters
      * @parent filter-widget.ViewModel.props
      */
     filters: {
@@ -132,7 +132,7 @@ export let ViewModel = CanMap.extend({
      * A custom field type for the value field to aid in entering a value to filter on
      * For example: a date type field can be specified for the value to aid
      * the user in picking a date.
-     * @property {geocola.types.FormFieldObject} filter-widget.ViewModel.valueField
+     * @property {crud.types.FormFieldObject} filter-widget.ViewModel.valueField
      * @parent filter-widget.ViewModel.props
      */
     valueField: {
@@ -157,7 +157,7 @@ export let ViewModel = CanMap.extend({
      * 2. 2f there is a defined type in the define property for the current filter field dropdown
      * If a type is found using the rules above, the returned value will be filtered to only include
      * operators for the given type.
-     * @property {Array<geocola.types.SelectOptionProperty>} filter-widget.ViewModel.filterOptions
+     * @property {Array<crud.types.SelectOptionProperty>} filter-widget.ViewModel.filterOptions
      * @parent filter-widget.ViewModel.props
      */
     filterOptions: {
@@ -199,7 +199,7 @@ export let ViewModel = CanMap.extend({
      * An array of field options to display for the field selection dropdown. If not provided, the
      * viewModel will look for the objectTemplate property and display its keys. If this property does
      * not exist, the fieldOptions will be replaced with a simple text field.
-     * @property {Array<geocola.types.SelectOptionProperty>} filter-widget.ViewModel.fieldOptions
+     * @property {Array<crud.types.SelectOptionProperty>} filter-widget.ViewModel.fieldOptions
      * @parent filter-widget.ViewModel.props
      */
     fieldOptions: {
@@ -239,7 +239,7 @@ export let ViewModel = CanMap.extend({
    * @param  {can.Map} scope The stache scope
    * @param  {event} dom   The dom event
    * @param  {event} event The can event
-   * @param  {geocola.types.filterObject} obj   The object to remove. This is the only argument used by the function, the rest may be null.
+   * @param  {crud.types.filterObject} obj   The object to remove. This is the only argument used by the function, the rest may be null.
    */
   removeFilter(scope, dom, event, obj) {
     let index = this.attr('filters').indexOf(obj);

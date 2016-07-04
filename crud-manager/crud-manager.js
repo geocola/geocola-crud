@@ -177,7 +177,7 @@ export let ViewModel = CanMap.extend({
      * Buttons to use for the list table actions. If `view.disableEdit` is falsey
      * the buttons will include an edit and delete button. Otherwise, it will be
      * a simple view details button.
-     * @property {Array<geocola.types.TableButtonObject>} crud-manager.ViewModel.props.buttons
+     * @property {Array<crud.types.TableButtonObject>} crud-manager.ViewModel.props.buttons
      * @parent crud-manager.ViewModel.props
      */
     buttons: {
@@ -385,7 +385,7 @@ export let ViewModel = CanMap.extend({
         level: 'danger',
         timeout: 20000
       }));
-      // this.attr('page', 'all');
+      this.attr('page', page);
     });
     return deferred;
   },
@@ -507,6 +507,13 @@ export let ViewModel = CanMap.extend({
   getRelatedValue(foreignKey, focusObject) {
     return focusObject.attr(foreignKey);
   },
+  /**
+   * @function onEvent
+   * A helper function to trigger beforeSave, afterSave, etc events.
+   * @signature
+   * @param  {can.Map} obj       The object to dispatch with the event
+   * @param  {String} eventName The name of the event to dispatch
+   */
   onEvent(obj, eventName) {
 
     //get the view method

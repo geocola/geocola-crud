@@ -1,8 +1,7 @@
 <!--
-@page geocola Home
-@group geocola.components Components
-@group geocola.providers Providers
-@group geocola.types Type Definitions
+@page crud Home
+@group crud.components Components
+@group crud.types Type Definitions
 -->
 
 

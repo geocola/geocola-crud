@@ -1,7 +1,7 @@
 <!--
 
 @module {can.Component} filter-widget <filter-widget />
-@parent geocola.components
+@parent crud.components
 @group filter-widget.props Properties
 @link http://jsonapi.org/format/#fetching-filtering JSON-API
 

@@ -1,7 +1,7 @@
 <!--
 
 @module {can.Component} property-table <property-table />
-@parent geocola.components
+@parent crud.components
 
 -->
 

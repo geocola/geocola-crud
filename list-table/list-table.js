@@ -68,7 +68,7 @@ export const ViewModel = CanMap.extend({
     /**
      * An array of buttonObjects
      * @parent list-table.ViewModel.props
-     * @property {Array.<geocola.types.TableButtonObject>} list-table.ViewModel.props.buttons
+     * @property {Array.<crud.types.TableButtonObject>} list-table.ViewModel.props.buttons
      */
     buttons: {
       value: List

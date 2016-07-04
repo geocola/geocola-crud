@@ -3,7 +3,7 @@
 @parent form-widget.fields
 
 @option {String} type This should be set to `select` to use this template in the form widget
-@option {Array.<geocola.types.SelectOptionProperty>} properties.options An array of values and labels
+@option {Array.<crud.types.SelectOptionProperty>} properties.options An array of values and labels
 
 @description
 A select dropdown with options. See `selectFieldProperty` and `selectOptionProperty`.

@@ -1,7 +1,7 @@
 <!--
 
 @module {can.Component} list-table <list-table />
-@parent geocola.components
+@parent crud.components
 
 -->
 

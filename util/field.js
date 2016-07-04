@@ -1,4 +1,4 @@
-/**
+/*
  * field parsing and creating utilities
  */
 
@@ -27,7 +27,8 @@ for (var type in TEMPLATES) {
 export {TEMPLATES};
 
 /**
- * [extend description]
+ * @module util/field.Field FieldDefinition
+ * @parent crud.types
  *
  */
 export const Field = CanMap.extend({
@@ -114,13 +115,14 @@ export const Field = CanMap.extend({
 });
 
 /**
+ * @function util/field.mapToFields
  * Converts a can.Map to an array of Field objects using the define
  * property or the keys
- * @param  {can.Map.extend} map The map constructor to parse
+ * @param  {Constructor<can.Map>} m The extended map/constructor to parse
  * @return {Array<Field>} The array of fields
  */
-export function mapToFields(map) {
-  let define = map.define || map.prototype.define;
+export function mapToFields(m) {
+  let define = m.define || m.prototype.define;
   let fields = [];
   if (define) {
     let defineTypes = {
@@ -138,12 +140,13 @@ export function mapToFields(map) {
     }
   } else {
     //we have a constructor so make a new map and get its keys
-    fields = CanMap.keys(new map());
+    fields = CanMap.keys(new m());
   }
   return parseFieldArray(fields);
 }
 
 /**
+ * @function util/field.parseFieldArray
  * Converts an array of strings or field json objects into Field objects
  * @param  {Array<Field | String>} fields An array of either strings or JSON like objects representing Field object properties
  * @return {Array<Field>} The array of fields

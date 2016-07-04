@@ -78,7 +78,7 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The list of form fields properties. These can be specified as strings representing the field names or the object properties described in the FormFieldObject
-     * @property {Array<String|geocola.types.FormFieldObject>} form-widget.ViewModel.props.fields
+     * @property {Array<String|crud.types.FormFieldObject>} form-widget.ViewModel.props.fields
      * @parent form-widget.ViewModel.props
      */
     fields: {

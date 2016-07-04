@@ -1,5 +1,5 @@
-@typedef {Object} geocola.types.FormFieldObject FormFieldObject
-@parent geocola.types
+@typedef {Object} crud.types.FormFieldObject FormFieldObject
+@parent crud.types
 @option {String} name The name of the field property
 @option {String} alias A label to display for the field
 @option {String} placeholder The field placeholder to display when no text is entered

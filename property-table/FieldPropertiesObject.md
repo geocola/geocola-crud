@@ -1,5 +1,5 @@
-@typedef {Object} geocola.types.FieldPropertiesObject FieldPropertiesObject
-@parent geocola.types
+@typedef {Object} crud.types.FieldPropertiesObject FieldPropertiesObject
+@parent crud.types
 @option {String} alias The label to display for this field. The default is replace underscores with spaces
 and capitalize the first letter
 @option {Boolean} exclude If set to true, this field will not display in the identify widget

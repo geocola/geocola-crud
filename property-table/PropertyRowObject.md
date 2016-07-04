@@ -1,5 +1,5 @@
-* @typedef {Object} geocola.types.PropertyRowObject PropertyRowObject
-* @parent geocola.types
+* @typedef {Object} crud.types.PropertyRowObject PropertyRowObject
+* @parent crud.types
 * An object used by the template to render the fields and their formatted values
 * @option {String} field The unformatted field name
 * @option {String} alias The formatted field name or alias

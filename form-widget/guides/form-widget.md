@@ -1,7 +1,7 @@
 <!--
 
 @module {can.Component} form-widget <form-widget />
-@parent geocola.components
+@parent crud.components
 @group form-widget.fields 1 Field Types
 
 -->
