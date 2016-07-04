@@ -184,7 +184,7 @@ test('saveObject(obj) success', assert => {
   id = 999;
   vm.attr('view', view);
 
-  let def = vm.saveObject(new TaskMap({ id: id }));
+  let def = vm.saveObject(new TaskMap({ title: 'title' }));
   def.fail(result => {
     assert.ok(result, 'deferred should be resolved');
     done();

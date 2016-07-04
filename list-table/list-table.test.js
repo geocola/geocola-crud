@@ -30,7 +30,7 @@ q.module('list-table.ViewModel', {
 
 test('promise set()', assert => {
   let done = assert.async();
-  vm.attr('promise', Connection.getList());
+  vm.attr('promise', Connection.getList({}));
   vm.attr('promise').then(data => {
     assert.ok(vm.attr('objects').length > 3, 'objects should be retrieved and replaced');
     done();
