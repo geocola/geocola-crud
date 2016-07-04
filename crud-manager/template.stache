@@ -36,8 +36,7 @@
       </div>
 
     {{else}}
-
-      <p><small>{{view.connection.metadata.totalItems}} rows found. Page {{pageNumber}} of {{totalPages}}</small></p>
+      <p><small>{{#if view.connectionProperties.totalItems}}{{view.connectionProperties.totalItems}} rows found. {{/if}} Page {{pageNumber}} of {{totalPages}}</small></p>
 
       {{#is view.listType 'property-table'}}
 
