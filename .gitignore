@@ -2,8 +2,13 @@
 node_modules/*
 !node_modules/bootstrap
 !node_modules/can
+!node_modules/can-connect
+!node_modules/can-set
 !node_modules/font-awesome
 !node_modules/can-ui
+!node_modules/date-selector
+!node_modules/pubsub-js
+!node_modules/underscore
 !node_modules/jquery
 !node_modules/steal
 !node_modules/steal-qunit
