@@ -77,12 +77,22 @@ export let ViewModel = CanMap.extend({
    */
   define: {
     /**
-     * The view object for this crud-manager
-     * @property {crud-manager.ViewMap} crud-manager.ViewModel.props.view
+     * The view object that controls the entire setup of the crud-manager.
+     * Properties on the view control how each field is formatted, default values,
+     * interactions, etc.
+     * @property {crud.types.viewMap} crud-manager.ViewModel.props.view
      * @parent crud-manager.ViewModel.props
      */
     view: {
-      Type: ViewMap
+      Type: ViewMap,
+      set(view){
+
+        //if parameters are in the view, mix them in to the crud parameters
+        if (view.attr('parameters')) {
+          this.attr('parameters').attr(view.attr('parameters').serialize());
+        }
+        return view;
+      }
     },
     /**
      * The current page to display in this view. Options include:
@@ -104,9 +114,14 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     totalPages: {
-      get(val, setAttr) {
+      get() {
+        let total = this.attr('view.connection').metadata.attr('total');
+        if(!total){
+          return 0;
+        }
+
         //round up to the nearest integer
-        return Math.ceil(this.attr('view.connectionProperties.totalItems') /
+        return Math.ceil(total /
           this.attr('parameters.perPage'));
       }
     },
@@ -257,10 +272,6 @@ export let ViewModel = CanMap.extend({
    * Initializes filters and other parameters
    */
   init() {
-    //if parameters are in the view, mix them in to the crud parameters
-    if (this.attr('view.parameters')) {
-      this.attr('parameters').attr(this.attr('view.parameters').serialize());
-    }
     //set up related filters
     if (this.attr('relatedField') && this.attr('relatedValue')) {
       this.attr('parameters.filters').push({

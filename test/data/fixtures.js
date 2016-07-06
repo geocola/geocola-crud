@@ -74,8 +74,8 @@ fixture({
   },
   'DELETE /tasks/{id}' (params, response) {
     let item = data.filter(i => {
-      return i.id === params.data.id;
-    });
+      return i.id == params.data.id;
+    })[0];
     let index = data.indexOf(item);
     if (index !== -1) {
       data.splice(data.indexOf(item), 1);

@@ -13,17 +13,18 @@
   import CanMap from 'can/map/';
   import List from 'can/list/';
   import 'test/data/fixtures';
+  import data from 'test/data/tasks.json';
 
-  export const TaskMap = CanMap.extend({
+  const TaskMap = CanMap.extend({
     "name": "name of task",
     "description": "description of task"
   });
 
-  export const TaskList = List.extend({
+  const TaskList = List.extend({
     map: TaskMap
   });
 
-  export const Connection = SuperMap({
+  const Connection = SuperMap({
     idProp: "id",
     Map: TaskMap,
     List: TaskList,
@@ -31,15 +32,17 @@
     name: "task"
   });
 
-
-  var frag = can.view('demo-html', {
+  let viewModel = new CanMap({
     view: {
       title: 'Tasks',
       connection: Connection,
       objectTemplate: Connection.Map, //we could also use TaskMap,
-      connectionProperties: {totalItems: 30}
+      connectionProperties: { totalItems: data.length }
     }
-  }, {});
+  })
+
+
+  let frag = can.view('demo-html', viewModel, {});
 
   can.$('body').append(frag);
 </script>
