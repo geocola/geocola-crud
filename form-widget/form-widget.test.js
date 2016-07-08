@@ -1,6 +1,8 @@
 import { ViewModel } from './form-widget';
 import q from 'steal-qunit';
 
+q.config.testTimeout = 10000;
+
 import { Connection } from 'test/data/connection';
 import {Field} from '../../util/field';
 

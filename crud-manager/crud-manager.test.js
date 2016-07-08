@@ -8,7 +8,7 @@ import { TOPICS } from './crud-manager';
 import PubSub from 'pubsub-js';
 let vm;
 
-q.config.testTimeout = 5000;
+q.config.testTimeout = 10000;
 
 q.module('crud-manager.ViewModel', {
   beforeEach: () => {
@@ -309,7 +309,7 @@ test('deleteMmultiple()', assert => {
     }).fail(r => {
       assert.ok(r, 'fail is resolved');
       done();
-    })
+    });
   });
 });
 
