@@ -20,6 +20,18 @@ import { Field } from '../util/field';
 export const ViewMap = CanMap.extend({
   define: {
     /**
+     * The can-connect object that connects our view to a rest api resource.
+     * In order for pagination to work on the crud-manager, this connection
+     * needs a special property set on it called `metadata.total` which
+     * represents the total number of items available to the rest api.
+     * This object is coerced into a CanMap to make the entire object
+     * observable so this property can be set asynchronously.
+     * @type {Object}
+     */
+    connection: {
+      Type: CanMap
+    },
+    /**
      * An array of field definitions which controls the display and editing
      * of each property of the objects being displayed and edited
      * @property {Array<util/field.Field>} fields
