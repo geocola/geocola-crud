@@ -1,8 +1,6 @@
 import { ViewModel } from './form-widget';
 import q from 'steal-qunit';
 
-q.config.testTimeout = 10000;
-
 import { Connection } from 'test/data/connection';
 import {Field} from '../../util/field';
 
@@ -19,7 +17,7 @@ q.module('form-widget.ViewModel', {
 
 test('objectId set()', assert => {
   let done = assert.async();
-  let id = 1;
+  let id = 10;
   vm.attr({
     connection: Connection,
     objectId: id
@@ -36,7 +34,7 @@ test('fields get()', assert => {
 });
 
 test('fetchObject(con, id)', assert => {
-  let id = 1;
+  let id = 10;
   let done = assert.async();
   let promise = vm.fetchObject(Connection, id);
   promise.then(function(item) {

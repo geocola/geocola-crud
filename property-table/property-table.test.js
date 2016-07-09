@@ -18,7 +18,7 @@ q.module('property-table.ViewModel', {
 
 test('fetchObject(con, id)', assert => {
   let done = assert.async();
-  vm.fetchObject(Connection, 11).then(data => {
+  vm.fetchObject(Connection, 10).then(data => {
 
     assert.ok(vm.attr('object'), 'the table should have an object after an object is fetched');
     done();
@@ -27,7 +27,7 @@ test('fetchObject(con, id)', assert => {
 
 test('objectId set(id)', assert => {
   let done = assert.async();
-  let id = 2;
+  let id = 10;
   vm.attr('connection', Connection);
   assert.notOk(vm.attr('objectPromise'), 'objectPromise should not have a value by default');
 
