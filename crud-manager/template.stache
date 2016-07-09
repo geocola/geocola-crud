@@ -6,7 +6,8 @@
       <p>You do not have permission to edit this data.</p>
     {{else}}
       {{#if focusObject.isResolved}}
-        <form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('all')" {fields}="_fields" />
+        <form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('all')"
+          {fields}="_fields" />
       {{/if}}
     {{/if}}
   {{/case}}
@@ -18,7 +19,8 @@
     {{#if view.disableAdd}}
       <p>You do not have permission to add this data.</p>
     {{else}}
-      <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('all')" {fields}="_fields" />
+      <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('all')"
+        {fields}="_fields" />
     {{/if}}
   {{/case}}
 
@@ -30,13 +32,19 @@
 
     {{#if objects.isPending}}
       <div class="progress">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100"
+          aria-valuemin="0" aria-valuemax="100" style="width:100%">
           <span>Refreshing Data...</span>
         </div>
       </div>
 
     {{else}}
-      <p><small>{{#if view.connectionProperties.totalItems}}{{view.connectionProperties.totalItems}} rows found. {{/if}} Page {{pageNumber}} of {{totalPages}}</small></p>
+      <p>
+        <small>
+          {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. {{/if}}
+          Page {{pageNumber}} of {{totalPages}}
+        </small>
+      </p>
 
       {{#is view.listType 'property-table'}}
 
@@ -60,7 +68,9 @@
         {{/each}}
 
     {{else}}
-      <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
+      <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject"
+        (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields"
+        {buttons}="buttons" />
       {{/is}}{{!view.ListType 'property-table'}}
     {{/if}}{{!objects.isPending}}
 
@@ -87,9 +97,10 @@
       {{/if}}
     </div>
 
-      <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
-        <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
-      </panel-container>
+    <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
+      <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate"
+      />
+    </panel-container>
 
     {{#if showPaginate}}
       <div class="hidden-print">
@@ -137,7 +148,8 @@
         <tab-container>
           {{#each view.relatedViews}}
             <panel-container title="{{./view.title}}" collapsible="false">
-              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
+              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}"
+              />
             </panel-container>
           {{/each}}
         </tab-container>
@@ -151,34 +163,40 @@
     <button class="btn btn-default" ($click)="setPage('all')">
       <i class="fa fa-arrow-left"></i> Back
     </button>
-    {{#each selectedObjects}}
-      <property-table {object}="." {fields}="_fields" />
-      {{#unless ../view.disableEdit}}
-        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-          <button class="btn btn-default" ($click)="editObject(null, null null, .)">
-            <i class="fa fa-wrench"></i> Edit
-          </button>
-        </div>
-      {{/unless}}
+    {{#if selectedObjects.length}}
+      {{#each selectedObjects}}
+        <property-table {object}="." {fields}="_fields" />
+        {{#unless ../view.disableEdit}}
+          <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+            <button class="btn btn-default" ($click)="editObject(null, null null, .)">
+              <i class="fa fa-wrench"></i> Edit
+            </button>
+          </div>
+        {{/unless}}
 
-      {{#if ../view.relatedViews}}
-        <hr />
-        <h3>Related Data</h3>
-        <tab-container>
-          {{#each ../view.relatedViews}}
-            <panel-container title="{{./view.title}}" collapsible="false">
-              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
-            </panel-container>
-          {{/each}}
-        </tab-container>
-      {{/if}}
+        {{#if ../view.relatedViews}}
+          <hr />
+          <h3>Related Data</h3>
+          <tab-container>
+            {{#each ../view.relatedViews}}
+              <panel-container title="{{./view.title}}" collapsible="false">
+                <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}"
+                />
+              </panel-container>
+            {{/each}}
+          </tab-container>
+        {{/if}}
 
-    {{/each}}
+      {{/each}}
+    {{else}}
+      <p>No objects were selected.</p>
+    {{/if}}
   {{/case}}
 
   {{#case 'loading'}}
     <div class="progress">
-      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{progress}}"
+        aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
         <span class="sr-only">Loading...</span>
       </div>
     </div>

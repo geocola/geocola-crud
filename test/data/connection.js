@@ -1,6 +1,8 @@
 import SuperMap from 'can-connect/can/super-map/';
 import CanMap from 'can/map/';
 import List from 'can/list/';
+
+//import fake ajax services
 import './fixtures';
 
 export const TaskMap = CanMap.extend({

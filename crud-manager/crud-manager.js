@@ -85,7 +85,7 @@ export let ViewModel = CanMap.extend({
      */
     view: {
       Type: ViewMap,
-      set(view){
+      set(view) {
 
         //if parameters are in the view, mix them in to the crud parameters
         if (view.attr('parameters')) {
@@ -109,14 +109,14 @@ export let ViewModel = CanMap.extend({
     /**
      * A virtual property that calculates the number of total pages to show
      * on the list page. This controls the paginator widget. It uses the property
-     * `view.connectionProperties.totalItems`  and `queryPerPage` to perform this calculation.
+     * `view.connectionProperties.total`  and `queryPerPage` to perform this calculation.
      * @property {String} crud-manager.ViewModel.props.totalPages
      * @parent crud-manager.ViewModel.props
      */
     totalPages: {
       get() {
-        let total = this.attr('view.connection').metadata.attr('total');
-        if(!total){
+        let total = this.attr('view.connection.metadata.total');
+        if (!total) {
           return 0;
         }
 
@@ -137,6 +137,10 @@ export let ViewModel = CanMap.extend({
         return this.attr('totalPages') > 1;
       }
     },
+    /**
+     * the internal parameters object. This is prepopulated when view is set.
+     * @type {Object}
+     */
     parameters: {
       Value: CanMap.extend({
         define: {
@@ -272,15 +276,19 @@ export let ViewModel = CanMap.extend({
    * Initializes filters and other parameters
    */
   init() {
-    //set up related filters
-    if (this.attr('relatedField') && this.attr('relatedValue')) {
+    //set up related filters which are typically numbers
+    if (this.attr('relatedField')) {
+      let val = parseFloat(this.attr('relatedValue'));
+      if (!val) {
+        //if we can't force numeric type, just use default value
+        val = this.attr('relatedValue');
+      }
       this.attr('parameters.filters').push({
         name: this.attr('relatedField'),
         operator: 'equals',
         value: this.attr('relatedValue')
       });
     }
-
   },
   /**
    * @function setPage
@@ -346,7 +354,7 @@ export let ViewModel = CanMap.extend({
   saveObject() {
     let obj;
     //accept 4 params from the template or just one
-    if(arguments.length === 4){
+    if (arguments.length === 4) {
       obj = arguments[3];
     } else {
       obj = arguments[0];

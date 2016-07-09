@@ -8,7 +8,7 @@ import { TOPICS } from './crud-manager';
 import PubSub from 'pubsub-js';
 let vm;
 
-q.config.testTimeout = 2000;
+q.config.testTimeout = 10000;
 
 q.module('crud-manager.ViewModel', {
   beforeEach: () => {
@@ -39,11 +39,15 @@ test('totalPages get()', assert => {
   cases.forEach(c => {
     vm.attr({
       view: {
-        connectionProperties: {
-          totalItems: c.items
+        connection: {
+          metadata: {
+            total: c.items
+          }
+        },
+        parameters: {
+          perPage: c.perPage
         }
-      },
-      queryPerPage: c.perPage
+      }
     });
     assert.equal(vm.attr('totalPages'), c.expected, 'totalPages should be calculated correctly');
   });
@@ -52,8 +56,10 @@ test('totalPages get()', assert => {
 test('showPaginate get()', assert => {
   vm.attr({
     view: {
-      connectionProperties: {
-        totalItems: 10
+      connection: {
+        metadata: {
+          total: 10
+        }
       }
     }
   });
@@ -62,8 +68,8 @@ test('showPaginate get()', assert => {
 
   vm.attr({
     view: {
-      connectionProperties: {
-        totalItems: 10
+      metadata: {
+        total: 10
       }
     }
   });
@@ -170,7 +176,7 @@ test('saveObject(obj) success', assert => {
     done();
   });
 
-  let id = 11;
+  let id = 6;
   let obj = Connection.get({ id: id }).then(obj => {
     vm.attr('view', view);
 
@@ -239,8 +245,12 @@ test('getNewObject()', assert => {
   assert.deepEqual(vm.getNewObject().attr(), new TaskMap().attr(), 'new object should be created');
 });
 
-test('deleteObject(obj, skipConfirm)', assert => {
-  let done = assert.async(7);
+
+
+
+test('deleteObject(obj, skipConfirm) ', assert => {
+  let id = 11;
+  let done = assert.async(5);
   let view = {
     connection: Connection,
     beforeDelete(obj) {
@@ -257,7 +267,6 @@ test('deleteObject(obj, skipConfirm)', assert => {
     done();
   });
 
-  let id = 11;
   vm.attr('view', view);
 
   vm.on('beforeDelete', (event, obj) => {
@@ -270,25 +279,11 @@ test('deleteObject(obj, skipConfirm)', assert => {
   });
 
   //delete the object skip confirm
-  let def = vm.deleteObject(new TaskMap({ id: id }), true);
-  def.then(result => {
-    assert.ok(result, 'success deferred should be resolved');
-    done();
-  });
-
-  id = 99;
-  vm.attr('view', view);
-
-  //delete the object skip confirm
-  def = vm.deleteObject(new TaskMap({ id: id }), true);
-  def.fail(result => {
-    assert.ok(result, 'fail deferred should be resolved');
-    done();
-  });
+  vm.deleteObject(new TaskMap({ id: id }), true);
 });
 
 test('deleteMmultiple()', assert => {
-  let done = assert.async(2);
+  let done = assert.async(4);
   let view = {
     connection: Connection
   };
@@ -309,7 +304,10 @@ test('deleteMmultiple()', assert => {
   let defs = vm.deleteMultiple(true);
   defs.forEach(def => {
     def.then(r => {
-      assert.ok(r, 'deferred should be resolved');
+      assert.ok(r, 'then is resolved');
+      done();
+    }).fail(r => {
+      assert.ok(r, 'fail is resolved');
       done();
     });
   });
