@@ -17,7 +17,7 @@ q.module('form-widget.ViewModel', {
 
 test('objectId set()', assert => {
   let done = assert.async();
-  let id = 10;
+  let id = 6;
   vm.attr({
     connection: Connection,
     objectId: id
@@ -34,7 +34,7 @@ test('fields get()', assert => {
 });
 
 test('fetchObject(con, id)', assert => {
-  let id = 10;
+  let id = 6;
   let done = assert.async();
   let promise = vm.fetchObject(Connection, id);
   promise.then(function(item) {

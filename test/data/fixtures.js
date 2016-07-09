@@ -3,6 +3,7 @@ import fixture from 'can/util/fixture/';
 import List from 'can/list/';
 import 'can/list/sort/';
 
+
 //a mock ajax service
 fixture({
   'GET /tasks' (params, response) {
@@ -63,7 +64,12 @@ fixture({
   'PUT /tasks/{id}' (params, response) {
     let item = data.filter(i => {
       return i.id == params.data.id;
-    })[0];
+    });
+    if (!item.length) {
+      response(404, 'Not Found');
+      return;
+    }
+    item = item[0];
     let index = data.indexOf(item);
     if (index !== -1) {
       data[index] = can.extend(item, params.data);
@@ -75,7 +81,12 @@ fixture({
   'DELETE /tasks/{id}' (params, response) {
     let item = data.filter(i => {
       return i.id == params.data.id;
-    })[0];
+    });
+    if (!item.length) {
+      response(404, 'Not Found');
+      return;
+    }
+    item = item[0];
     let index = data.indexOf(item);
     if (index !== -1) {
       data.splice(data.indexOf(item), 1);

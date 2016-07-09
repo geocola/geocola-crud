@@ -176,7 +176,7 @@ test('saveObject(obj) success', assert => {
     done();
   });
 
-  let id = 11;
+  let id = 6;
   let obj = Connection.get({ id: id }).then(obj => {
     vm.attr('view', view);
 

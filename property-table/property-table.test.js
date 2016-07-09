@@ -3,7 +3,7 @@ import can from 'can';
 import { Connection } from 'test/data/connection';
 import { ViewModel } from './property-table';
 import CanMap from 'can/map/';
-import {Field} from '../../util/field';
+import { Field } from '../../util/field';
 
 let vm;
 
@@ -18,16 +18,17 @@ q.module('property-table.ViewModel', {
 
 test('fetchObject(con, id)', assert => {
   let done = assert.async();
-  vm.fetchObject(Connection, 10).then(data => {
+  let def = vm.fetchObject(Connection, 6).then(data => {
 
     assert.ok(vm.attr('object'), 'the table should have an object after an object is fetched');
     done();
+
   });
 });
 
 test('objectId set(id)', assert => {
   let done = assert.async();
-  let id = 10;
+  let id = 6;
   vm.attr('connection', Connection);
   assert.notOk(vm.attr('objectPromise'), 'objectPromise should not have a value by default');
 
@@ -41,8 +42,8 @@ test('objectId set(id)', assert => {
 });
 
 test('getValue(field)', assert => {
-  let field = new Field({name: 'test'});
-  let obj = new CanMap({test: 'value'});
+  let field = new Field({ name: 'test' });
+  let obj = new CanMap({ test: 'value' });
 
   vm.attr('object', obj);
   assert.equal(vm.getValue(field), 'value', 'result should match the value of the object');
