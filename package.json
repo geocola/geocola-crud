@@ -34,7 +34,7 @@
     "can-ui": "git+https://github.com/roemhildtg/can-ui.git",
     "date-selector": "^2.0.x",
     "font-awesome": "^4.5.x",
-    "jquery": "^2.2.x",
+    "jquery": "^3.1.0",
     "pubsub-js": "^1.5.x",
     "steal": "^0.16.x",
     "underscore": "^1.8.x"
