@@ -16,12 +16,14 @@
 
 
   {{#case 'add'}}
+
     {{#if view.disableAdd}}
       <p>You do not have permission to add this data.</p>
     {{else}}
       <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('all')"
         {fields}="_fields" />
     {{/if}}
+
   {{/case}}
 
 
@@ -40,7 +42,7 @@
     <p>
       <small>
         {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. {{/if}}
-        Page {{pageNumber}} of {{totalPages}} 
+        Page {{pageNumber}} of {{totalPages}}
       </small>
     </p>
 
@@ -66,7 +68,7 @@
       {{/each}}
 
       {{else}}
-        <list-table {promise}="objects" {^selected-objects}="selectedObjects" (edit)="editObject"
+        <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject"
           (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort"
           {fields}="_fields" {buttons}="buttons" />
     {{/is}}{{!view.ListType 'property-table'}}
