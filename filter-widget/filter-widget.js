@@ -262,17 +262,17 @@ export let ViewModel = CanMap.extend({
    * @param  {can.Map} scope The stache scope
    * @param  {event} dom   The dom event
    * @param  {event} event The can event
-   * @param  {filterObject} obj The object to add. This is the only argument used by the function, the rest may be null.
+   * @param  {filterObject} filterObj The object to add. This is the only argument used by the function, the rest may be null.
    */
-  addFilter(scope, dom, event, obj) {
-    let name = obj.attr('name');
+  addFilter(scope, dom, event, filterObj) {
+    let name = filterObj.attr('name');
     let filters;
-    if (!name || !obj.attr('value')) {
+    if (!name || !filterObj.attr('value')) {
       return false;
     }
     let fields = this.attr('fields');
     let filterOption = FilterOptions.filter(f => {
-      return obj.attr('operator') === f.value;
+      return filterObj.attr('operator') === f.value;
     })[0];
     let field = this.attr('fields') ? this.attr('fields').filter(f => {
       return f.name === name;
@@ -282,16 +282,19 @@ export let ViewModel = CanMap.extend({
     //try a filterFactory on the field object
     //which should return one or an array of filters
     if (field && typeof field.filterFactory === 'function') {
-      filters = field.filterFactory(obj);
+      filters = field.filterFactory(filterObj);
     }
 
     //otherwise just use the filter as is
     if (!filters) {
-      filters = [obj];
+      filters = [filterObj];
     }
 
     if (this.attr('replaceExisting')) {
+      can.batch.start();
       this.attr('filters').replace(filters);
+      this.attr('formObject', null);
+      can.batch.stop();
     } else {
 
       //start batch process
@@ -304,7 +307,6 @@ export let ViewModel = CanMap.extend({
       //end batch process
       can.batch.stop();
     }
-
     return false;
   }
 });
