@@ -1,4 +1,3 @@
-
 import can from 'can/util/library';
 import CanEvent from 'can/event/';
 import CanMap from 'can/map/';
@@ -15,10 +14,22 @@ export let ViewModel = CanMap.extend({
   define: {
     properties: {
       Value: can.Map
+    },
+    value: {
+      type: 'string'
     }
   },
-  onChange(element) {
-    this.dispatch('change', [element.value]);
+  /**
+   * Checks for the enter keypress and triggers a change event on the input
+   * The enter key press triggers a submit event on the form, but before the
+   * submit event, we need to trigger a change on the field value
+   * @param  {domElement} element The form input element
+   * @param  {KeyDownEvent} event
+   */
+  beforeSubmit(element, event) {
+    if (event.keyCode === 13) {
+      can.trigger(element, 'change');
+    }
   }
 });
 can.extend(ViewModel.prototype, CanEvent);
@@ -26,5 +37,10 @@ can.extend(ViewModel.prototype, CanEvent);
 Component.extend({
   tag: 'text-field',
   template: template,
-  viewModel: ViewModel
+  viewModel: ViewModel,
+  events: {
+    '{viewModel} value'(viewModel, event, newValue){
+      viewModel.dispatch('change', [newValue]);
+    }
+  }
 });

@@ -1,6 +1,4 @@
-
 import can from 'can/util/library';
-import CanEvent from 'can/event/';
 import CanMap from 'can/map/';
 import Component from 'can/component/';
 
@@ -9,6 +7,7 @@ import dateSelector from 'date-selector';
 
 import template from './date-field.stache!';
 import './date-field.less!';
+import { ViewModel as TextViewModel } from '../text-field/';
 
 /**
  * @constructor form-widget/field-components/date-field.ViewModel ViewModel
@@ -17,26 +16,32 @@ import './date-field.less!';
  *
  * @description A `<date-field />` component's ViewModel
  */
-export let ViewModel = CanMap.extend({
+export let ViewModel = TextViewModel.extend({
   define: {
     properties: {
       Value: CanMap
+    },
+    value: {
+      type: 'date',
+      value: ''
     }
   },
-  onChange(element) {
-    this.dispatch('change', [element.value]);
+  onBlur(element){
+    can.trigger(element, 'change');
   }
 });
-
-can.extend(ViewModel.prototype, CanEvent);
 
 Component.extend({
   tag: 'date-field',
   template: template,
   viewModel: ViewModel,
   events: {
-    inserted: function() {
+    inserted() {
       dateSelector();
+    },
+    '{viewModel} value'(viewModel, event, newValue){
+      console.log(viewModel.attr());
+      viewModel.dispatch('change', [newValue]);
     }
   }
 });
