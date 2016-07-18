@@ -36,7 +36,7 @@
     "font-awesome": "^4.5.x",
     "jquery": "^3.1.0",
     "pubsub-js": "^1.5.x",
-    "steal": "^0.16.x",
+    "steal": "^0.16.26",
     "underscore": "^1.8.x"
   },
   "main": "index",
