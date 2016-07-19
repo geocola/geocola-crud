@@ -40,7 +40,6 @@ Component.extend({
       dateSelector();
     },
     '{viewModel} value'(viewModel, event, newValue){
-      console.log(viewModel.attr());
       viewModel.dispatch('change', [newValue]);
     }
   }

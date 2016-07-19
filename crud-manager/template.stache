@@ -86,7 +86,7 @@
       {{/unless}}
       {{#if selectedObjects.length}}
         {{#unless view.disableDelete}}
-          <button class="btn btn-default" ($click)="deleteMultiple">
+          <button class="btn btn-default" ($click)="deleteMultiple(false)">
             <i class="fa fa-trash"></i> Remove Selected
           </button>
         {{/unless}}
