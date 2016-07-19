@@ -103,7 +103,7 @@ export let ViewModel = CanMap.extend({
           formatter: makeSentenceCase,
           name: 'name',
           alias: 'Field Name',
-          type: 'select',
+          fieldType: 'select',
           properties: {
             options: this.attr('fieldOptions')
           }
@@ -116,7 +116,7 @@ export let ViewModel = CanMap.extend({
           name: 'operator',
           alias: 'is',
           placeholder: 'Choose an operator',
-          type: 'select',
+          fieldType: 'select',
           formatter(op) {
             return FilterOptions.filter(f => {
               return f.value === op;
@@ -153,7 +153,7 @@ export let ViewModel = CanMap.extend({
     /**
      * A getter for the filter operators that changes based on the selected field and
      * the selected field's type. The value may be filtered based on
-     * 1. If there is a `dataType` property on the field that matches the name of the dropdown
+     * 1. If there is a `type` property on the field that matches the name of the dropdown
      * 2. 2f there is a defined type in the define property for the current filter field dropdown
      * If a type is found using the rules above, the returned value will be filtered to only include
      * operators for the given type.
@@ -166,15 +166,15 @@ export let ViewModel = CanMap.extend({
         let name = this.attr('formObject.name');
         let fields = this.attr('fields');
 
-        //if we have fields search them for a dataType matching the name
+        //if we have fields search them for a type matching the name
         //of the selected field name
         if (fields) {
           let field = fields.filter(f => {
             return f.attr('name') === name;
           })[0];
-          if (field && field.attr('dataType')) {
+          if (field && field.attr('type')) {
             return FilterOptions.filter(f => {
-              return f.types.indexOf(field.attr('dataType')) !== -1;
+              return f.types.indexOf(field.attr('type')) !== -1;
             });
           }
         }
