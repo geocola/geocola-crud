@@ -86,7 +86,6 @@ export let ViewModel = CanMap.extend({
     view: {
       Type: ViewMap,
       set(view) {
-
         //if parameters are in the view, mix them in to the crud parameters
         if (view.attr('parameters')) {
           this.attr('parameters').attr(view.attr('parameters').serialize());
@@ -96,14 +95,14 @@ export let ViewModel = CanMap.extend({
     },
     /**
      * The current page to display in this view. Options include:
-     * * `all`: The list table page that displays all records
+     * * `list`: The list table page that displays all records
      * * `details`: The individual view page that shows one detailed record
      * * `edit`: The editing view that allows editing of an individual record using a form
      * @property {String} crud-manager.ViewModel.props.page
      * @parent crud-manager.ViewModel.props
      */
     page: {
-      value: 'all',
+      value: 'list',
       type: 'string'
     },
     /**
