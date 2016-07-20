@@ -133,7 +133,7 @@ export function mapToFields(m) {
       if (define.hasOwnProperty(prop)) {
         fields.push(can.extend({
           name: prop,
-          type: 'text',
+          type: 'string',
           fieldType: 'text',
         }, define[prop]));
       }
