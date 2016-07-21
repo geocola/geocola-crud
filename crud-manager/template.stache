@@ -86,13 +86,18 @@
       {{/unless}}
       {{#if selectedObjects.length}}
         {{#unless view.disableDelete}}
-          <button class="btn btn-default" ($click)="deleteMultiple(false)">
+          <button class="btn btn-danger" ($click)="deleteMultiple(false)">
             <i class="fa fa-trash"></i> Remove Selected
           </button>
         {{/unless}}
         <button class="btn btn-default" ($click)="setPage('selection')">
           <i class="fa fa-list"></i> View Selected
         </button>
+        {{#each view.manageButtons}}
+          <button class="btn btn-default" ($click)="onClick(selectedObjects)">
+            <i class="{{iconClass}}"></i> {{text}}
+          </button>
+        {{/each}}
       {{/if}}
     </div>
 
