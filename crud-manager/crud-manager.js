@@ -554,5 +554,13 @@ Component.extend({
   template: template,
   //since this is a recursive component, don't leak the scope.
   //this prevents infinite nesting of the components.
-  leakScope: false
+  leakScope: false,
+  events: {
+    '{viewModel.parameters.filters} change' () {
+      this.viewModel.attr('parameters.page', 0);
+    },
+    '{viewModel.parameters.perPage} change' () {
+      this.viewModel.attr('parameters.page', 0);
+    }
+  }
 });
