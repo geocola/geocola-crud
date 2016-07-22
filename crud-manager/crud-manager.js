@@ -558,6 +558,9 @@ Component.extend({
   events: {
     '{viewModel.parameters.filters} change' () {
       this.viewModel.attr('parameters.page', 0);
+    },
+    '{viewModel.parameters.perPage} change' () {
+      this.viewModel.attr('parameters.page', 0);
     }
   }
 });
