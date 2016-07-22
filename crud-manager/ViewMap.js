@@ -90,7 +90,7 @@ export const ViewMap = CanMap.extend({
    * @link https://connect.canjs.com/doc/can-connect|constructor.html constructor
    * @property {can-connect} connection
    */
-  connection: null,
+  connection: undefined,
   /**
    * A template for creating new objects. This should be an constructor of can.Map
    * created using can.Map.extend. This object defines the default properties, types,
@@ -106,7 +106,7 @@ export const ViewMap = CanMap.extend({
    * @signature `objectTemplate: can.Map.extend({prop: 'value'})`
    * @property {Constructor<can.Map>} objectTemplate
    */
-  objectTemplate: null,
+  objectTemplate: undefined,
   /**
    * A property that controls the display of rows of data. This property can either
    * be `list-table` or `property-table`.
@@ -133,36 +133,50 @@ export const ViewMap = CanMap.extend({
    * with a value that matches the related views foreign key.
    * @property {Array<crud.types.relatedView>} relatedViews
    */
-  relatedViews: null,
+  relatedViews: undefined,
   /**
    * A method to call before a new object in this view is created
    * @property {funtion} beforeCreate
    */
-  beforeCreate: null,
+  beforeCreate: undefined,
   /**
    * A method to call after a new object in this view is created
    * @property {funtion} beforeCreate
    */
-  afterCreate: null,
+  afterCreate: undefined,
   /**
    * A method to call before an object in this view is saved
    * @property {funtion} beforeCreate
    */
-  beforeSave: null,
+  beforeSave: undefined,
   /**
    * A method to call after an object in this view is saved
    * @property {funtion} afterSave
    */
-  afterSave: null,
+  afterSave: undefined,
   /**
    * A method to call before an object in this view is deleted
    * @property {funtion} beforeDelete
    */
-  beforeDelete: null,
+  beforeDelete: undefined,
   /**
    * A method to call after an object in this view is deleted
    * @property {funtion} afterDelete
    */
-  afterDelete: null,
-
+  afterDelete: undefined,
+  /**
+   * Additional buttons to display when items are checked in the table. Buttotns
+   * can have an icon, text an an on click event handler
+   * @property {Array<ManageButton>}
+   *   ```
+   *   manageButtons: [{
+       iconClass: 'fa fa-files-o',
+       text: 'New Workorder',
+       onClick(items){
+         batchWorkorder('water_pipe', items);
+       }
+     }],
+     ```
+   */
+  manageButtons: undefined
 });
