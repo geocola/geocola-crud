@@ -233,8 +233,8 @@ test('setPage(page)', assert => {
     viewId: 999
   });
 
-  vm.setPage('all');
-  assert.equal(vm.attr('page'), 'all', 'page should be set correctly');
+  vm.setPage('list');
+  assert.equal(vm.attr('page'), 'list', 'page should be set correctly');
   assert.equal(vm.attr('viewId'), 0, 'viewId should be reset');
 });
 
