@@ -78,7 +78,7 @@ export const FilterOptions = [{
   valueField: {
     name: 'value',
     alias: 'Value',
-    type: 'date',
+    fieldType: 'date',
     properties: {
       placeholder: 'Select a date'
     }
@@ -90,7 +90,7 @@ export const FilterOptions = [{
   valueField: {
     name: 'value',
     alias: 'Value',
-    type: 'date',
+    fieldType: 'date',
     properties: {
       placeholder: 'Select a date'
     }

@@ -59,7 +59,7 @@ export const Field = CanMap.extend({
      * are defined in the `util/field.TEMPLATES` constant
      * @property {String} util/field.Field.type
      */
-    type: {
+    fieldType: {
       type: 'string',
       value: 'text'
     },
@@ -74,7 +74,7 @@ export const Field = CanMap.extend({
         if (template) {
           return template;
         }
-        let type = this.attr('type');
+        let type = this.attr('fieldType');
         if (!TEMPLATES.hasOwnProperty(type)) {
           console.warn('No template for the given field type', type);
           return TEMPLATES.text;
@@ -103,6 +103,10 @@ export const Field = CanMap.extend({
     excludeForm: {
       value: false
     },
+    /**
+     * Formats the property when it is displayed in a property or list table
+     * @property {Function}
+     */
     formatter: {
       value: null
     }
@@ -125,17 +129,13 @@ export function mapToFields(m) {
   let define = m.define || m.prototype.define;
   let fields = [];
   if (define) {
-    let defineTypes = {
-      string: 'text',
-      date: 'date',
-      number: 'text'
-    };
     for (let prop in define) {
       if (define.hasOwnProperty(prop)) {
-        fields.push({
+        fields.push(can.extend({
           name: prop,
-          type: defineTypes[define[prop].type] || 'text'
-        });
+          type: 'string',
+          fieldType: 'text',
+        }, define[prop]));
       }
     }
   } else {
