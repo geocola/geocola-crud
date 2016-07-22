@@ -140,7 +140,7 @@ export let ViewModel = CanMap.extend({
         let defaultField = {
           name: 'value',
           alias: 'Value',
-          type: 'text',
+          fieldType: 'text',
           properties: {
             placeholder: 'Enter a filter value'
           }

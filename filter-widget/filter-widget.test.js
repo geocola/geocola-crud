@@ -37,23 +37,24 @@ test('formObject get()', assert => {
 });
 
 test('formFields get()', assert => {
-  assert.equal(vm.attr('formFields')[0].type, 'text', 'name field type should be text by default');
+  assert.equal(vm.attr('formFields')[0].fieldType, 'text', 'name field fieldType should be text by default');
 
   let field = {
     name: 'test',
     alias: 'Test'
   };
   vm.attr('fields', [field]);
-  assert.equal(vm.attr('formFields')[0].type, 'select', 'name field type should be select when there are fieldOptions');
+  assert.equal(vm.attr('formFields')[0].fieldType, 'select', 'name field fieldType should be select when there are fieldOptions');
 });
 
 test('valueField get()', assert => {
-  assert.equal(vm.attr('valueField').type, 'text', 'default valueField type should be text');
+  console.log(vm.attr('valueField'));
+  assert.equal(vm.attr('valueField').fieldType, 'text', 'default valueField fieldType should be text');
 
   let obj = vm.attr('formObject');
   obj.attr('operator', 'after');
   vm.attr('formObject', obj);
-  assert.equal(vm.attr('valueField').type, 'date', 'when using a date operator, valueField type should be date');
+  assert.equal(vm.attr('valueField').fieldType, 'date', 'when using a date operator, valueField fieldType should be date');
 });
 
 test('filterOptions get()', assert => {
@@ -61,9 +62,9 @@ test('filterOptions get()', assert => {
   obj.attr('name', 'test');
   vm.attr('formObject', obj);
 
-  vm.attr('fields', [{name: 'test', label: 'test', dataType: 'date'}]);
+  vm.attr('fields', [{name: 'test', label: 'test', type: 'date'}]);
   vm.attr('filterOptions').forEach(f => {
-    assert.ok(f.types.indexOf('date') !== -1 , 'each filter should have type date');
+    assert.ok(f.types.indexOf('date') !== -1 , 'each filter should have fieldType date');
   });
 
 

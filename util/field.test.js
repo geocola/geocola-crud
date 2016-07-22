@@ -7,7 +7,7 @@ let cases = [{
   name: 'one'
 }, {
   name: 'two',
-  type: 'date'
+  fieldType: 'date'
 }, {
   name: 'three',
   alias: 'Custom'
@@ -31,5 +31,5 @@ q.module('.ViewModel', {
 });
 
 test('Field.alias default', assert => {
-  
+
 });
