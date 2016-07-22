@@ -1,6 +1,6 @@
 {
   "name": "can-crud",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Data management and crud operation components built using CanJS",
   "repository": "https://github.com/roemhildtg/can-crud",
   "watch": {
