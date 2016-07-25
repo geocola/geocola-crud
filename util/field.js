@@ -24,7 +24,7 @@ for (var type in TEMPLATES) {
   }
 }
 
-export {TEMPLATES};
+export { TEMPLATES };
 
 /**
  * @module util/field.Field FieldDefinition
@@ -113,7 +113,7 @@ export const Field = CanMap.extend({
   },
   getFormattedValue(obj) {
     return this.attr('formatter') ?
-      this.attr('formatter')(obj.attr(this.attr('name')), obj):
+      this.attr('formatter')(obj.attr(this.attr('name')), obj) :
       can.esc(obj.attr(this.attr('name')));
   }
 });
@@ -126,6 +126,10 @@ export const Field = CanMap.extend({
  * @return {Array<Field>} The array of fields
  */
 export function mapToFields(m) {
+  if (!m) {
+    console.warn('map is undefined, so no fields will be generated');
+    return [];
+  }
   let define = m.define || m.prototype.define;
   let fields = [];
   if (define) {
