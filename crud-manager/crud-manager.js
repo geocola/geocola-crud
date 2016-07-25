@@ -16,7 +16,6 @@ import '../paginate-widget/';
 import 'can-ui/modal-container/';
 import 'can-ui/tab-container/';
 import 'can-ui/panel-container/';
-import { Message } from 'can-ui/alert-widget/message';
 
 import { FilterList } from '../filter-widget/Filter';
 import { mapToFields, parseFieldArray } from '../util/field';
@@ -257,8 +256,9 @@ export let ViewModel = CanMap.extend({
           return parseFieldArray(this.attr('view.fields'));
         }
 
-        //if that doesn't exist, use the objectTemplate to create fields
-        return mapToFields(this.attr('view.objectTemplate'));
+        //if that doesn't exist, use the objectTemplate or Map to create fields
+        let template = this.attr('view.objectTemplate') || this.attr('view.connection.Map');
+        return mapToFields(template);
       }
     },
     /**
@@ -383,10 +383,10 @@ export let ViewModel = CanMap.extend({
       }
 
       //add a message
-      PubSub.publish(TOPICS.ADD_MESSAGE, new Message({
+      PubSub.publish(TOPICS.ADD_MESSAGE, {
         message: this.attr('view.saveSuccessMessage'),
         detail: 'ID: ' + this.attr('view.connection').id(result)
-      }));
+      });
 
       //update the view id
       //set page to the details view by default
@@ -397,12 +397,12 @@ export let ViewModel = CanMap.extend({
 
     }).fail(e => {
       console.warn(e);
-      PubSub.publish(TOPICS.ADD_MESSAGE, new Message({
+      PubSub.publish(TOPICS.ADD_MESSAGE, {
         message: this.attr('view.saveFailMessage'),
         detail: e.statusText + ' : <small>' + e.responseText + '</small>',
         level: 'danger',
         timeout: 20000
-      }));
+      });
       this.attr('page', page);
     });
     return deferred;
@@ -463,20 +463,20 @@ export let ViewModel = CanMap.extend({
         this.onEvent(obj, 'afterDelete');
 
         //add a message
-        PubSub.publish(TOPICS.ADD_MESSAGE, new Message({
+        PubSub.publish(TOPICS.ADD_MESSAGE, {
           message: this.attr('view.deleteSuccessMessage'),
           detail: 'ID: ' + this.attr('view.connection').id(result)
-        }));
+        });
       });
 
       deferred.fail(result => {
         //add a message
-        PubSub.publish(TOPICS.ADD_MESSAGE, new Message({
+        PubSub.publish(TOPICS.ADD_MESSAGE, {
           message: this.attr('view.deleteFailMessage'),
           detail: result.statusText + ' : <small>' + result.responseText + '</small>',
           level: 'danger',
           timeout: 20000
-        }));
+        });
       });
       return deferred;
     }
