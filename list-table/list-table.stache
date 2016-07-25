@@ -17,10 +17,12 @@
       {{#each objects}}
         <tr {{#if isSelected(.)}} class="warning" {{/if}}>
           <td class="tool-buttons">
-            <i ($click)="toggleSelected(.)" class="fa {{#if isSelected(.)}}fa-check-square-o{{else}}fa-square-o{{/if}}"></i>
-            {{#each buttons}}
-              <i ($click)="buttonClick(eventName, ../.)" title="{{title}}" class="{{iconClass}}"></i>
-            {{/each}}
+            <div class="btn-group" role="group" aria-label="...">
+              <button title="Select Row" class="btn btn-default btn-sm" type="button" ($click)="toggleSelected(.)"><i class="fa {{#if isSelected(.)}}fa-check-square-o{{else}}fa-square-o{{/if}}"></i></button>
+              {{#each buttons}}
+                <button title="{{title}}" ($click)="buttonClick(eventName, ../.)" class="btn btn-default btn-sm" type="button"><i class="{{iconClass}}"></i></button>
+              {{/each}}
+            </div>
           </td>
           {{#each fields}}
             {{! this passes the field name and the current object to getFieldValue }}
