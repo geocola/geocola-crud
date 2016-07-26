@@ -53,6 +53,35 @@ test('totalPages get()', assert => {
   });
 });
 
+test('perPageOptions get()', assert => {
+  let tests = [{
+    total: 1,
+    expected: []
+  }, {
+    total: 15,
+    expected: [10, 20]
+  }, {
+    total: 50,
+    expected: [10, 20, 50]
+  }, {
+    total: 99,
+    expected: [10, 20, 50, 100]
+  }];
+  tests.forEach(t => {
+    vm.attr({
+      view: {
+        connection: {
+          metadata: {
+            total: t.total
+          }
+        }
+      }
+    });
+    assert.deepEqual(vm.attr('perPageOptions').serialize(), t.expected, 'per page options should be filtered correctly');
+  });
+
+});
+
 test('showPaginate get()', assert => {
   vm.attr({
     view: {
@@ -172,7 +201,7 @@ test('saveObject(obj) success', assert => {
     connection: Connection
   };
   let token = PubSub.subscribe(TOPICS.ADD_MESSAGE, (name, message) => {
-    assert.ok(message.attr('message'), 'message should be published');
+    assert.ok(message.message, 'message should be published');
     done();
   });
 
@@ -263,7 +292,7 @@ test('deleteObject(obj, skipConfirm) ', assert => {
     }
   };
   let token = PubSub.subscribe(TOPICS.ADD_MESSAGE, (name, message) => {
-    assert.ok(message.attr('message'), 'message should be published');
+    assert.ok(message.message, 'message should be published');
     done();
   });
 
@@ -288,7 +317,7 @@ test('deleteMmultiple()', assert => {
     connection: Connection
   };
   let token = PubSub.subscribe(TOPICS.ADD_MESSAGE, (name, message) => {
-    assert.ok(message.attr('message'), 'message should be published');
+    assert.ok(message.message, 'message should be published');
     done();
   });
 
