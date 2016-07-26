@@ -133,12 +133,12 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     perPageOptions: {
-      Value(){
+      Value() {
         return [10, 20, 50, 100];
       },
-      get(counts){
+      get(counts) {
         return counts.filter((c, index) => {
-          return counts[index ? index - 1: index] < this.attr('view.connection.metadata.total');
+          return counts[index ? index - 1 : index] < this.attr('view.connection.metadata.total');
         });
       }
     },
@@ -510,12 +510,14 @@ export let ViewModel = CanMap.extend({
    * and will immediately attempt to remove the selected objects
    */
   deleteMultiple(skipConfirm) {
-    if (skipConfirm || confirm('Are you sure you want to delete the selected records?')) {
+    let selected = this.attr('selectedObjects');
+    if (skipConfirm || confirm('Are you sure you want to delete the ' +
+        selected.length + ' selected records?')) {
       let defs = [];
-      this.attr('selectedObjects').forEach((obj) => {
+      selected.forEach((obj) => {
         defs.push(this.deleteObject(null, null, null, obj, true));
       });
-      this.attr('selectedObjects').replace([]);
+      selected.replace([]);
       return defs;
     }
     return null;
