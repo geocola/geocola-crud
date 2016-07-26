@@ -20,16 +20,45 @@ import { Field } from '../util/field';
 export const ViewMap = CanMap.extend({
   define: {
     /**
-     * The can-connect object that connects our view to a rest api resource.
-     * In order for pagination to work on the crud-manager, this connection
-     * needs a special property set on it called `metadata.total` which
-     * represents the total number of items available to the rest api.
-     * This object is coerced into a CanMap to make the entire object
-     * observable so this property can be set asynchronously.
-     * @type {Object}
+     * A can-connect object that utilizes a miniumum of the base and constructor behaviors.
+     * This includes the can-connect.SuperMap, which consists of many different behaviors.
+     * In addition, a custom set of behaviors may be used as long as they include
+     * the constructor.
+     *
+     * This connection property can also contain a special metadata object. This object
+     * may include more properties in the future but currently it supports a `total`
+     * property which allows the template to display how many items there are in total.
+     * The path to this property should be `connection.metadata.total`.
+     *
+     * @link https://connect.canjs.com/doc/index.html can-connect
+     * @link https://connect.canjs.com/doc/can-connect|constructor.html constructor
+     * @property {can-connect} connection
      */
     connection: {
       Type: CanMap
+    },
+    /**
+     * A template for creating new objects. This should be an constructor of can.Map
+     * created using can.Map.extend. This object defines the default properties, types,
+     * and can be used to implement custom serialization on objects before they are saved.
+     *
+     * CanJS includes a powerful define plugin which can implement very powerful
+     * behavior with `serialize`, `value`, getters, and setters.
+     *
+     * This is usually the same object that is passed to can-connect `Map` property
+     * and can reused here also: `connection.Map`.
+     *
+     * @link https://canjs.com/docs/can.Map.prototype.define.html Define Plugin
+     * @signature `objectTemplate: can.Map.extend({prop: 'value'})`
+     * @property {Constructor<can.Map>} objectTemplate
+     */
+    objectTemplate: {
+      get(obj) {
+        if (!obj) {
+          return this.attr('connection.Map');
+        }
+        return obj;
+      }
     },
     /**
      * An array of field definitions which controls the display and editing
@@ -75,38 +104,6 @@ export const ViewMap = CanMap.extend({
    * @property {Boolean} disableAdd
    */
   disableAdd: false,
-  /**
-   * A can-connect object that utilizes a miniumum of the base and constructor behaviors.
-   * This includes the can-connect.SuperMap, which consists of many different behaviors.
-   * In addition, a custom set of behaviors may be used as long as they include
-   * the constructor.
-   *
-   * This connection property can also contain a special metadata object. This object
-   * may include more properties in the future but currently it supports a `totalItems`
-   * property which allows the template to display how many items there are in total.
-   * The path to this property should be `connection.metadata.totalItems`.
-   *
-   * @link https://connect.canjs.com/doc/index.html can-connect
-   * @link https://connect.canjs.com/doc/can-connect|constructor.html constructor
-   * @property {can-connect} connection
-   */
-  connection: undefined,
-  /**
-   * A template for creating new objects. This should be an constructor of can.Map
-   * created using can.Map.extend. This object defines the default properties, types,
-   * and can be used to implement custom serialization on objects before they are saved.
-   *
-   * CanJS includes a powerful define plugin which can implement very powerful
-   * behavior with `serialize`, `value`, getters, and setters.
-   *
-   * This is usually the same object that is passed to can-connect `Map` property
-   * and can reused here also: `connection.Map`.
-   *
-   * @link https://canjs.com/docs/can.Map.prototype.define.html Define Plugin
-   * @signature `objectTemplate: can.Map.extend({prop: 'value'})`
-   * @property {Constructor<can.Map>} objectTemplate
-   */
-  objectTemplate: undefined,
   /**
    * A property that controls the display of rows of data. This property can either
    * be `list-table` or `property-table`.
