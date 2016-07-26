@@ -6,8 +6,7 @@
       <p>You do not have permission to edit this data.</p>
     {{else}}
       {{#if focusObject.isResolved}}
-        <form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('list')"
-          {fields}="_fields" />
+        <form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
       {{/if}}
     {{/if}}
   {{/case}}
@@ -20,8 +19,7 @@
     {{#if view.disableAdd}}
       <p>You do not have permission to add this data.</p>
     {{else}}
-      <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')"
-        {fields}="_fields" />
+      <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
     {{/if}}
 
   {{/case}}
@@ -33,8 +31,7 @@
   {{#case 'list'}}
     {{#if objects.isPending}}
       <div class="progress">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100"
-          aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
           <span>Refreshing Data...</span>
         </div>
       </div>
@@ -53,11 +50,11 @@
 
           {{#unless view.disableEdit}}
             <button class="btn btn-default" ($click)="editObject(null, null null, .)">
-              <i class="fa fa-wrench"></i> Edit
+              <i class="fa fa-pencil"></i> Edit
             </button>
           {{/unless}}
           {{#unless view.disableDelete}}
-            <button class="btn btn-default" ($click)="deleteObject(null, null, null, .)">
+            <button class="btn btn-danger" ($click)="deleteObject(null, null, null, .)">
               <i class="fa fa-trash"></i> Remove
             </button>
           {{/unless}}
@@ -68,9 +65,7 @@
       {{/each}}
 
       {{else}}
-        <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject"
-          (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort"
-          {fields}="_fields" {buttons}="buttons" />
+        <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
     {{/is}}{{!view.ListType 'property-table'}}
 
     <hr />
@@ -102,28 +97,28 @@
     </div>
 
     <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
-      <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate"
-      />
+      <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
     </panel-container>
 
-    {{#if showPaginate}}
-      <div class="hidden-print">
+    <div class="hidden-print">
+      {{#if showPaginate}}
         <paginate-widget {(active-page-index)}="parameters.page" {pages}="totalPages" />
+      {{/if}}
+      {{#if perPageOptions.length}}
         <div class="per-page-form">
           <form class="form-inline">
             <div class="form-group">
               <label for="perPageSelect">Items per page:</label>
               <select {($value)}="parameters.perPage" class="form-control">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
+                {{#each perPageOptions}}
+                  <option value="{{.}}">{{.}}</option>
+                {{/each}}
               </select>
             </div>
           </form>
         </div>
-      </div>
-    {{/if}}
+      {{/if}}
+    </div>
   {{/case}}
 
 
@@ -152,8 +147,7 @@
         <tab-container>
           {{#each view.relatedViews}}
             <panel-container title="{{./view.title}}" collapsible="false">
-              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}"
-              />
+              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
             </panel-container>
           {{/each}}
         </tab-container>
@@ -173,7 +167,7 @@
         {{#unless ../view.disableEdit}}
           <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
             <button class="btn btn-default" ($click)="editObject(null, null null, .)">
-              <i class="fa fa-wrench"></i> Edit
+              <i class="fa fa-pencil"></i> Edit
             </button>
           </div>
         {{/unless}}
@@ -184,8 +178,7 @@
           <tab-container>
             {{#each ../view.relatedViews}}
               <panel-container title="{{./view.title}}" collapsible="false">
-                <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}"
-                />
+                <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
               </panel-container>
             {{/each}}
           </tab-container>
@@ -199,8 +192,7 @@
 
   {{#case 'loading'}}
     <div class="progress">
-      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{progress}}"
-        aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
         <span class="sr-only">Loading...</span>
       </div>
     </div>

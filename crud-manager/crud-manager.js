@@ -124,6 +124,25 @@ export let ViewModel = CanMap.extend({
       }
     },
     /**
+     * The array of per page counts to display in the per page switcher. This
+     * list is automatically filtered to include options provided where one
+     * step below is less than the total count. Example, if there are
+     * 30 total items, the default list returned will be 10, 20, and 50.
+     * If no options are returned the per page switcher is hidden.
+     * @property {Array<Number>} crud-manager.ViewModel.props.perPageOptions
+     * @parent crud-manager.ViewModel.props
+     */
+    perPageOptions: {
+      Value(){
+        return [10, 20, 50, 100];
+      },
+      get(counts){
+        return counts.filter((c, index) => {
+          return counts[index ? index - 1: index] < this.attr('view.connection.metadata.total');
+        });
+      }
+    },
+    /**
      * A helper to show or hide the paginate-widget. If totalPages is less than
      * 2, the paginate widget will not be shown.
      * @property {Boolean} crud-manager.ViewModel.props.showPaginate

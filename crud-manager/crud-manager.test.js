@@ -53,6 +53,35 @@ test('totalPages get()', assert => {
   });
 });
 
+test('perPageOptions get()', assert => {
+  let tests = [{
+    total: 1,
+    expected: [10]
+  }, {
+    total: 15,
+    expected: [10, 20]
+  }, {
+    total: 50,
+    expected: [10, 20, 50]
+  }, {
+    total: 99,
+    expected: [10, 20, 50, 100]
+  }];
+  tests.forEach(t => {
+    vm.attr({
+      view: {
+        connection: {
+          metadata: {
+            total: t.total
+          }
+        }
+      }
+    });
+    assert.deepEqual(t.expected, vm.attr('perPageOptions'), 'per page options should be filtered correctly');
+  });
+
+});
+
 test('showPaginate get()', assert => {
   vm.attr({
     view: {
