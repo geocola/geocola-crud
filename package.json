@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "Data management and crud operation components built using CanJS",
   "repository": "https://github.com/roemhildtg/can-crud",
+  "main": "index.js",
   "watch": {
     "lint": "**/*.js",
     "test": "**/*.js"
@@ -38,32 +39,5 @@
     "pubsub-js": "^1.5.x",
     "steal": "^0.16.x",
     "underscore": "^1.8.x"
-  },
-  "main": "can-crud/index.js",
-  "system": {
-    "bundleAssets": true,
-    "bundle": [
-      "can-crud/index.js"
-    ],
-    "npmIgnore": [
-      "documentjs",
-      "jshint",
-      "steal-tools",
-      "testee",
-      "npm-watch"
-    ],
-    "paths": {
-      "bootstrap": "node_modules/bootstrap/dist/js/bootstrap.min.js"
-    },
-    "shim": {
-      "jquery": {
-        "exports": "jQuery"
-      },
-      "bootstrap": {
-        "deps": [
-          "jquery"
-        ]
-      }
-    }
   }
 }
