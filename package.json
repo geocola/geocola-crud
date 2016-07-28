@@ -39,11 +39,11 @@
     "steal": "^0.16.x",
     "underscore": "^1.8.x"
   },
-  "main": "index",
+  "main": "can-crud/index.js",
   "system": {
     "bundleAssets": true,
     "bundle": [
-      "index"
+      "can-crud/index.js"
     ],
     "npmIgnore": [
       "documentjs",
