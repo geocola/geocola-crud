@@ -395,17 +395,18 @@ export let ViewModel = CanMap.extend({
     //save the object
     var deferred = this.attr('view.connection').save(obj);
     deferred.then(result => {
-      if (page === 'add') {
-        this.onEvent(obj, 'afterCreate');
-      } else {
-        this.onEvent(obj, 'afterSave');
-      }
 
       //add a message
       PubSub.publish(TOPICS.ADD_MESSAGE, {
         message: this.attr('view.saveSuccessMessage'),
         detail: 'ID: ' + this.attr('view.connection').id(result)
       });
+
+      if (page === 'add') {
+        this.onEvent(obj, 'afterCreate');
+      } else {
+        this.onEvent(obj, 'afterSave');
+      }
 
       //update the view id
       //set page to the details view by default
@@ -478,14 +479,14 @@ export let ViewModel = CanMap.extend({
       let deferred = this.attr('view.connection').destroy(obj);
       deferred.then(result => {
 
-        //afterDelete handler
-        this.onEvent(obj, 'afterDelete');
-
         //add a message
         PubSub.publish(TOPICS.ADD_MESSAGE, {
           message: this.attr('view.deleteSuccessMessage'),
           detail: 'ID: ' + this.attr('view.connection').id(result)
         });
+
+        //afterDelete handler
+        this.onEvent(obj, 'afterDelete');
       });
 
       deferred.fail(result => {
