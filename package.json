@@ -32,7 +32,7 @@
     "can": "^2.3.x",
     "can-connect": "^0.5.x",
     "can-set": "^0.5.x",
-    "can-ui": "git+https://github.com/roemhildtg/can-ui.git",
+    "can-ui": "latest",
     "date-selector": "^2.0.x",
     "font-awesome": "^4.5.x",
     "jquery": "^3.1.0",
