@@ -1,206 +1,247 @@
 {{#switch page}}
 
 
-  {{#case 'edit'}}
-    {{#if view.disableEdit}}
-      <p>You do not have permission to edit this data.</p>
-    {{else}}
-      {{#if focusObject.isResolved}}
-        <form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
-      {{/if}}
-    {{/if}}
-  {{/case}}
+    {{#case 'edit'}}
+        {{#if view.disableEdit}}
+            <p>You do not have permission to edit this data.</p>
+        {{else}}
+            {{#if focusObject.isResolved}}
+                <form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
+            {{/if}}
+        {{/if}}
+    {{/case}}
 
 
 
 
-  {{#case 'add'}}
+    {{#case 'add'}}
 
-    {{#if view.disableAdd}}
-      <p>You do not have permission to add this data.</p>
-    {{else}}
-      <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
-    {{/if}}
+        {{#if view.disableAdd}}
+            <p>You do not have permission to add this data.</p>
+        {{else}}
+            <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
+        {{/if}}
 
-  {{/case}}
-
-
+    {{/case}}
 
 
 
-  {{#case 'list'}}
-    {{#if objects.isPending}}
-      <div class="progress">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-          <span>Refreshing Data...</span>
-        </div>
-      </div>
-    {{/if}}
-    <p>
-      <small class="text-primary">
+
+
+    {{#case 'list'}}
+        {{#if objects.isPending}}
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                    <span>Refreshing Data...</span>
+                </div>
+            </div>
+        {{/if}}
+        <p>
+            <small class="text-primary">
         {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. {{/if}}
         Page {{pageNumber}} of {{totalPages}}
       </small>
-    </p>
+        </p>
 
-    {{#is view.listType 'property-table'}}
+        {{#is view.listType 'property-table'}}
 
-      {{#each objects.value}}
-        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+            {{#each objects.value}}
+                <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
 
-          {{#unless view.disableEdit}}
-            <button class="btn btn-default" ($click)="editObject(null, null null, .)">
-              <i class="fa fa-pencil"></i> Edit
-            </button>
-          {{/unless}}
-          {{#unless view.disableDelete}}
-            <button class="btn btn-danger" ($click)="deleteObject(null, null, null, .)">
-              <i class="fa fa-trash"></i> Remove
-            </button>
-          {{/unless}}
+                    {{#unless view.disableEdit}}
+                        <button class="btn btn-default" ($click)="editObject(null, null null, .)">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                    {{/unless}}
+                    {{#unless view.disableDelete}}
+                        <button class="btn btn-danger" ($click)="deleteObject(null, null, null, .)">
+                            <i class="fa fa-trash"></i> Remove
+                        </button>
+                    {{/unless}}
 
-        </div>
+                </div>
 
-        <property-table {object}="." {connection}="view.connection" {fields}="_fields" />
-      {{/each}}
-
-      {{else}}
-        <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
-    {{/is}}{{!view.ListType 'property-table'}}
-
-    <hr />
-
-    <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-      <button class="btn btn-default" ($click)="toggleFilter()">
-        <i class="fa fa-search"></i> Search ({{parameters.filters.length}})
-      </button>
-      {{#unless view.disableAdd}}
-        <button class="btn btn-default" ($click)="setPage('add')">
-          <i class="fa fa-plus"></i> Add New
-        </button>
-      {{/unless}}
-    </div>
-    <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-      {{#if selectedObjects.length}}
-      <button class="btn btn-default" ($click)="setPage('selection')">
-        <i class="fa fa-list"></i> Selected
-         <span class="badge">{{selectedObjects.length}}</span>
-      </button>
-      <button class="btn btn-default" title="Clear Selection" ($click)="clearSelection()">
-        <i class="fa fa-remove"></i>
-      </button>
-        {{#each view.manageButtons}}
-          <button class="btn btn-{{#if buttonClass}}{{buttonClass}}{{else}}default{{/if}}" title="{{text}}" ($click)="onClick(selectedObjects)">
-            <i class="{{iconClass}}"></i>
-          </button>
-        {{/each}}
-        {{#unless view.disableDelete}}
-          <button class="btn btn-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
-            <i class="fa fa-trash"></i>
-          </button>
-        {{/unless}}
-      {{/if}}
-    </div>
-
-    <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
-      <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
-    </panel-container>
-
-    <div class="hidden-print">
-      {{#if showPaginate}}
-        <paginate-widget {(active-page-index)}="parameters.page" {pages}="totalPages" />
-      {{/if}}
-      {{#if perPageOptions.length}}
-        <div class="per-page-form">
-          <form class="form-inline">
-            <div class="form-group">
-              <label for="perPageSelect">Items per page:</label>
-              <select {($value)}="parameters.perPage" class="form-control">
-                {{#each perPageOptions}}
-                  <option value="{{.}}">{{.}}</option>
-                {{/each}}
-              </select>
-            </div>
-          </form>
-        </div>
-      {{/if}}
-    </div>
-  {{/case}}
-
-
-
-
-
-
-
-  {{#case 'details'}}
-    {{#if focusObject.isResolved}}
-      <property-table {object}="focusObject.value" {fields}="_fields" />
-      <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-        <button class="btn btn-default" ($click)="setPage('list')">
-          <i class="fa fa-arrow-left"></i> {{view.title}}
-        </button>
-        {{#unless view.disableEdit}}
-          <button class="btn btn-default" ($click)="editObject(null, null null, focusObject.value)">
-            <i class="fa fa-pencil"></i> Edit
-          </button>
-        {{/unless}}
-      </div>
-
-      {{#if view.relatedViews}}
-        <hr />
-        <h3>Related Data</h3>
-        <tab-container>
-          {{#each view.relatedViews}}
-            <panel-container title="{{./view.title}}" collapsible="false">
-              <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
-            </panel-container>
-          {{/each}}
-        </tab-container>
-      {{/if}}
-
-    {{/if}}
-  {{/case}}
-
-
-  {{#case 'selection'}}
-    <button class="btn btn-default" ($click)="setPage('list')">
-      <i class="fa fa-arrow-left"></i> {{view.title}}
-    </button>
-    {{#if selectedObjects.length}}
-      {{#each selectedObjects}}
-        <property-table {object}="." {fields}="_fields" />
-        {{#unless ../view.disableEdit}}
-          <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-            <button class="btn btn-default" ($click)="editObject(null, null null, .)">
-              <i class="fa fa-pencil"></i> Edit
-            </button>
-          </div>
-        {{/unless}}
-
-        {{#if ../view.relatedViews}}
-          <hr />
-          <h3>Related Data</h3>
-          <tab-container>
-            {{#each ../view.relatedViews}}
-              <panel-container title="{{./view.title}}" collapsible="false">
-                <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
-              </panel-container>
+                <property-table {object}="." {connection}="view.connection" {fields}="_fields" />
             {{/each}}
-          </tab-container>
+
+            {{else}}
+                <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
+        {{/is}}{{!view.ListType 'property-table'}}
+
+        <hr />
+
+        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+            <button class="btn btn-default" ($click)="toggleFilter()">
+                <i class="fa fa-search"></i> Search ({{parameters.filters.length}})
+            </button>
+            {{#unless view.disableAdd}}
+                <button class="btn btn-default" ($click)="setPage('add')">
+                    <i class="fa fa-plus"></i> Add New
+                </button>
+            {{/unless}}
+        </div>
+        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+            {{#if selectedObjects.length}}
+                <button class="btn btn-default" ($click)="setPage('selection')">
+                    <i class="fa fa-list"></i> Selected
+                    <span class="badge">{{selectedObjects.length}}</span>
+                </button>
+                <button class="btn btn-default" title="Clear Selection" ($click)="clearSelection()">
+                    <i class="fa fa-remove"></i>
+                </button>
+                {{#each view.manageButtons}}
+                    <button class="btn btn-{{#if buttonClass}}{{buttonClass}}{{else}}default{{/if}}" title="{{text}}" ($click)="onClick(selectedObjects)">
+                        <i class="{{iconClass}}"></i>
+                    </button>
+                {{/each}}
+                {{#unless view.disableDelete}}
+                    <button class="btn btn-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                {{/unless}}
+            {{/if}}
+        </div>
+
+        <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
+            <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
+        </panel-container>
+
+        <div class="hidden-print">
+            {{#if showPaginate}}
+                <paginate-widget {(active-page-index)}="parameters.page" {pages}="totalPages" />
+            {{/if}}
+            {{#if perPageOptions.length}}
+                <div class="per-page-form">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="perPageSelect">Items per page:</label>
+                            <select {($value)}="parameters.perPage" class="form-control">
+                                {{#each perPageOptions}}
+                                    <option value="{{.}}">{{.}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            {{/if}}
+        </div>
+    {{/case}}
+
+
+
+
+
+
+
+    {{#case 'details'}}
+        {{#if focusObject.isResolved}}
+
+            {{#if view.relatedViews}}
+                <div class="row">
+                    <div class="col-md-6">
+                        <property-table {object}="focusObject.value" {fields}="_fields" />
+                        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+                            <button class="btn btn-default" ($click)="setPage('list')">
+                                <i class="fa fa-arrow-left"></i> {{view.title}}
+                            </button>
+                            {{#unless view.disableEdit}}
+                                <button class="btn btn-default" ($click)="editObject(null, null null, focusObject.value)">
+                                    <i class="fa fa-pencil"></i> Edit
+                                </button>
+                            {{/unless}}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Related Data</h3>
+                        <tab-container>
+                            {{#each view.relatedViews}}
+                                <panel-container title="{{./view.title}}" collapsible="false">
+                                    <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
+                                </panel-container>
+                            {{/each}}
+                        </tab-container>
+                    </div>
+                </div>
+            {{else}}
+                <property-table {object}="focusObject.value" {fields}="_fields" />
+                <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+                    <button class="btn btn-default" ($click)="setPage('list')">
+                        <i class="fa fa-arrow-left"></i> {{view.title}}
+                    </button>
+                    {{#unless view.disableEdit}}
+                        <button class="btn btn-default" ($click)="editObject(null, null null, focusObject.value)">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                    {{/unless}}
+            {{/if}}{{!view.relatedViews}}
+
+        {{/if}}{{!focusObject.isResolved}}
+    {{/case}}
+
+
+    {{#case 'selection'}}
+        <button class="btn btn-default" ($click)="setPage('list')">
+            <i class="fa fa-arrow-left"></i> {{view.title}}
+        </button>
+        {{#if selectedObjects.length}}
+            {{#each selectedObjects}}
+
+                {{#if view.relatedViews}}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <property-table {object}="." {fields}="_fields" />
+                            {{#unless ../view.disableEdit}}
+                                <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+                                    <button class="btn btn-default" ($click)="editObject(null, null null, .)">
+                                        <i class="fa fa-pencil"></i> Edit
+                                    </button>
+                                </div>
+                            {{/unless}}
+                        </div>
+                        <div class="col-md-6">
+                            <h3>Related Data</h3>
+                            <tab-container>
+                                {{#each ../view.relatedViews}}
+                                    <panel-container title="{{./view.title}}" collapsible="false">
+                                        <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
+                                    </panel-container>
+                                {{/each}}
+                            </tab-container>
+                        </div>
+                    </div>
+                {{else}}
+
+                    <property-table {object}="." {fields}="_fields" />
+                    {{#unless ../view.disableEdit}}
+                        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
+                            <button class="btn btn-default" ($click)="editObject(null, null null, .)">
+                                <i class="fa fa-pencil"></i> Edit
+                            </button>
+                        </div>
+                    {{/unless}}
+
+                    <h3>Related Data</h3>
+                    <tab-container>
+                        {{#each ../view.relatedViews}}
+                            <panel-container title="{{./view.title}}" collapsible="false">
+                                <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
+                            </panel-container>
+                        {{/each}}
+                    </tab-container>
+                {{/if}}{{!view.relatedViews}}
+
+
+            {{/each}}
+        {{else}}
+            <p>No objects were selected.</p>
         {{/if}}
+    {{/case}}
 
-      {{/each}}
-    {{else}}
-      <p>No objects were selected.</p>
-    {{/if}}
-  {{/case}}
-
-  {{#case 'loading'}}
-    <div class="progress">
-      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
-        <span class="sr-only">Loading...</span>
-      </div>
-    </div>
-  {{/case}}
+    {{#case 'loading'}}
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    {{/case}}
 {{/switch}}
