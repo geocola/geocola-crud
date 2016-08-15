@@ -221,6 +221,7 @@
                     {{/unless}}
                 {{/if}}{{!view.relatedViews}}
 
+                <hr />
 
             {{/each}}
         {{else}}
