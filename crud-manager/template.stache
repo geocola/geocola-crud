@@ -186,7 +186,7 @@
         {{#if selectedObjects.length}}
             {{#each selectedObjects}}
 
-                {{#if view.relatedViews}}
+                {{#if view.relatedViews.length}}
                     <div class="row">
                         <div class="col-md-6">
                             <property-table {object}="." {fields}="_fields" />
@@ -219,15 +219,6 @@
                             </button>
                         </div>
                     {{/unless}}
-
-                    <h3>Related Data</h3>
-                    <tab-container>
-                        {{#each ../view.relatedViews}}
-                            <panel-container title="{{./view.title}}" collapsible="false">
-                                <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
-                            </panel-container>
-                        {{/each}}
-                    </tab-container>
                 {{/if}}{{!view.relatedViews}}
 
 
