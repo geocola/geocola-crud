@@ -71,7 +71,7 @@ export const ViewModel = CanMap.extend({
     },
     /**
      * A promise that resolves to the object. Used to determine state of current fetching operations
-     * @property {Promise | `null`}  property-table.ViewModel.props.objectPromise
+     * @property {Promise}  property-table.ViewModel.props.objectPromise
      * @parent property-table.ViewModel.props
      */
     objectPromise: {},
