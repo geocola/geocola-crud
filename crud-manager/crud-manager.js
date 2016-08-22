@@ -524,6 +524,13 @@ export let ViewModel = CanMap.extend({
     return null;
   },
   /**
+   * @function deleteMultiple
+   * empties the currently selected objects array
+   */
+  clearSelection(){
+    this.attr('selectedObjects').replace([]);
+  },
+  /**
    * @function toggleFilter
    * Toggles the display of the filter dialog
    * @signature
