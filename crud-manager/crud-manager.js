@@ -379,12 +379,18 @@ export let ViewModel = CanMap.extend({
     }
     let page = this.attr('page');
 
-    //trigger events beforeCreate/beforeSave depending on if we're adding or
-    //updating an object
+    // trigger events beforeCreate/beforeSave depending on if we're adding or
+    // updating an object
+    let val = true;
     if (page === 'add') {
-      this.onEvent(obj, 'beforeCreate');
+      val = this.onEvent(obj, 'beforeCreate');
     } else {
-      this.onEvent(obj, 'beforeSave');
+      val = this.onEvent(obj, 'beforeSave');
+    }
+
+    // halt save or create if the value returned is falsey
+    if (!val) {
+      return;
     }
 
     //display a loader
@@ -472,8 +478,11 @@ export let ViewModel = CanMap.extend({
     }
     if (obj && (skipConfirm || confirm('Are you sure you want to delete this record?'))) {
 
-      //beforeDelete handler
-      this.onEvent(obj, 'beforeDelete');
+      // beforeDelete handler
+      // if return value is falsey, stop execution and don't delete
+      if (!this.onEvent(obj, 'beforeDelete')) {
+        return;
+      }
 
       //destroy the object using the connection
       let deferred = this.attr('view.connection').destroy(obj);
@@ -512,22 +521,20 @@ export let ViewModel = CanMap.extend({
    */
   deleteMultiple(skipConfirm) {
     let selected = this.attr('selectedObjects');
-    if (skipConfirm || confirm('Are you sure you want to delete the ' +
-        selected.length + ' selected records?')) {
-      let defs = [];
+    let defs = [];
+    if (skipConfirm || confirm(`Are you sure you want to delete the ${selected.length} selected records?`)) {
       selected.forEach((obj) => {
         defs.push(this.deleteObject(null, null, null, obj, true));
       });
       selected.replace([]);
-      return defs;
     }
-    return null;
+    return defs;
   },
   /**
-   * @function deleteMultiple
+   * @function clearSelection
    * empties the currently selected objects array
    */
-  clearSelection(){
+  clearSelection() {
     this.attr('selectedObjects').replace([]);
   },
   /**
@@ -567,12 +574,21 @@ export let ViewModel = CanMap.extend({
     let prop = this.attr(['view', eventName].join('.'));
 
     //if it is a function, call it passing the object
+    let returnVal = true;
     if (typeof prop === 'function') {
-      prop(obj);
+      returnVal = prop(obj);
+
+      // Only return falsey value if a value is returned.
+      // Otherwise the execution of the event will be halted unintentionally
+      if (typeof returnVal === 'undefined') {
+        returnVal = true;
+      }
     }
 
     //dispatch an event
     this.dispatch(eventName, [obj]);
+
+    return returnVal;
   }
 });
 
