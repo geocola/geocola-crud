@@ -1,48 +1,70 @@
+<!DOCTYPE html>
+
 <script type="text/stache" id="demo-html">
-  <h1>Crud Manager Demo</h1>
-  <crud-manager {view}="view" />
+    <h1>Crud Manager Demo</h1>
+    <crud-manager {view}="view" />
 </script>
 <script src="../node_modules/steal/steal.js" main="@empty" id="demo-source">
-  import 'bootstrap/dist/css/bootstrap.min.css!';
-  import 'bootstrap/dist/css/bootstrap-theme.min.css!';
-  import 'font-awesome/css/font-awesome.min.css';
-  import 'crud-manager/';
-  import can from 'can/util/library';
+    import 'bootstrap/dist/css/bootstrap.min.css!';
+    import 'bootstrap/dist/css/bootstrap-theme.min.css!';
+    import 'font-awesome/css/font-awesome.min.css';
+    import 'crud-manager/';
+    import can from 'can/util/library';
 
-  import SuperMap from 'can-connect/can/super-map/';
-  import CanMap from 'can/map/';
-  import List from 'can/list/';
-  import 'test/data/fixtures';
-  import data from 'test/data/tasks.json';
+    import SuperMap from 'can-connect/can/super-map/';
+    import CanMap from 'can/map/';
+    import List from 'can/list/';
+    import data from 'test/data/tasks.json';
+    import 'test/data/fixtures';
+    import 'can/view/stache/';
 
-  const TaskMap = CanMap.extend({
-    "name": "name of task",
-    "description": "description of task"
-  });
+    const TaskMap = CanMap.extend({
+        define: {
+            "name": { value: "name of task" },
+            "description": { value: "description of task" },
+            "completed": { value: false, type: 'boolean' }
+        }
+    });
 
-  const TaskList = List.extend({
-    map: TaskMap
-  });
+    const TaskList = List.extend({
+        map: TaskMap
+    });
 
-  const Connection = SuperMap({
-    idProp: "id",
-    Map: TaskMap,
-    List: TaskList,
-    url: "/tasks",
-    name: "task"
-  });
+    const Connection = SuperMap({
+        idProp: "id",
+        Map: TaskMap,
+        List: TaskList,
+        url: "/tasks",
+        name: "task",
+        metadata: {
+          total: data.length
+        }
+    });
 
-  let viewModel = new CanMap({
-    view: {
-      title: 'Tasks',
-      connection: Connection,
-      objectTemplate: Connection.Map, //we could also use TaskMap,
-      connectionProperties: { totalItems: data.length }
-    }
-  })
+    let viewModel = new CanMap({
+        view: {
+            title: 'Tasks',
+            connection: Connection,
+            manageButtons: [{
+                textClass: 'text-success',
+                buttonClass: 'btn btn-success',
+                text: 'Mark Completed',
+                iconClass: 'fa fa-fw fa-check-square-o',
+                onClick(objs) {
+                    if (!objs.length) {
+                        objs = [objs];
+                    }
+                    objs.forEach(obj => {
+                        obj.attr('completed', true);
+                        Connection.save(obj);
+                    });
+                }
+            }]
+        }
+    })
 
 
-  let frag = can.view('demo-html', viewModel, {});
+    let frag = can.view('demo-html', viewModel, {});
 
-  can.$('body').append(frag);
+    can.$('body').append(frag);
 </script>
