@@ -65,7 +65,7 @@
             {{/each}}
 
             {{else}}
-                <list-table {objects}="objects.value" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
+                <list-table {objects}="objects.value" id-prop="{{view.connection.idProp}}" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
         {{/is}}{{!view.ListType 'property-table'}}
 
         <hr />
@@ -82,23 +82,42 @@
         </div>
         <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
             {{#if selectedObjects.length}}
-                <button class="btn btn-default" ($click)="setPage('selection')">
-                    <i class="fa fa-list"></i> Selected
-                    <span class="badge">{{selectedObjects.length}}</span>
-                </button>
-                <button class="btn btn-default" title="Clear Selection" ($click)="clearSelection()">
-                    <i class="fa fa-remove"></i>
-                </button>
-                {{#each view.manageButtons}}
-                    <button class="btn btn-{{#if buttonClass}}{{buttonClass}}{{else}}default{{/if}}" title="{{text}}" ($click)="onClick(selectedObjects)">
-                        <i class="{{iconClass}}"></i>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" title="View Selected" ($click)="setPage('selection')">
+                        <i class="fa fa-list"></i> Selected <span class="badge">{{selectedObjects.length}}</span>
                     </button>
-                {{/each}}
-                {{#unless view.disableDelete}}
-                    <button class="btn btn-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
-                        <i class="fa fa-trash"></i>
+                    <button type="button" class="btn btn-default" title="Clear Selection" ($click)="clearSelection()">
+                        <i class="fa fa-ban"></i>
+                        <span class="sr-only">Clear Selection</span>
                     </button>
-                {{/unless}}
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+
+                        <li><a href="#" title="Clear Selection" ($click)="clearSelection()"><i class="fa fa-fw fa-ban"></i>Clear</a></li>
+
+                        {{#each view.manageButtons}}
+                            <li>
+                                <a href="#" ($click)="onClick(selectedObjects)">
+                                    <span class="{{textClass}}"><i class="{{iconClass}}"></i> {{text}}</span>
+                                </a>
+                            </li>
+                        {{/each}}
+
+                        {{#unless view.disableDelete}}
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a href="#" class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
+                                    <span class="text-danger"><i class="fa fa-fw fa-trash"></i> Delete</span>
+                                </a>
+                            </li>
+                        {{/unless}}
+                    </ul>
+                </div>
+
             {{/if}}
         </div>
 
@@ -135,6 +154,7 @@
 
     {{#case 'details'}}
         {{#if focusObject.isResolved}}
+            <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
 
             {{#if view.relatedViews}}
                 <div class="row">
@@ -185,6 +205,7 @@
         </button>
         {{#if selectedObjects.length}}
             {{#each selectedObjects}}
+                <h3>{{view.title}}: {{view.connection.id(.)}}</h3>
 
                 {{#if view.relatedViews.length}}
                     <div class="row">
@@ -195,6 +216,11 @@
                                     <button class="btn btn-default" ($click)="editObject(null, null null, .)">
                                         <i class="fa fa-pencil"></i> Edit
                                     </button>
+                                    {{#each ../view.manageButtons}}
+                                        <button class="{{#if buttonClass}}{{buttonClass}}{{else}}btn-btn-default{{/if}}" ($click)="onClick([.])">
+                                            <i class="{{iconClass}}"></i> {{text}}
+                                        </button>
+                                    {{/each}}
                                 </div>
                             {{/unless}}
                         </div>
@@ -217,6 +243,11 @@
                             <button class="btn btn-default" ($click)="editObject(null, null null, .)">
                                 <i class="fa fa-pencil"></i> Edit
                             </button>
+                            {{#each ../view.manageButtons}}
+                                <button class="{{#if buttonClass}}{{buttonClass}}{{else}}btn-btn-default{{/if}}" ($click)="onClick(../.)">
+                                    <i class="{{iconClass}}"></i> {{text}}
+                                </button>
+                            {{/each}}
                         </div>
                     {{/unless}}
                 {{/if}}{{!view.relatedViews}}
