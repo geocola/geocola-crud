@@ -28,9 +28,8 @@ export const ViewModel = CanMap.extend({
      */
     promise: {
       set(newVal) {
-        var self = this;
-        newVal.then(function(objects) {
-          self.attr('objects').replace(objects);
+        newVal.then((objects) => {
+          this.attr('objects').replace(objects);
         });
         return newVal;
       }
@@ -46,6 +45,16 @@ export const ViewModel = CanMap.extend({
       Type: List
     },
     /**
+     * Id property name for the rows of objects. The default is `id`. This value
+     * is used to determine whether objects are selected or not.
+     * @parent list-table.ViewModel.props
+     * @property {String} list-table.ViewModel.props.idProp
+     */
+    idProp: {
+      value: 'id',
+      type: 'string'
+    },
+    /**
      * A list of the currently selected objects in the table
      * @parent list-table.ViewModel.props
      * @property {Array.<can.Map>} list-table.ViewModel.props.selectedObjects
@@ -55,6 +64,19 @@ export const ViewModel = CanMap.extend({
       Type: List
     },
     /**
+     * An array of ids for the selected objects. This is a virtual property
+     * and cannot be set.
+     * @parent list-table.ViewModel.props
+     * @property {Array<Number>} list-table.ViewModel.props.selectedIds
+     */
+    selectedIds: {
+      get(){
+        return this.attr('selectedObjects').map(obj => {
+          return obj.attr(this.attr('idProp'));
+        });
+      }
+    },
+    /**
      * A virtual property that helps the template determine whether all objects are selected
      * @parent list-table.ViewModel.props
      * @property {Boolean} list-table.ViewModel.props._allSelected
@@ -62,7 +84,7 @@ export const ViewModel = CanMap.extend({
     _allSelected: {
       type: 'boolean',
       get() {
-        return this.attr('selectedObjects').length === this.attr('objects').length;
+        return this.attr('selectedObjects.length')=== this.attr('objects.length');
       }
     },
     /**
@@ -143,7 +165,7 @@ export const ViewModel = CanMap.extend({
    * @param  {can.Map} obj The row to toggle
    */
   toggleSelected(obj) {
-    var index = this.attr('selectedObjects').indexOf(obj);
+    let index = this.attr('selectedObjects').indexOf(obj);
     if (index > -1) {
       this.attr('selectedObjects').splice(index, 1);
     } else {
@@ -171,7 +193,7 @@ export const ViewModel = CanMap.extend({
    * @return {Boolean}     Whether or not it is selected
    */
   isSelected(obj) {
-    return this.attr('selectedObjects').indexOf(obj) > -1;
+    return this.attr('selectedIds').indexOf(obj.attr(this.attr('idProp'))) > -1;
   },
   /**
    * @function getFieldValue
