@@ -97,11 +97,9 @@
                     </button>
                     <ul class="dropdown-menu">
 
-                        <li><a href="#" title="Clear Selection" ($click)="clearSelection()"><i class="fa fa-fw fa-ban"></i>Clear</a></li>
-
                         {{#each view.manageButtons}}
                             <li>
-                                <a href="#" ($click)="onClick(selectedObjects)">
+                                <a ($click)="onClick(selectedObjects)">
                                     <span class="{{textClass}}"><i class="{{iconClass}}"></i> {{text}}</span>
                                 </a>
                             </li>
@@ -110,7 +108,7 @@
                         {{#unless view.disableDelete}}
                             <li role="separator" class="divider"></li>
                             <li>
-                                <a href="#" class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
+                                <a class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
                                     <span class="text-danger"><i class="fa fa-fw fa-trash"></i> Delete</span>
                                 </a>
                             </li>
