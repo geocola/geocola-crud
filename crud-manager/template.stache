@@ -46,6 +46,8 @@
         {{#is view.listType 'property-table'}}
 
             {{#each objects.value}}
+
+                <property-table {object}="." {connection}="view.connection" {fields}="_fields" />
                 <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
 
                     {{#unless view.disableEdit}}
@@ -61,11 +63,12 @@
 
                 </div>
 
-                <property-table {object}="." {connection}="view.connection" {fields}="_fields" />
+                <hr />
             {{/each}}
 
             {{else}}
-                <list-table {objects}="objects.value" id-prop="{{view.connection.idProp}}" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons" />
+                <list-table {objects}="objects.value" id-prop="{{view.connection.idProp}}" {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" {buttons}="buttons"
+                />
         {{/is}}{{!view.ListType 'property-table'}}
 
         <hr />
@@ -155,7 +158,7 @@
             {{#if view.relatedViews}}
                 <div class="row">
                     <div class="col-md-6">
-                      <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
+                        <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
                         <property-table {object}="focusObject.value" {fields}="_fields" />
                         <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
                             <button class="btn btn-default" ($click)="setPage('list')">
@@ -180,7 +183,7 @@
                     </div>
                 </div>
             {{else}}
-              <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
+                <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
                 <property-table {object}="focusObject.value" {fields}="_fields" />
                 <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
                     <button class="btn btn-default" ($click)="setPage('list')">
