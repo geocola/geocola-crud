@@ -538,6 +538,14 @@ export let ViewModel = CanMap.extend({
     this.attr('selectedObjects').replace([]);
   },
   /**
+   * passes an array of objects to the on click handler
+   * @param  {object} obj     A single object
+   * @param  {Function} onClick The function to pass array of objects to
+   */
+  manageObject(obj, button){
+    button.onClick([obj]);
+  },
+  /**
    * @function toggleFilter
    * Toggles the display of the filter dialog
    * @signature

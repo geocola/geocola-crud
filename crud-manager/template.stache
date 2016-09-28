@@ -46,8 +46,6 @@
         {{#is view.listType 'property-table'}}
 
             {{#each objects.value}}
-
-                <property-table {object}="." {connection}="view.connection" {fields}="_fields" />
                 <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
 
                     {{#unless view.disableEdit}}
@@ -63,7 +61,7 @@
 
                 </div>
 
-                <hr />
+                <property-table {object}="." {connection}="view.connection" {fields}="_fields" />
             {{/each}}
 
             {{else}}
@@ -83,44 +81,44 @@
                 </button>
             {{/unless}}
         </div>
-        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-            {{#if selectedObjects.length}}
+        {{#if selectedObjects.length}}
+          <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" title="Selection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Selected <span class="badge">{{selectedObjects.length}}</span>
+                <span class="sr-only">Toggle Dropdown</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                {{#each view.manageButtons}}
+                    <li>
+                        <a title="{{text}}" ($click)="onClick(selectedObjects)">
+                                {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}
+                                {{#text}}<span class="{{textClass}}"> {{text}}</span>{{/text}}
+                            </a>
+                    </li>
+                {{/each}}
+                <li>
+                    <a title="View Selected" ($click)="setPage('selection')">
+                        <i class="fa fa-list"></i> View Selected
+                    </a>
+                </li>
+                <li>
+                    <a title="Clear Selection" ($click)="clearSelection()">
+                        <i class="fa fa-ban"></i> Clear Selected
+                    </a>
+                </li>
 
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default" title="View Selected" ($click)="setPage('selection')">
-                        <i class="fa fa-list"></i> Selected <span class="badge">{{selectedObjects.length}}</span>
-                    </button>
-                    <button type="button" class="btn btn-default" title="Clear Selection" ($click)="clearSelection()">
-                        <i class="fa fa-ban"></i>
-                        <span class="sr-only">Clear Selection</span>
-                    </button>
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu">
-
-                        {{#each view.manageButtons}}
-                            <li>
-                                <a ($click)="onClick(selectedObjects)">
-                                    <span class="{{textClass}}"><i class="{{iconClass}}"></i> {{text}}</span>
-                                </a>
-                            </li>
-                        {{/each}}
-
-                        {{#unless view.disableDelete}}
-                            <li role="separator" class="divider"></li>
-                            <li>
-                                <a class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
-                                    <span class="text-danger"><i class="fa fa-fw fa-trash"></i> Delete</span>
-                                </a>
-                            </li>
-                        {{/unless}}
-                    </ul>
-                </div>
-
-            {{/if}}
-        </div>
+                {{#unless view.disableDelete}}
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
+                            <span class="text-danger"><i class="fa fa-fw fa-trash"></i> Delete</span>
+                        </a>
+                    </li>
+                {{/unless}}
+            </ul>
+          </div>
+        {{/if}}
 
         <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
             <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
@@ -155,46 +153,58 @@
 
     {{#case 'details'}}
         {{#if focusObject.isResolved}}
-            {{#if view.relatedViews}}
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-lg-4">
                         <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
                         <property-table {object}="focusObject.value" {fields}="_fields" />
                         <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
                             <button class="btn btn-default" ($click)="setPage('list')">
                                 <i class="fa fa-arrow-left"></i> {{view.title}}
                             </button>
-                            {{#unless view.disableEdit}}
-                                <button class="btn btn-default" ($click)="editObject(null, null null, focusObject.value)">
-                                    <i class="fa fa-pencil"></i> Edit
-                                </button>
-                            {{/unless}}
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                {{#each view.manageButtons}}
+                                    <li>
+                                        <a title="{{text}}" ($click)="manageObject(focusObject.value, .)">
+                                    {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}
+                                    {{#text}}<span class="{{textClass}}"> {{text}}</span>{{/text}}
+                                </a>
+                                    </li>
+                                {{/each}}
+                                {{#unless view.disableEdit}}
+                                    <li>
+                                        <a title="{{text}}" ($click)="editObject(focusObject.value)">
+                                            <i class="fa fa-pencil"></i> Edit
+                                        </a>
+                                    </li>
+                                {{/unless}}
+                                {{#unless view.disableDelete}}
+                                    <li>
+                                        <a title="{{text}}" ($click)="deleteObject(focusObject.value)">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </a>
+                                    </li>
+                                {{/unless}}
+                            </ul>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <h3>Related Data</h3>
-                        <tab-container>
-                            {{#each view.relatedViews}}
-                                <panel-container title="{{./view.title}}" collapsible="false">
-                                    <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
-                                </panel-container>
-                            {{/each}}
-                        </tab-container>
-                    </div>
+                    {{#if view.relatedViews}}
+                        <div class="col-lg-8">
+                            <h3>Related Data</h3>
+                            <tab-container>
+                                {{#each view.relatedViews}}
+                                    <panel-container title="{{./view.title}}" collapsible="false">
+                                        <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../focusObject.value)}}" />
+                                    </panel-container>
+                                {{/each}}
+                            </tab-container>
+                        </div>
+                    {{/if}}
                 </div>
-            {{else}}
-                <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
-                <property-table {object}="focusObject.value" {fields}="_fields" />
-                <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-                    <button class="btn btn-default" ($click)="setPage('list')">
-                        <i class="fa fa-arrow-left"></i> {{view.title}}
-                    </button>
-                    {{#unless view.disableEdit}}
-                        <button class="btn btn-default" ($click)="editObject(null, null null, focusObject.value)">
-                            <i class="fa fa-pencil"></i> Edit
-                        </button>
-                    {{/unless}}
-            {{/if}}{{!view.relatedViews}}
+            </div>
 
         {{/if}}{{!focusObject.isResolved}}
     {{/case}}
@@ -207,24 +217,38 @@
         {{#if selectedObjects.length}}
             {{#each selectedObjects}}
                 <h3>{{view.title}}: {{view.connection.id(.)}}</h3>
-
-                {{#if view.relatedViews.length}}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <property-table {object}="." {fields}="_fields" />
-                            {{#unless ../view.disableEdit}}
-                                <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-                                    <button class="btn btn-default" ($click)="editObject(null, null null, .)">
+                <div class="row">
+                    <div class="col-md-6">
+                        <property-table {object}="." {fields}="_fields" />
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            {{#each view.manageButtons}}
+                                <li>
+                                    <a title="{{text}}" ($click)="manageObject(../., .)">
+                                    {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}
+                                    {{#text}}<span class="{{textClass}}"> {{text}}</span>{{/text}}
+                                </a>
+                                </li>
+                            {{/each}}
+                            {{#unless view.disableEdit}}
+                                <li>
+                                    <a title="{{text}}" ($click)="editObject(.)">
                                         <i class="fa fa-pencil"></i> Edit
-                                    </button>
-                                    {{#each ../view.manageButtons}}
-                                        <button class="{{#if buttonClass}}{{buttonClass}}{{else}}btn-btn-default{{/if}}" ($click)="onClick([.])">
-                                            <i class="{{iconClass}}"></i> {{text}}
-                                        </button>
-                                    {{/each}}
-                                </div>
+                                    </a>
+                                </li>
                             {{/unless}}
-                        </div>
+                            {{#unless view.disableDelete}}
+                                <li>
+                                    <a title="{{text}}" ($click)="deleteObject(.)">
+                                        <i class="fa fa-trash"></i> Delete
+                                    </a>
+                                </li>
+                            {{/unless}}
+                        </ul>
+                    </div>
+                    {{#if view.relatedViews}}
                         <div class="col-md-6">
                             <h3>Related Data</h3>
                             <tab-container>
@@ -235,23 +259,8 @@
                                 {{/each}}
                             </tab-container>
                         </div>
-                    </div>
-                {{else}}
-
-                    <property-table {object}="." {fields}="_fields" />
-                    {{#unless ../view.disableEdit}}
-                        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-                            <button class="btn btn-default" ($click)="editObject(null, null null, .)">
-                                <i class="fa fa-pencil"></i> Edit
-                            </button>
-                            {{#each ../view.manageButtons}}
-                                <button class="{{#if buttonClass}}{{buttonClass}}{{else}}btn-btn-default{{/if}}" ($click)="onClick(../.)">
-                                    <i class="{{iconClass}}"></i> {{text}}
-                                </button>
-                            {{/each}}
-                        </div>
-                    {{/unless}}
-                {{/if}}{{!view.relatedViews}}
+                    {{/if}}{{!view.relatedViews}}
+                </div>
 
                 <hr />
 
