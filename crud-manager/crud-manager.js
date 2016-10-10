@@ -330,7 +330,14 @@ export let ViewModel = CanMap.extend({
    * @param  {Event} event The event that was triggered (not used)
    * @param  {can.Map} obj   The object to start editing
    */
-  editObject(scope, dom, event, obj) {
+  editObject() {
+    let obj;
+    //accept 4 params from the template or just one
+    if (arguments.length === 4) {
+      obj = arguments[3];
+    } else {
+      obj = arguments[0];
+    }
     this.attr({
       'viewId': this.attr('view.connection').id(obj),
       'page': 'edit'
@@ -346,7 +353,14 @@ export let ViewModel = CanMap.extend({
    * @param  {Event} event The event that was triggered (not used)
    * @param  {can.Map} obj   The object to view
    */
-  viewObject(scope, dom, event, obj) {
+  viewObject() {
+    let obj;
+    //accept 4 params from the template or just one
+    if (arguments.length === 4) {
+      obj = arguments[3];
+    } else {
+      obj = arguments[0];
+    }
     this.attr({
       'viewId': this.attr('view.connection').id(obj),
       'page': 'details'

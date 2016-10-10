@@ -82,42 +82,42 @@
             {{/unless}}
         </div>
         {{#if selectedObjects.length}}
-          <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" title="Selection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Selected <span class="badge">{{selectedObjects.length}}</span>
-                <span class="sr-only">Toggle Dropdown</span>
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                {{#each view.manageButtons}}
-                    <li>
-                        <a title="{{text}}" ($click)="onClick(selectedObjects)">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" title="Selection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Selected <span class="badge">{{selectedObjects.length}}</span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    {{#each view.manageButtons}}
+                        <li>
+                            <a title="{{text}}" ($click)="onClick(selectedObjects)">
                                 {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}
                                 {{#text}}<span class="{{textClass}}"> {{text}}</span>{{/text}}
                             </a>
-                    </li>
-                {{/each}}
-                <li>
-                    <a title="View Selected" ($click)="setPage('selection')">
-                        <i class="fa fa-list"></i> View Selected
-                    </a>
-                </li>
-                <li>
-                    <a title="Clear Selection" ($click)="clearSelection()">
-                        <i class="fa fa-ban"></i> Clear Selected
-                    </a>
-                </li>
-
-                {{#unless view.disableDelete}}
-                    <li role="separator" class="divider"></li>
+                        </li>
+                    {{/each}}
                     <li>
-                        <a class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
-                            <span class="text-danger"><i class="fa fa-fw fa-trash"></i> Delete</span>
+                        <a title="View Selected" ($click)="setPage('selection')">
+                            <i class="fa fa-list"></i> View Selected
                         </a>
                     </li>
-                {{/unless}}
-            </ul>
-          </div>
+                    <li>
+                        <a title="Clear Selection" ($click)="clearSelection()">
+                            <i class="fa fa-ban"></i> Clear Selected
+                        </a>
+                    </li>
+
+                    {{#unless view.disableDelete}}
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
+                                <span class="text-danger"><i class="fa fa-fw fa-trash"></i> Delete</span>
+                            </a>
+                        </li>
+                    {{/unless}}
+                </ul>
+            </div>
         {{/if}}
 
         <panel-container class="{{^filterVisible}}hidden{{/filterVisible}}">
@@ -155,14 +155,15 @@
         {{#if focusObject.isResolved}}
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-{{#if view.relatedViews}}4{{else}}12{{/if}}">
                         <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
                         <property-table {object}="focusObject.value" {fields}="_fields" />
                         <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
                             <button class="btn btn-default" ($click)="setPage('list')">
                                 <i class="fa fa-arrow-left"></i> {{view.title}}
                             </button>
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-wrench"></i> Manage <span class="caret"></span>
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu">
@@ -218,9 +219,10 @@
             {{#each selectedObjects}}
                 <h3>{{view.title}}: {{view.connection.id(.)}}</h3>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-lg-{{#if view.relatedViews}}4{{else}}12{{/if}}">
                         <property-table {object}="." {fields}="_fields" />
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-wrench"></i> Manage <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu">
@@ -249,7 +251,7 @@
                         </ul>
                     </div>
                     {{#if view.relatedViews}}
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <h3>Related Data</h3>
                             <tab-container>
                                 {{#each ../view.relatedViews}}
@@ -259,7 +261,7 @@
                                 {{/each}}
                             </tab-container>
                         </div>
-                    {{/if}}{{!view.relatedViews}}
+                    {{/if}}
                 </div>
 
                 <hr />
