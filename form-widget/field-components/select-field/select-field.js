@@ -1,8 +1,7 @@
 
-import can from 'can/util/library';
-import CanEvent from 'can/event/';
-import Component from 'can/component/';
-import CanMap from 'can/map/';
+import CanEvent from 'can-event';
+import Component from 'can-component';
+import DefineMap from 'can-define/map/map';
 import template from './select-field.stache!';
 
 /**
@@ -12,25 +11,21 @@ import template from './select-field.stache!';
  *
  * @description A `<select-field />` component's ViewModel
  */
-export let ViewModel = CanMap.extend({
-  define: {
-    properties: {
-      Value: CanMap
-    }
-  },
-  onChange(value) {
+export const ViewModel = DefineMap.extend('SelectField', {
+    properties: DefineMap,
+    onChange (value) {
     //we could perform some other logic here
-    this.attr('value', value);
-    this.dispatch('change', [value]);
-  },
-  isSelected(value){
-    return value == this.attr('value');
-  }
+        this.value = value;
+        this.dispatch('change', [value]);
+    },
+    isSelected (value) {
+        return value == this.value;
+    }
 });
-can.extend(ViewModel.prototype, CanEvent);
+Object.assign(ViewModel.prototype, CanEvent);
 
 Component.extend({
-  tag: 'select-field',
-  template: template,
-  viewModel: ViewModel
+    tag: 'select-field',
+    view: template,
+    ViewModel: ViewModel
 });

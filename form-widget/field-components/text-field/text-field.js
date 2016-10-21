@@ -1,7 +1,6 @@
-import can from 'can/util/library';
-import CanEvent from 'can/event/';
-import CanMap from 'can/map/';
-import Component from 'can/component/';
+import canEvent from 'can-event';
+import DefineMap from 'can-define/map/map';
+import Component from 'can-component';
 import template from './text-field.stache!';
 /**
  * @constructor form-widget/field-components/text-field.ViewModel ViewModel
@@ -10,15 +9,9 @@ import template from './text-field.stache!';
  *
  * @description A `<text-field />` component's ViewModel
  */
-export let ViewModel = CanMap.extend({
-  define: {
-    properties: {
-      Value: can.Map
-    },
-    value: {
-      type: 'string'
-    }
-  },
+export const ViewModel = DefineMap.extend('TextField', {
+    properties: DefineMap,
+    value: 'string',
   /**
    * Checks for the enter keypress and triggers a change event on the input
    * The enter key press triggers a submit event on the form, but before the
@@ -26,21 +19,21 @@ export let ViewModel = CanMap.extend({
    * @param  {domElement} element The form input element
    * @param  {KeyDownEvent} event
    */
-  beforeSubmit(element, event) {
-    if (event.keyCode === 13) {
-      can.trigger(element, 'change');
+    beforeSubmit (element, event) {
+        if (event.keyCode === 13) {
+            canEvent.trigger(element, 'change');
+        }
     }
-  }
 });
-can.extend(ViewModel.prototype, CanEvent);
+Object.assign(ViewModel.prototype, canEvent);
 
 Component.extend({
-  tag: 'text-field',
-  template: template,
-  viewModel: ViewModel,
-  events: {
-    '{viewModel} value'(viewModel, event, newValue){
-      viewModel.dispatch('change', [newValue]);
+    tag: 'text-field',
+    view: template,
+    ViewModel: ViewModel,
+    events: {
+        '{viewModel} value' (viewModel, event, newValue) {
+            viewModel.dispatch('change', [newValue]);
+        }
     }
-  }
 });

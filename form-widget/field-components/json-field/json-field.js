@@ -1,10 +1,9 @@
 
-import can from 'can/util/library';
-import Component from 'can/component/';
-import CanMap from 'can/map/';
-import CanEvent from 'can/event/';
+import Component from 'can-component';
+import DefineMap from 'can-define/map/map';
+import CanEvent from 'can-event';
 import template from './json-field.stache!';
-import { mapToFields, parseFieldArray } from '../../../../util/field';
+import {mapToFields, parseFieldArray} from '../../../../util/field';
 
 /**
  * @constructor form-widget/field-components/json-field.ViewModel ViewModel
@@ -13,40 +12,36 @@ import { mapToFields, parseFieldArray } from '../../../../util/field';
  *
  * @description A `<json-field />` component's ViewModel
  */
-export let ViewModel = CanMap.extend({
-  define: {
-    properties: {
-      Value: CanMap
-    },
+export const ViewModel = DefineMap.extend('JSONField', {
+    properties: DefineMap,
     jsonFormObject: {
-      get: function(val) {
-        let template = this.attr('properties.objectTemplate');
-        let obj = this.attr('value') ? JSON.parse(this.attr('value')) : {};
-        if (template) {
-          return new template(obj);
+        get: function () {
+            const Template = this.properties.objectTemplate;
+            const obj = this.value ? JSON.parse(this.value) : {};
+            if (template) {
+                return new Template(obj);
+            }
+            return null;
         }
-        return null;
-      }
     },
     formFields: {
-      get(){
-        if(this.attr('properties.fields')){
-          return parseFieldArray(this.attr('properties.fields'));
+        get () {
+            if (this.attr('properties.fields')) {
+                return parseFieldArray(this.properties.fields);
+            }
+            return mapToFields(this.jsonFormObject);
         }
-        return mapToFields(this.attr('jsonFormObject'));
-      }
+    },
+    saveField: function (scope, dom, event, obj) {
+        const json = JSON.stringify(obj.serialize());
+        this.attr('value', json);
+        this.dispatch('change', [json]);
     }
-  },
-  saveField: function(scope, dom, event, obj) {
-    let json = JSON.stringify(obj.attr());
-    this.attr('value', json);
-    this.dispatch('change', [json]);
-  }
 });
-can.extend(ViewModel.prototype, CanEvent);
+Object.assign(ViewModel.prototype, CanEvent);
 
 Component.extend({
-  tag: 'json-field',
-  template: template,
-  viewModel: ViewModel
+    tag: 'json-field',
+    view: template,
+    ViewModel: ViewModel
 });

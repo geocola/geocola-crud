@@ -1,13 +1,13 @@
-import can from 'can/util/library';
-import CanMap from 'can/map/';
-import Component from 'can/component/';
+import DefineMap from 'can-define/map/map';
+import Component from 'can-component';
+import CanEvent from 'can-event';
 
 import 'date-selector/less/datepicker.less!';
 import dateSelector from 'date-selector';
 
 import template from './date-field.stache!';
 import './date-field.less!';
-import { ViewModel as TextViewModel } from '../text-field/';
+import {ViewModel as TextViewModel} from '../text-field/';
 
 /**
  * @constructor form-widget/field-components/date-field.ViewModel ViewModel
@@ -16,31 +16,36 @@ import { ViewModel as TextViewModel } from '../text-field/';
  *
  * @description A `<date-field />` component's ViewModel
  */
-export let ViewModel = TextViewModel.extend({
-  define: {
-    properties: {
-      Value: CanMap
+export const ViewModel = DefineMap.extend('DateField', {
+    properties: DefineMap,
+    value: 'date',
+/**
+ * Checks for the enter keypress and triggers a change event on the input
+ * The enter key press triggers a submit event on the form, but before the
+ * submit event, we need to trigger a change on the field value
+ * @param  {domElement} element The form input element
+ * @param  {KeyDownEvent} event
+ */
+    beforeSubmit (element, event) {
+        if (event.keyCode === 13) {
+            canEvent.trigger(element, 'change');
+        }
     },
-    value: {
-      type: 'date',
-      value: ''
+    onBlur (element) {
+        CanEvent.trigger(element, 'change');
     }
-  },
-  onBlur(element){
-    can.trigger(element, 'change');
-  }
 });
 
 Component.extend({
-  tag: 'date-field',
-  template: template,
-  viewModel: ViewModel,
-  events: {
-    inserted() {
-      dateSelector();
-    },
-    '{viewModel} value'(viewModel, event, newValue){
-      viewModel.dispatch('change', [newValue]);
+    tag: 'date-field',
+    view: template,
+    ViewModel: ViewModel,
+    events: {
+        inserted () {
+            dateSelector();
+        },
+        '{viewModel} value' (viewModel, event, newValue) {
+            viewModel.dispatch('change', [newValue]);
+        }
     }
-  }
 });

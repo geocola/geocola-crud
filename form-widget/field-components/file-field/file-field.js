@@ -1,8 +1,8 @@
-import can from 'can/util/library';
-import List from 'can/list/';
-import CanMap from 'can/map/';
-import Component from 'can/component/';
-import CanEvent from 'can/event/';
+import DefineList from 'can-define/list/list';
+import DefineMap from 'can-define/map/map';
+import Component from 'can-component';
+import CanEvent from 'can-event';
+import ajax from 'can-util/dom/ajax/ajax';
 
 import template from './file-field.stache!';
 
@@ -13,118 +13,113 @@ import template from './file-field.stache!';
  *
  * @description A `<file-field />` component's ViewModel
  */
-export let ViewModel = CanMap.extend({
-  define: {
-    properties: {
-      Value: CanMap
-    },
+export const ViewModel = DefineMap.extend('FileField', {
+    properties: DefineMap,
     currentFiles: {
-      get: function initCurrentFiles(val, set) {
-        if (!val) {
-          if (this.attr('value')) {
-            val = new List().concat(this.attr('value').split(',').filter(function(file) {
-              return file !== '';
-            }));
-          } else {
-            val = new List();
-          }
-        }
+        get: function initCurrentFiles (val, set) {
+            if (!val) {
+                if (this.value) {
+                    val = new DefineList().concat(this.value.split(',').filter(function (file) {
+                        return file !== '';
+                    }));
+                } else {
+                    val = new DefineList();
+                }
+            }
 
-        set(val);
-        return val;
-      }
+            set(val);
+            return val;
+        }
     },
     state: {
-      value: {
-        isResolved: true
-      }
+        value: {
+            isResolved: true
+        }
     },
     progress: {
-      type: 'number',
-      value: 100
-    }
-  },
-  onChange(element) {
-    if (element.files) {
-      if (!this.attr('properties.multiple') && this.attr('currentFiles').length) {
-        let self = this;
-        this.removeFile(this.attr('currentFiles')[0]).then(function() {
-          self.uploadFiles(element.files);
+        type: 'number',
+        value: 100
+    },
+    onChange (element) {
+        if (element.files) {
+            if (!this.properties.multiple && this.currentFiles.length) {
+                this.removeFile(this.currentFiles[0]).then(() => {
+                    this.uploadFiles(element.files);
+                });
+            } else {
+                this.uploadFiles(element.files);
+            }
+        }
+    },
+    uploadFiles (files) {
+        var data = new FormData();
+        console.log(files);
+        for (var i = 0; i < files.length; i++) {
+            data.append(i, files.item(i));
+        }
+        this.state = ajax({
+            url: this.properties.url,
+            type: 'POST',
+            data: data,
+            cache: false,
+            dataType: 'json',
+            processData: false, // Don't process the files
+            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+            success: this.uploadSuccess.bind(this),
+            error: this.uploadError.bind(this)
         });
-      } else {
-        this.uploadFiles(element.files);
-      }
-    }
-  },
-  uploadFiles(files) {
-    var data = new FormData();
-    for (var i = 0; i < files.length; i++) {
-      data.append(i, files.item(i));
-    }
-    var self = this;
-    this.attr('state', can.ajax({
-      url: this.attr('properties.url'),
-      type: 'POST',
-      data: data,
-      cache: false,
-      dataType: 'json',
-      processData: false, // Don't process the files
-      contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-      success: this.uploadSuccess.bind(this),
-      error: this.uploadError.bind(this)
-    }));
-  },
-  uploadSuccess(data, textStatus, jqXHR) {
-    if (typeof data.error === 'undefined') {
-      this.attr('currentFiles', this.attr('currentFiles').concat(data.uploads));
-      this.updateValue();
-    } else {
+    },
+    uploadSuccess (data) {
+        if (typeof data.error === 'undefined') {
+            this.currentFiles = this.currentFiles.concat(data.uploads);
+            this.updateValue();
+        } else {
       // Handle errors here
-      console.warn('ERRORS: ', data.error);
-    }
-  },
-  updateValue() {
-    if (this.attr('currentFiles').length) {
-      this.attr('value', this.attr('currentFiles').join(','));
-    } else {
-      this.attr('value', '');
-    }
-    this.dispatch('change', [this.attr('value')]);
-  },
-  uploadError(response, textStatus, errorThrown) {
+            console.warn('ERRORS: ', data.error);
+        }
+    },
+    updateValue () {
+        if (this.currentFiles.length) {
+            this.value = this.currentFiles.join(',');
+        } else {
+            this.value = '';
+        }
+        this.dispatch('change', [this.value]);
+    },
+    uploadError (response, textStatus, errorThrown) {
     // Handle errors here
-    console.warn('ERRORS: ', response, textStatus, errorThrown);
+        console.warn('ERRORS: ', response, textStatus, errorThrown);
     // STOP LOADING SPINNER
-  },
-  removeFile(file) {
-    this.attr('state', can.ajax({
-      url: this.attr('properties.url'),
-      type: 'DELETE',
-      data: {
-        file: file
-      },
-      success: this.removeSuccess.bind(this, file),
-      error: this.removeError.bind(this, file)
-    }));
-    return this.attr('state');
-  },
-  removeSuccess(file, response) {
-    this.attr('currentFiles').splice(this.attr('currentFiles').indexOf(file), 1);
-    this.updateValue();
-  },
-  removeError(file, response) {
-    if (response.status === 404) {
+    },
+    removeFile (file) {
+        this.state = ajax({
+            url: this.properties.url,
+            type: 'DELETE',
+            data: {
+                file: file
+            },
+            success: this.removeSuccess.bind(this, file),
+            error: this.removeError.bind(this, file)
+        });
+        return this.state;
+    },
+    removeSuccess (file) {
+        this.currentFiles.splice(this.currentFiles.indexOf(file), 1);
+        this.updateValue();
+    },
+    removeError (file, response) {
+        if (response.status === 404) {
       //file doesn't exist, remove it from this widget
-      this.removeSuccess(file, response);
+            this.removeSuccess(file, response);
+        }
+        console.warn('Error: ', response);
     }
-    console.warn('Error: ', response);
-  }
 });
 
-can.extend(ViewModel.prototype, CanEvent);
+Object.assign(ViewModel.prototype, CanEvent);
 
 Component.extend({
-  tag: 'file-field',
-  template: template,
-  viewModel: ViewModel
+    tag: 'file-field',
+    view: template,
+    ViewModel: ViewModel
 });

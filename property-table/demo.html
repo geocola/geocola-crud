@@ -9,12 +9,11 @@
     import 'font-awesome/css/font-awesome.min.css';
     import 'property-table/';
 
-    import DefineMap from 'can-define/map/map';
     import stache from 'can-stache';
 
     var render = stache(document.getElementById('demo-html').innerHTML);
 
-    var viewModel = new DefineMap({
+    var viewModel = {
         fields: [{
           //fields can be specified using a detailed object
           name: 'prop_1',
@@ -31,9 +30,7 @@
             another_property_value: 'Value here',
             etc_or_misc: 'This is a value'
         }
-    });
-
-    console.log(viewModel);
+    };
 
     document.body.appendChild(render(viewModel));
 </script>
