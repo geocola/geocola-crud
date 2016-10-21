@@ -1,17 +1,17 @@
-import List from 'can/list/';
-import CanMap from 'can/map/';
-import can from 'can/util/library';
-import 'can/map/define/';
-import Component from 'can/component/';
-import { makeSentenceCase } from '../../util/string';
-//import './widget.css!';
+import DefineList from 'can-define/list/list';
+import DefineMap from 'can-define/map/map';
+import Component from 'can-component';
+import batch from 'can-event/batch/batch';
+import {makeSentenceCase} from '../../util/string';
+
 import template from './template.stache!';
 import '../list-table/';
 import '../form-widget/';
 import '../form-widget/field-components/text-field/';
 import '../form-widget/field-components/select-field/';
-import { parseFieldArray } from '../util/field';
-import { Filter, FilterOptions } from './Filter';
+
+import {parseFieldArray} from '../util/field';
+import {Filter, FilterOptions} from './Filter';
 
 /**
  * @constructor filter-widget.ViewModel ViewModel
@@ -20,11 +20,10 @@ import { Filter, FilterOptions } from './Filter';
  *
  * @description A `<filter-widget />` component's ViewModel
  */
-export let ViewModel = CanMap.extend({
+export const ViewModel = DefineMap.extend('FilterWidget', {
   /**
    * @prototype
    */
-  define: {
     /**
      * A list of fields that will be used to create options in the field name
      * dropdown. Each field may have a property `filterFactory` which may return
@@ -33,14 +32,13 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     fields: {
-      value: null,
-      get(fields) {
-        if (fields) {
-          return fields.filter(f => {
-            return !f.excludeFilter;
-          });
+        get (fields) {
+            if (fields) {
+                return fields.filter((f) => {
+                    return !f.excludeFilter;
+                });
+            }
         }
-      }
     },
     /**
      * An optional object template to derive field options from. If it is provided,
@@ -50,7 +48,6 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     objectTemplate: {
-      value: null
     },
     /**
      * A list of filterObjects currently used in this widget
@@ -58,7 +55,7 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     filters: {
-      Value: List
+        Value: DefineList
     },
     /**
      * The model-like object to render in the form
@@ -67,14 +64,14 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     formObject: {
-      get(obj) {
-        if (obj) {
-          return obj;
+        get (obj) {
+            if (obj) {
+                return obj;
+            }
+            return new Filter({
+                name: this.fieldOptions ? this.fieldOptions[0].value : ''
+            });
         }
-        return new Filter({
-          name: this.attr('fieldOptions') ? this.attr('fieldOptions')[0].attr('value') : ''
-        });
-      }
     },
     /**
      * The buttonObjects to display in the list table. This widget only uses
@@ -83,11 +80,11 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     buttons: {
-      value: [{
-        iconClass: 'fa fa-times',
-        eventName: 'delete',
-        title: 'Remove Filter'
-      }]
+        value: [{
+            iconClass: 'fa fa-times',
+            eventName: 'delete',
+            title: 'Remove Filter'
+        }]
     },
     /**
      * The fields to render in the form. These fields are:
@@ -98,35 +95,35 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     formFields: {
-      get(fields) {
-        let nameField = this.attr('fieldOptions') ? {
-          formatter: makeSentenceCase,
-          name: 'name',
-          alias: 'Field Name',
-          fieldType: 'select',
-          properties: {
-            options: this.attr('fieldOptions')
-          }
-        } : {
-          name: 'name',
-          alias: 'Field Name',
-          placeholder: 'Enter fieldname'
-        };
-        return parseFieldArray([nameField, {
-          name: 'operator',
-          alias: 'is',
-          placeholder: 'Choose an operator',
-          fieldType: 'select',
-          formatter(op) {
-            return FilterOptions.filter(f => {
-              return f.value === op;
-            })[0].label;
-          },
-          properties: {
-            options: this.attr('filterOptions')
-          }
-        }, this.attr('valueField')]);
-      }
+        get (fields) {
+            const nameField = this.fieldOptions ? {
+                formatter: makeSentenceCase,
+                name: 'name',
+                alias: 'Field Name',
+                fieldType: 'select',
+                properties: {
+                    options: this.fieldOptions
+                }
+            } : {
+                name: 'name',
+                alias: 'Field Name',
+                placeholder: 'Enter fieldname'
+            };
+            return parseFieldArray([nameField, {
+                name: 'operator',
+                alias: 'is',
+                placeholder: 'Choose an operator',
+                fieldType: 'select',
+                formatter (op) {
+                    return FilterOptions.filter((f) => {
+                        return f.value === op;
+                    })[0].label;
+                },
+                properties: {
+                    options: this.filterOptions
+                }
+            }, this.valueField]);
+        }
     },
     /**
      * A custom field type for the value field to aid in entering a value to filter on
@@ -136,19 +133,20 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     valueField: {
-      get() {
-        let defaultField = {
-          name: 'value',
-          alias: 'Value',
-          fieldType: 'text',
-          properties: {
-            placeholder: 'Enter a filter value'
-          }
-        };
-        return FilterOptions.filter(f => {
-          return f.value === this.attr('formObject.operator');
-        })[0].valueField || defaultField;
-      }
+        get () {
+            const defaultField = {
+                name: 'value',
+                alias: 'Value',
+                fieldType: 'text',
+                properties: {
+                    placeholder: 'Enter a filter value'
+                }
+            };
+            // return FilterOptions.filter((f) => {
+            //     return f.value === this.formObject.operator;
+            // })[0].valueField ||
+            return defaultField;
+        }
     },
     /**
      * A getter for the filter operators that changes based on the selected field and
@@ -161,39 +159,39 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     filterOptions: {
-      get() {
+        get () {
         //get the name of the selected field
-        let name = this.attr('formObject.name');
-        let fields = this.attr('fields');
+            const name = this.formObject.name;
+            const fields = this.fields;
 
         //if we have fields search them for a type matching the name
         //of the selected field name
-        if (fields) {
-          let field = fields.filter(f => {
-            return f.attr('name') === name;
-          })[0];
-          if (field && field.attr('type')) {
-            return FilterOptions.filter(f => {
-              return f.types.indexOf(field.attr('type')) !== -1;
-            });
-          }
-        }
+            if (fields) {
+                const field = fields.filter((f) => {
+                    return f.name === name;
+                })[0];
+                if (field && field.type) {
+                    return FilterOptions.filter((f) => {
+                        return f.types.indexOf(field.type) !== -1;
+                    });
+                }
+            }
 
         //otherwise search the objectTemplate for a field type
         //if it doesn't exist or the property/type doesn't exist then
         //return the whole array
-        let map = this.attr('objectTemplate');
-        if (!map ||
+            const map = this.objectTemplate;
+            if (!map ||
           !map.prototype.define ||
           !map.prototype.define[name] ||
           !map.prototype.define[name].type) {
-          return FilterOptions;
+                return FilterOptions;
+            }
+            const type = map.prototype.define[name].type;
+            return FilterOptions.filter((f) => {
+                return f.types.indexOf(type) !== -1;
+            });
         }
-        let type = map.prototype.define[name].type;
-        return FilterOptions.filter(f => {
-          return f.types.indexOf(type) !== -1;
-        });
-      }
     },
     /**
      * An array of field options to display for the field selection dropdown. If not provided, the
@@ -203,23 +201,24 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     fieldOptions: {
-      value: null,
-      get() {
-        if (this.attr('fields')) {
-          return this.attr('fields').map(f => {
-            return {
-              value: f.attr('name'),
-              label: f.attr('alias')
-            };
-          });
+        value: null,
+        get () {
+            if (this.fields) {
+                return this.fields.map((f) => {
+                    return {
+                        value: f.name,
+                        label: f.alias
+                    };
+                });
+            }
+            return this.objectTemplate ?
+                Object.keys(this.objectTemplate()).map((key) => {
+                    return {
+                        value: key,
+                        label: makeSentenceCase(key)
+                    };
+                }) : null;
         }
-        return this.attr('objectTemplate') ? CanMap.keys(this.attr('objectTemplate')()).map(key => {
-          return {
-            value: key,
-            label: makeSentenceCase(key)
-          };
-        }) : null;
-      }
     },
     /**
      * If true, existing filters will be replaced rather than concatenated
@@ -228,10 +227,9 @@ export let ViewModel = CanMap.extend({
      * @parent filter-widget.ViewModel.props
      */
     replaceExisting: {
-      value: false,
-      type: 'boolean'
-    }
-  },
+        value: false,
+        type: 'boolean'
+    },
   /**
    * @function removeFilter
    * Removes a filter from the list of filters
@@ -241,18 +239,18 @@ export let ViewModel = CanMap.extend({
    * @param  {event} event The can event
    * @param  {crud.types.filterObject} obj   The object to remove. This is the only argument used by the function, the rest may be null.
    */
-  removeFilter(scope, dom, event, obj) {
-    let index = this.attr('filters').indexOf(obj);
-    this.attr('filters').splice(index, 1);
-  },
+    removeFilter (scope, dom, event, obj) {
+        const index = this.filters.indexOf(obj);
+        this.filters.splice(index, 1);
+    },
   /**
    * @function removeFilters
    * Replaces the filter array with an empty array, clearing all existing filters
    * @signature
    */
-  removeFilters() {
-    this.attr('filters').replace([]);
-  },
+    removeFilters () {
+        this.filters.replace([]);
+    },
   /**
    * @function addFilter
    * Adds a new filter or set of filters to the list of filters in this widget.
@@ -264,56 +262,55 @@ export let ViewModel = CanMap.extend({
    * @param  {event} event The can event
    * @param  {filterObject} filterObj The object to add. This is the only argument used by the function, the rest may be null.
    */
-  addFilter(scope, dom, event, filterObj) {
-    let name = filterObj.attr('name');
-    let filters;
-    if (!name || !filterObj.attr('value')) {
-      return false;
-    }
-    let fields = this.attr('fields');
-    let filterOption = FilterOptions.filter(f => {
-      return filterObj.attr('operator') === f.value;
-    })[0];
-    let field = this.attr('fields') ? this.attr('fields').filter(f => {
-      return f.name === name;
-    })[0] : null;
+    addFilter (scope, dom, event, filterObj) {
+        const name = filterObj.name;
+        let filters;
+        if (!name || !filterObj.value) {
+            return false;
+        }
+        // const fields = this.fields;
+        // const filterOption = FilterOptions.filter((f) => {
+        //     return filterObj.operator === f.value;
+        // })[0];
+        const field = this.fields ? this.fields.filter((f) => {
+            return f.name === name;
+        })[0] : null;
 
     //get the filters
     //try a filterFactory on the field object
     //which should return one or an array of filters
-    if (field && typeof field.filterFactory === 'function') {
-      filters = field.filterFactory(filterObj);
-    }
+        if (field && typeof field.filterFactory === 'function') {
+            filters = field.filterFactory(filterObj);
+        }
 
     //otherwise just use the filter as is
-    if (!filters) {
-      filters = [filterObj];
-    }
+        if (!filters) {
+            filters = [filterObj];
+        }
 
-    if (this.attr('replaceExisting')) {
-      can.batch.start();
-      this.attr('filters').replace(filters);
-      this.attr('formObject', null);
-      can.batch.stop();
-    } else {
+        if (this.replaceExisting) {
+            batch.start();
+            this.filters.replace(filters);
+            this.formObject = null;
+            batch.stop();
+        } else {
 
       //start batch process
       //concat array doesn't seem to update correctly
-      can.batch.start();
-      filters.forEach(f => {
-        this.attr('filters').push(f);
-      });
-      this.attr('formObject', null);
+            batch.start();
+            filters.forEach((f) => {
+                this.filters.push(f);
+            });
+            this.formObject = null;
       //end batch process
-      can.batch.stop();
+            batch.stop();
+        }
+        return false;
     }
-    return false;
-  }
 });
 
 Component.extend({
-  tag: 'filter-widget',
-  viewModel: ViewModel,
-  template: template,
-  events: {}
+    tag: 'filter-widget',
+    ViewModel: ViewModel,
+    view: template
 });
