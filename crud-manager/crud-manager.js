@@ -1,9 +1,6 @@
-import can from 'can/util/library';
-import CanMap from 'can/map/';
-import 'can/map/define/';
-import List from 'can/list/';
-import Component from 'can/component/';
-import Route from 'can/route/';
+import DefineMap from 'can-define/map/map';
+import DefineList from 'can-define/list/list';
+import Component from 'can-component';
 import template from './template.stache!';
 import './widget.less!';
 
@@ -13,14 +10,14 @@ import '../form-widget/';
 import '../filter-widget/';
 import '../paginate-widget/';
 
-import 'can-ui/modal-container/';
-import 'can-ui/tab-container/';
-import 'can-ui/panel-container/';
+// import 'can-ui/modal-container/';
+// import 'can-ui/tab-container/';
+// import 'can-ui/panel-container/';
 
-import { FilterList } from '../filter-widget/Filter';
-import { mapToFields, parseFieldArray } from '../util/field';
+import {FilterList} from '../filter-widget/Filter';
+import {mapToFields, parseFieldArray} from '../util/field';
 import PubSub from 'pubsub-js';
-import { ViewMap } from './ViewMap';
+import {ViewMap} from './ViewMap';
 
 export const TOPICS = {
   /**
@@ -29,34 +26,34 @@ export const TOPICS = {
    * @property {String} crud-manager.ViewModel.topics.ADD_MESSAGE
    * @parent crud-manager.ViewModel.topics
    */
-  ADD_MESSAGE: 'addMessage',
+    ADD_MESSAGE: 'addMessage',
   /**
    * topic to clear existing messages. The topic
    * published is `clearMessages`
    * @property {String} crud-manager.ViewModel.topics.CLEAR_MESSAGES
    * @parent crud-manager.ViewModel.topics
    */
-  CLEAR_MESSAGES: 'clearMessages'
+    CLEAR_MESSAGES: 'clearMessages'
 };
 
 const DEFAULT_BUTTONS = [{
-  iconClass: 'fa fa-list-ul',
-  eventName: 'view',
-  title: 'View Row Details'
+    iconClass: 'fa fa-list-ul',
+    eventName: 'view',
+    title: 'View Row Details'
 }];
 const EDIT_BUTTONS = DEFAULT_BUTTONS.concat([{
-  iconClass: 'fa fa-pencil',
-  eventName: 'edit',
-  title: 'Edit Row'
+    iconClass: 'fa fa-pencil',
+    eventName: 'edit',
+    title: 'Edit Row'
 }, {
-  iconClass: 'fa fa-trash',
-  eventName: 'delete',
-  title: 'Remove Row'
+    iconClass: 'fa fa-trash',
+    eventName: 'delete',
+    title: 'Remove Row'
 }]);
 
-export const SortMap = CanMap.extend({
-  fieldName: null,
-  type: 'asc'
+export const SortMap = DefineMap.extend('SortMap', {
+    fieldName: null,
+    type: 'asc'
 });
 /**
  * @module crud-manager
@@ -70,11 +67,10 @@ export const SortMap = CanMap.extend({
  *
  * @description A `<crud-manager />` component's ViewModel
  */
-export let ViewModel = CanMap.extend({
+export const ViewModel = DefineMap.extend('CrudManager', {
   /**
    * @prototype
    */
-  define: {
     /**
      * The view object that controls the entire setup of the crud-manager.
      * Properties on the view control how each field is formatted, default values,
@@ -83,14 +79,14 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     view: {
-      Type: ViewMap,
-      set(view) {
+        Type: ViewMap,
+        set (view) {
         //if parameters are in the view, mix them in to the crud parameters
-        if (view.attr('parameters')) {
-          this.attr('parameters').attr(view.attr('parameters').serialize());
+            if (view.parameters) {
+                Object.assign(this.parameters, view.parameters.serialize());
+            }
+            return view;
         }
-        return view;
-      }
     },
     /**
      * The current page to display in this view. Options include:
@@ -101,8 +97,8 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     page: {
-      value: 'list',
-      type: 'string'
+        value: 'list',
+        type: 'string'
     },
     /**
      * A virtual property that calculates the number of total pages to show
@@ -112,16 +108,16 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     totalPages: {
-      get() {
-        let total = this.attr('view.connection.metadata.total');
-        if (!total) {
-          return 0;
-        }
+        get () {
+            const total = this.view.connection.metadata.total;
+            if (!total) {
+                return 0;
+            }
 
         //round up to the nearest integer
-        return Math.ceil(total /
-          this.attr('parameters.perPage'));
-      }
+            return Math.ceil(total /
+          this.parameters.perPage);
+        }
     },
     /**
      * The array of per page counts to display in the per page switcher. This
@@ -133,14 +129,14 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     perPageOptions: {
-      Value() {
-        return [10, 20, 50, 100];
-      },
-      get(counts) {
-        return counts.filter((c, index) => {
-          return counts[index ? index - 1 : index] < this.attr('view.connection.metadata.total');
-        });
-      }
+        Value () {
+            return [10, 20, 50, 100];
+        },
+        get (counts) {
+            return counts.filter((c, index) => {
+                return counts[index ? index - 1 : index] < this.view.connection.metadata.total;
+            });
+        }
     },
     /**
      * A helper to show or hide the paginate-widget. If totalPages is less than
@@ -149,44 +145,42 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     showPaginate: {
-      type: 'boolean',
-      get() {
-        return this.attr('totalPages') > 1;
-      }
+        type: 'boolean',
+        get () {
+            return this.totalPages > 1;
+        }
     },
     /**
      * the internal parameters object. This is prepopulated when view is set.
      * @type {Object}
      */
     parameters: {
-      Value: CanMap.extend({
-        define: {
-          filters: { Type: FilterList, Value: FilterList },
-          perPage: { type: 'number', value: 10 },
-          page: { type: 'number', value: 0 },
-          sort: { Type: SortMap, Value: SortMap }
-        }
-      })
+        Value: DefineMap.extend({
+            filters: {Type: FilterList, Value: FilterList},
+            perPage: {type: 'number', value: 10},
+            page: {type: 'number', value: 0},
+            sort: {Type: SortMap, Value: SortMap}
+        })
     },
     /**
-     * A promise that resolves to the objects retrieved from a can-connect.getList call
+     * A promise that resolves to the objects retrieved from a can-connect.getListData call
      * @property {can.Deferred} crud-manager.ViewModel.props.objects
      * @parent crud-manager.ViewModel.props
      */
     objects: {
-      get(prev, setAttr) {
-        let params = this.attr('parameters') ? this.attr('parameters').serialize() : {};
-        let promise = this.attr('view.connection').getList(params);
+        get (prev, setAttr) {
+            const params = this.parameters ? this.parameters.serialize() : {};
+            const promise = this.view.connection.getListData(params);
         //handle promise.fail for deferreds
-        let dummy = promise.fail ? promise.fail(err => {
-            console.error('unable to complete objects request', err);
-          }) :
+            const dummy = promise.fail ? promise.fail((err) => {
+                console.error('unable to complete objects request', err);
+            }) :
           //and handle promise.catch for local-storage deferreds...
-          promise.catch(err => {
-            console.error('unable to complete objects request', err);
+          promise.catch((err) => {
+              console.error('unable to complete objects request', err);
           });
-        return promise;
-      }
+            return promise;
+        }
     },
     /**
      * A promise that resolves to the object retreived from a `can-connect.get` call
@@ -194,20 +188,20 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     focusObject: {
-      get(prev, setAttr) {
-        if (this.attr('viewId')) {
-          let params = {};
-          params[this.attr('view.connection').idProp] = this.attr('viewId');
-          let promise = this.attr('view.connection').get(params);
-          let dummy = promise.fail ? promise.fail(function(err) {
-            console.error('unable to complete focusObject request', err);
-          }) : promise.catch(function(err) {
-            console.error('unable to complete focusObject request', err);
-          });
-          return promise;
+        get (prev, setAttr) {
+            if (this.attr('viewId')) {
+                const params = {};
+                params[this.view.connection.idProp] = this.viewId;
+                const promise = this.view.connection.get(params);
+                const dummy = promise.fail ? promise.fail(function (err) {
+                    console.error('unable to complete focusObject request', err);
+                }) : promise.catch(function (err) {
+                    console.error('unable to complete focusObject request', err);
+                });
+                return promise;
+            }
+            return null;
         }
-        return null;
-      }
     },
     /**
      * Buttons to use for the list table actions. If `view.disableEdit` is falsey
@@ -217,10 +211,10 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     buttons: {
-      type: '*',
-      get() {
-        return this.attr('view.disableEdit') ? DEFAULT_BUTTONS : EDIT_BUTTONS;
-      }
+        type: '*',
+        get () {
+            return this.view.disableEdit ? DEFAULT_BUTTONS : EDIT_BUTTONS;
+        }
     },
     /**
      * The page number, this is calculated by incrementing the queryPage by one.
@@ -228,9 +222,9 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     pageNumber: {
-      get() {
-        return this.attr('parameters.page') + 1;
-      }
+        get () {
+            return this.parameters.page + 1;
+        }
     },
     /**
      * The current id number of the object that is being viewed in the property
@@ -239,8 +233,8 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     viewId: {
-      type: 'number',
-      value: 0
+        type: 'number',
+        value: 0
     },
     /**
      * Current loading progress. NOT IMPLEMENTED
@@ -249,8 +243,8 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     progress: {
-      type: 'number',
-      value: 100
+        type: 'number',
+        value: 100
     },
     /**
      * Whether or not the filter popup is visible
@@ -258,8 +252,8 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     filterVisible: {
-      type: 'boolean',
-      value: false
+        type: 'boolean',
+        value: false
     },
     /**
      * The internal field array that define the display of data and field types
@@ -268,58 +262,55 @@ export let ViewModel = CanMap.extend({
      * @parent crud-manager.ViewModel.props
      */
     _fields: {
-      get() {
+        get () {
 
         //try a fields propety first
-        if (this.attr('view.fields')) {
-          return parseFieldArray(this.attr('view.fields'));
-        }
+            if (this.view.fields) {
+                return parseFieldArray(this.view.fields);
+            }
 
         //if that doesn't exist, use the objectTemplate or Map to create fields
-        let template = this.attr('view.objectTemplate') || this.attr('view.connection.Map');
-        return mapToFields(template);
-      }
+            const template = this.view.objectTemplate || this.view.connection.Map;
+            return mapToFields(template);
+        }
     },
     /**
      * An array of currently selected objects in the list-table
      * @property {Array<can.Map>} crud-manager.ViewModel.props.selectedObjects
      * @parent crud-manager.ViewModel.props
      */
-    selectedObjects: {
-      Value: List
-    }
-  },
+    selectedObjects: DefineList,
   /**
    * @function init
    * Initializes filters and other parameters
    */
-  init() {
+    init () {
     //set up related filters which are typically numbers
-    if (this.attr('relatedField')) {
-      let val = parseFloat(this.attr('relatedValue'));
-      if (!val) {
+        if (this.relatedField) {
+            let val = parseFloat(this.relatedValue);
+            if (!val) {
         //if we can't force numeric type, just use default value
-        val = this.attr('relatedValue');
-      }
-      this.attr('parameters.filters').push({
-        name: this.attr('relatedField'),
-        operator: 'equals',
-        value: this.attr('relatedValue')
-      });
-    }
-  },
+                val = this.relatedValue;
+            }
+            this.parameters.filters.push({
+                name: this.relatedField,
+                operator: 'equals',
+                value: this.relatedValue
+            });
+        }
+    },
   /**
    * @function setPage
    * Changes the page and resets the viewId to 0
    * @signature
    * @param {String} page The name of the page to switch to
    */
-  setPage(page) {
-    this.attr({
-      'viewId': 0,
-      'page': page
-    });
-  },
+    setPage (page) {
+        this.attr({
+            'viewId': 0,
+            'page': page
+        });
+    },
   /**
    * @function editObject
    * Sets the current viewId to the object's id and sets the page to edit
@@ -330,19 +321,17 @@ export let ViewModel = CanMap.extend({
    * @param  {Event} event The event that was triggered (not used)
    * @param  {can.Map} obj   The object to start editing
    */
-  editObject() {
-    let obj;
+    editObject () {
+        let obj;
     //accept 4 params from the template or just one
-    if (arguments.length === 4) {
-      obj = arguments[3];
-    } else {
-      obj = arguments[0];
-    }
-    this.attr({
-      'viewId': this.attr('view.connection').id(obj),
-      'page': 'edit'
-    });
-  },
+        if (arguments.length === 4) {
+            obj = arguments[3];
+        } else {
+            obj = arguments[0];
+        }
+        this.viewId = this.view.connection.id(obj);
+        this.page = 'edit';
+    },
   /**
    * @function viewObject
    * Sets the current viewId to the object's id and sets the page to details
@@ -353,19 +342,17 @@ export let ViewModel = CanMap.extend({
    * @param  {Event} event The event that was triggered (not used)
    * @param  {can.Map} obj   The object to view
    */
-  viewObject() {
-    let obj;
+    viewObject () {
+        let obj;
     //accept 4 params from the template or just one
-    if (arguments.length === 4) {
-      obj = arguments[3];
-    } else {
-      obj = arguments[0];
-    }
-    this.attr({
-      'viewId': this.attr('view.connection').id(obj),
-      'page': 'details'
-    });
-  },
+        if (arguments.length === 4) {
+            obj = arguments[3];
+        } else {
+            obj = arguments[0];
+        }
+        this.viewId = this.view.connection.id(obj);
+        this.page = 'details';
+    },
   /**
    * @function saveObject
    * Saves the provided object and sets the current viewId to the object's
@@ -383,85 +370,83 @@ export let ViewModel = CanMap.extend({
    * @param  {Event} event The event that was triggered (not used)
    * @param  {can.Map} obj   The object to save
    */
-  saveObject() {
-    let obj;
+    saveObject () {
+        let obj;
     //accept 4 params from the template or just one
-    if (arguments.length === 4) {
-      obj = arguments[3];
-    } else {
-      obj = arguments[0];
-    }
-    let page = this.attr('page');
+        if (arguments.length === 4) {
+            obj = arguments[3];
+        } else {
+            obj = arguments[0];
+        }
+        const page = this.page;
 
     // trigger events beforeCreate/beforeSave depending on if we're adding or
     // updating an object
-    let val = true;
-    if (page === 'add') {
-      val = this.onEvent(obj, 'beforeCreate');
-    } else {
-      val = this.onEvent(obj, 'beforeSave');
-    }
+        let val = true;
+        if (page === 'add') {
+            val = this.onEvent(obj, 'beforeCreate');
+        } else {
+            val = this.onEvent(obj, 'beforeSave');
+        }
 
     // halt save or create if the value returned is falsey
-    if (!val) {
-      return;
-    }
+        if (!val) {
+            return;
+        }
 
     //display a loader
     //TODO: add loading progress?
-    this.attr('progress', 100);
-    this.attr('page', 'loading');
+        this.progress = 100;
+        this.page = 'loading';
 
     //save the object
-    var deferred = this.attr('view.connection').save(obj);
-    deferred.then(result => {
+        var deferred = this.view.connection.save(obj);
+        deferred.then((result) => {
 
       //add a message
-      PubSub.publish(TOPICS.ADD_MESSAGE, {
-        message: this.attr('view.saveSuccessMessage'),
-        detail: 'ID: ' + this.attr('view.connection').id(result)
-      });
+            PubSub.publish(TOPICS.ADD_MESSAGE, {
+                message: this.view.saveSuccessMessage,
+                detail: 'ID: ' + this.view.connection.id(result)
+            });
 
-      if (page === 'add') {
-        this.onEvent(obj, 'afterCreate');
-      } else {
-        this.onEvent(obj, 'afterSave');
-      }
+            if (page === 'add') {
+                this.onEvent(obj, 'afterCreate');
+            } else {
+                this.onEvent(obj, 'afterSave');
+            }
 
       //update the view id
       //set page to the details view by default
-      this.attr({
-        viewId: result.attr('id'),
-        page: 'details'
-      });
+            this.viewId = result.id;
+            this.page = 'details';
 
-    }).fail(e => {
-      console.warn(e);
-      PubSub.publish(TOPICS.ADD_MESSAGE, {
-        message: this.attr('view.saveFailMessage'),
-        detail: e.statusText + ' : <small>' + e.responseText + '</small>',
-        level: 'danger',
-        timeout: 20000
-      });
-      this.attr('page', page);
-    });
-    return deferred;
-  },
+        }).fail((e) => {
+            console.warn(e);
+            PubSub.publish(TOPICS.ADD_MESSAGE, {
+                message: this.attr('view.saveFailMessage'),
+                detail: e.statusText + ' : <small>' + e.responseText + '</small>',
+                level: 'danger',
+                timeout: 20000
+            });
+            this.page = page;
+        });
+        return deferred;
+    },
   /**
    * @function getNewObject
    * Creates and returns a new object from the view's objectTemplate
    * @signature
    * @return {can.map} A new object created from the `view.objectTemplate`
    */
-  getNewObject() {
+    getNewObject () {
     //create a new empty object with the defaults provided
     //from the objectTemplate property which is a map
-    let props = {};
-    if (this.attr('relatedField')) {
-      props[this.attr('relatedField')] = this.attr('relatedValue');
-    }
-    return new(this.attr('view.objectTemplate'))(props);
-  },
+        const props = {};
+        if (this.attr('relatedField')) {
+            props[this.attr('relatedField')] = this.attr('relatedValue');
+        }
+        return new(this.attr('view.objectTemplate'))(props);
+    },
   /**
    * @function deleteObject
    * Displays a confirm dialog box and if confirmed, deletes the object provided.
@@ -479,51 +464,51 @@ export let ViewModel = CanMap.extend({
    * @param {Boolean} skipConfirm If true, the method will not display a confirm dialog
    * and will immediately attempt to remove the object
    */
-  deleteObject() {
-    let obj, skipConfirm;
+    deleteObject () {
+        let obj, skipConfirm;
     //arguments can be ( scope, dom, event, obj, skipConfirm )
     //OR (obj, skipConfirm)
-    if (arguments.length > 2) {
-      obj = arguments[3];
-      skipConfirm = arguments[4];
-    } else {
-      obj = arguments[0];
-      skipConfirm = arguments[1];
-    }
-    if (obj && (skipConfirm || confirm('Are you sure you want to delete this record?'))) {
+        if (arguments.length > 2) {
+            obj = arguments[3];
+            skipConfirm = arguments[4];
+        } else {
+            obj = arguments[0];
+            skipConfirm = arguments[1];
+        }
+        if (obj && (skipConfirm || confirm('Are you sure you want to delete this record?'))) {
 
       // beforeDelete handler
       // if return value is falsey, stop execution and don't delete
-      if (!this.onEvent(obj, 'beforeDelete')) {
-        return;
-      }
+            if (!this.onEvent(obj, 'beforeDelete')) {
+                return;
+            }
 
       //destroy the object using the connection
-      let deferred = this.attr('view.connection').destroy(obj);
-      deferred.then(result => {
+            const deferred = this.view.connection.destroy(obj);
+            deferred.then((result) => {
 
         //add a message
-        PubSub.publish(TOPICS.ADD_MESSAGE, {
-          message: this.attr('view.deleteSuccessMessage'),
-          detail: 'ID: ' + this.attr('view.connection').id(result)
-        });
+                PubSub.publish(TOPICS.ADD_MESSAGE, {
+                    message: this.view.deleteSuccessMessage,
+                    detail: 'ID: ' + this.view.connection.id(result)
+                });
 
         //afterDelete handler
-        this.onEvent(obj, 'afterDelete');
-      });
+                this.onEvent(obj, 'afterDelete');
+            });
 
-      deferred.fail(result => {
+            deferred.fail((result) => {
         //add a message
-        PubSub.publish(TOPICS.ADD_MESSAGE, {
-          message: this.attr('view.deleteFailMessage'),
-          detail: result.statusText + ' : <small>' + result.responseText + '</small>',
-          level: 'danger',
-          timeout: 20000
-        });
-      });
-      return deferred;
-    }
-  },
+                PubSub.publish(TOPICS.ADD_MESSAGE, {
+                    message: this.view.deleteFailMessage,
+                    detail: result.statusText + ' : <small>' + result.responseText + '</small>',
+                    level: 'danger',
+                    timeout: 20000
+                });
+            });
+            return deferred;
+        }
+    },
   /**
    * @function deleteMultiple
    * Iterates through the objects in the `selectedObjects` array
@@ -533,45 +518,45 @@ export let ViewModel = CanMap.extend({
    * @param {Boolean} skipConfirm If true, the method will not display a confirm dialog
    * and will immediately attempt to remove the selected objects
    */
-  deleteMultiple(skipConfirm) {
-    let selected = this.attr('selectedObjects');
-    let defs = [];
-    if (skipConfirm || confirm(`Are you sure you want to delete the ${selected.length} selected records?`)) {
-      selected.forEach((obj) => {
-        defs.push(this.deleteObject(null, null, null, obj, true));
-      });
-      selected.replace([]);
-    }
-    return defs;
-  },
+    deleteMultiple (skipConfirm) {
+        const selected = this.selectedObjects;
+        const defs = [];
+        if (skipConfirm || confirm(`Are you sure you want to delete the ${selected.length} selected records?`)) {
+            selected.forEach((obj) => {
+                defs.push(this.deleteObject(null, null, null, obj, true));
+            });
+            selected.replace([]);
+        }
+        return defs;
+    },
   /**
    * @function clearSelection
    * empties the currently selected objects array
    */
-  clearSelection() {
-    this.attr('selectedObjects').replace([]);
-  },
+    clearSelection () {
+        this.selectedObjects.replace([]);
+    },
   /**
    * passes an array of objects to the on click handler
    * @param  {object} obj     A single object
    * @param  {Function} onClick The function to pass array of objects to
    */
-  manageObject(obj, button){
-    button.onClick([obj]);
-  },
+    manageObject (obj, button) {
+        button.onClick([obj]);
+    },
   /**
    * @function toggleFilter
    * Toggles the display of the filter dialog
    * @signature
    * @param  {Boolean} val (Optional) whether or not to display the dialog
    */
-  toggleFilter(val) {
-    if (typeof val !== 'undefined') {
-      this.attr('filterVisible', val);
-    } else {
-      this.attr('filterVisible', !this.attr('filterVisible'));
-    }
-  },
+    toggleFilter (val) {
+        if (typeof val !== 'undefined') {
+            this.filterVisible = val;
+        } else {
+            this.filterVisible = !this.filterVisible;
+        }
+    },
   /**
    * @function getRelatedValue
    * Retrieves a value from an object based on the key provided
@@ -580,9 +565,9 @@ export let ViewModel = CanMap.extend({
    * @param  {can.Map} focusObject The object to retrieve the property from
    * @return {*} The object's property
    */
-  getRelatedValue(foreignKey, focusObject) {
-    return focusObject.attr(foreignKey);
-  },
+    getRelatedValue (foreignKey, focusObject) {
+        return focusObject[foreignKey];
+    },
   /**
    * @function onEvent
    * A helper function to trigger beforeSave, afterSave, etc events.
@@ -590,43 +575,40 @@ export let ViewModel = CanMap.extend({
    * @param  {can.Map} obj       The object to dispatch with the event
    * @param  {String} eventName The name of the event to dispatch
    */
-  onEvent(obj, eventName) {
+    onEvent (obj, eventName) {
 
     //get the view method
-    let prop = this.attr(['view', eventName].join('.'));
+        const prop = this.view[eventName];
 
     //if it is a function, call it passing the object
-    let returnVal = true;
-    if (typeof prop === 'function') {
-      returnVal = prop(obj);
+        let returnVal = true;
+        if (typeof prop === 'function') {
+            returnVal = prop(obj);
 
       // Only return falsey value if a value is returned.
       // Otherwise the execution of the event will be halted unintentionally
-      if (typeof returnVal === 'undefined') {
-        returnVal = true;
-      }
-    }
+            if (typeof returnVal === 'undefined') {
+                returnVal = true;
+            }
+        }
 
     //dispatch an event
-    this.dispatch(eventName, [obj]);
+        this.dispatch(eventName, [obj]);
 
-    return returnVal;
-  }
+        return returnVal;
+    }
 });
 
 Component.extend({
-  tag: 'crud-manager',
-  viewModel: ViewModel,
-  template: template,
-  //since this is a recursive component, don't leak the scope.
-  //this prevents infinite nesting of the components.
-  leakScope: false,
-  events: {
-    '{viewModel.parameters.filters} change' () {
-      this.viewModel.attr('parameters.page', 0);
-    },
-    '{viewModel.parameters.perPage} change' () {
-      this.viewModel.attr('parameters.page', 0);
+    tag: 'crud-manager',
+    ViewModel: ViewModel,
+    view: template,
+    events: {
+        '{ViewModel.parameters.filters} change' () {
+            this.viewModel.attr('parameters.page', 0);
+        },
+        '{ViewModel.parameters.perPage} change' () {
+            this.viewModel.attr('parameters.page', 0);
+        }
     }
-  }
 });

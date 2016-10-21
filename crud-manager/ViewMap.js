@@ -1,6 +1,8 @@
-import CanMap from 'can/map/';
-import List from 'can/list/';
-import { Field } from '../util/field';
+import DefineMap from 'can-define/map/map';
+import DefineList from 'can-define/list/list';
+import {Field} from '../util/field';
+
+import editTemplate from './templates/edit.stache!';
 
 /**
  * @typedef {object} crud.types.relatedView RelatedView
@@ -17,8 +19,7 @@ import { Field } from '../util/field';
  * A view object that controls the display and management of data in the
  * crud-manager and other data components.
  */
-export const ViewMap = CanMap.extend({
-  define: {
+export const ViewMap = DefineMap.extend('ViewMap', {
     /**
      * A can-connect object that utilizes a miniumum of the base and constructor behaviors.
      * This includes the can-connect.SuperMap, which consists of many different behaviors.
@@ -34,9 +35,7 @@ export const ViewMap = CanMap.extend({
      * @link https://connect.canjs.com/doc/can-connect|constructor.html constructor
      * @property {can-connect} connection
      */
-    connection: {
-      Type: CanMap
-    },
+    connection: {},
     /**
      * A template for creating new objects. This should be an constructor of can.Map
      * created using can.Map.extend. This object defines the default properties, types,
@@ -53,76 +52,69 @@ export const ViewMap = CanMap.extend({
      * @property {Constructor<can.Map>} objectTemplate
      */
     objectTemplate: {
-      get(obj) {
-        if (!obj) {
-          return this.attr('connection.Map');
+        get (obj) {
+            if (!obj) {
+                return this.connection.Map;
+            }
+            return obj;
         }
-        return obj;
-      }
     },
     /**
      * An array of field definitions which controls the display and editing
      * of each property of the objects being displayed and edited
      * @property {Array<util/field.Field>} fields
      */
-    fields: {
-      Type: List
-    }
-  },
+    fields: DefineList,
   /**
    * The message to display when an object is updated
    * @property {String} saveSuccessMessage
    */
-  saveSuccessMessage: 'Object saved.',
+    saveSuccessMessage: {value: 'Object saved.'},
   /**
    * The message to display when an object fails to save
    * @property {String} saveFailMessage
    */
-  saveFailMessage: 'Object could not be saved.',
+    saveFailMessage: {value: 'Object could not be saved.'},
   /**
    * The message to display when an object is deleted
    * @property {String} deleteSuccessMessage
    */
-  deleteSuccessMessage: 'Object removed.',
+    deleteSuccessMessage: {value: 'Object removed.'},
   /**
    * The message to display when an object fails to be deleted
    * @property {String} deleteFailMessage
    */
-  deleteFailMessage: 'Object could not be removed.',
+    deleteFailMessage: {value: 'Object could not be removed.'},
+  /**
+   * The message to display when a user does not have permissions to edit
+   * @property {String} editDisabledMessage
+   */
+    editDisabledMessage: {value: 'You do not have permission to edit this data.'},
+  /**
+   * The template to render when editing and has permissions
+   * @property {Renderer} editTemplate
+   */
+    editTemplate: {value: editTemplate},
   /**
    * A flag to disable editing existing objects
    * @property {Boolean} disableEdit
    */
-  disableEdit: false,
+    disableEdit: {value: false},
   /**
    * A flag to disable deleting existing objects
    * @property {Boolean} disableDelete
    */
-  disableDelete: false,
+    disableDelete: {value: false},
   /**
    * A flag to disable creating new objects
    * @property {Boolean} disableAdd
    */
-  disableAdd: false,
-  /**
-   * A property that controls the display of rows of data. This property can either
-   * be `list-table` or `property-table`.
-   *
-   * 1. The list will show each objects properties in a horizontal table where each object occupies one single line.
-   * This format is much more compact and allows for sorting.
-   * 2. The property  table format will display a two column table for each object with fieldname and
-   * value. This option is better suited for data types that will only have one items
-   * displayed at a time because it occupies much more space and does not allow for sorting.
-   *
-   * The default value is `list-table`
-   * @property {String} listType
-   */
-  listType: 'list-table',
+    disableAdd: {value: false},
   /**
    * The title of the view to display in the heading or tab container button in related views
    * @property {String} title
    */
-  title: '',
+    title: {value: ''},
   /**
    * Views related to the current view. If related views are provided, the
    * crud manager will display items related to selected items on the detail page.
@@ -130,37 +122,37 @@ export const ViewMap = CanMap.extend({
    * with a value that matches the related views foreign key.
    * @property {Array<crud.types.relatedView>} relatedViews
    */
-  relatedViews: undefined,
+    relatedViews: {value: undefined},
   /**
    * A method to call before a new object in this view is created
    * @property {funtion} beforeCreate
    */
-  beforeCreate: undefined,
+    beforeCreate: {value: undefined},
   /**
    * A method to call after a new object in this view is created
    * @property {funtion} beforeCreate
    */
-  afterCreate: undefined,
+    afterCreate: {value: undefined},
   /**
    * A method to call before an object in this view is saved
    * @property {funtion} beforeCreate
    */
-  beforeSave: undefined,
+    beforeSave: {value: undefined},
   /**
    * A method to call after an object in this view is saved
    * @property {funtion} afterSave
    */
-  afterSave: undefined,
+    afterSave: {value: undefined},
   /**
    * A method to call before an object in this view is deleted
    * @property {funtion} beforeDelete
    */
-  beforeDelete: undefined,
+    beforeDelete: {value: undefined},
   /**
    * A method to call after an object in this view is deleted
    * @property {funtion} afterDelete
    */
-  afterDelete: undefined,
+    afterDelete: {value: undefined},
   /**
    * Additional buttons to display when items are checked in the table. Buttotns
    * can have an icon, text an an on click event handler
@@ -175,5 +167,5 @@ export const ViewMap = CanMap.extend({
      }],
      ```
    */
-  manageButtons: undefined
+    manageButtons: {value: undefined}
 });

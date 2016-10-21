@@ -1,23 +1,23 @@
-import SuperMap from 'can-connect/can/super-map/';
-import CanMap from 'can/map/';
-import List from 'can/list/';
+import superMap from 'can-connect/can/super-map/';
+import DefineMap from 'can-define/map/map';
+import DefineList from 'can-define/list/list';
 
 //import fake ajax services
 import './fixtures';
 
-export const TaskMap = CanMap.extend({
-  "name": "name of task",
-  "description": "description of task"
+export const TaskMap = DefineMap.extend({
+    'name': 'name of task',
+    'description': 'description of task'
 });
 
-export const TaskList = List.extend({
-  map: TaskMap
+export const TaskList = DefineList.extend({
+    map: TaskMap
 });
 
-export const Connection = SuperMap({
-  idProp: "id",
-  Map: TaskMap,
-  List: TaskList,
-  url: "/tasks",
-  name: "task"
+export const Connection = superMap({
+    idProp: 'id',
+    Map: TaskMap,
+    List: TaskList,
+    url: '/tasks',
+    name: 'task'
 });

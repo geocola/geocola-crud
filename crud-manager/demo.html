@@ -14,24 +14,21 @@
     import 'bootstrap/dist/css/bootstrap-theme.min.css!';
     import 'font-awesome/css/font-awesome.min.css';
     import 'crud-manager/';
-    import can from 'can/util/library';
 
     import SuperMap from 'can-connect/can/super-map/';
-    import CanMap from 'can/map/';
-    import List from 'can/list/';
+    import DefineMap from 'can-define/map/map';
+    import DefineList from 'can-define/list/list';
     import data from 'test/data/tasks.json';
     import 'test/data/fixtures';
-    import 'can/view/stache/';
+    import stache from 'can-stache';
 
-    const TaskMap = CanMap.extend({
-        define: {
-            "name": { value: "name of task" },
-            "description": { value: "description of task" },
-            "completed": { value: false, type: 'boolean' }
-        }
+    const TaskMap = DefineMap.extend({
+      "name": { value: "name of task" },
+      "description": { value: "description of task" },
+      "completed": { value: false, type: 'boolean' }
     });
 
-    const TaskList = List.extend({
+    const TaskList = DefineList.extend({
         map: TaskMap
     });
 
@@ -46,7 +43,7 @@
         }
     });
 
-    let viewModel = new CanMap({
+    let viewModel = new DefineMap({
         view: {
             title: 'Tasks',
             connection: Connection,
@@ -60,7 +57,7 @@
                         objs = [objs];
                     }
                     objs.forEach(obj => {
-                        obj.attr('completed', true);
+                        obj.completed= true;
                         Connection.save(obj);
                     });
                 }
@@ -69,7 +66,7 @@
     })
 
 
-    let frag = can.view('demo-html', viewModel, {});
+    let frag = stache(document.getElementById('demo-html').innerHTML)(viewModel);
 
-    can.$('body').append(frag);
+    document.body.appendChild(frag);
 </script>

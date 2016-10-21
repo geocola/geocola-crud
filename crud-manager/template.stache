@@ -2,13 +2,13 @@
 
 
     {{#case 'edit'}}
-        {{#if view.disableEdit}}
-            <p>You do not have permission to edit this data.</p>
-        {{else}}
-            {{#if focusObject.isResolved}}
-                <form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
-            {{/if}}
+    {{#if view.disableEdit}}
+        <p>{{view.editDisabledMessage}}</p>
+    {{else}}
+        {{#if focusObject.isResolved}}
+          {{view.editTemplate}}
         {{/if}}
+    {{/if}}
     {{/case}}
 
 

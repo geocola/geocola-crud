@@ -2,116 +2,116 @@
  * field parsing and creating utilities
  */
 
-import { string } from 'can-util';
-import { makeSentenceCase } from './string';
+import {string} from 'can-util';
+import {makeSentenceCase} from './string';
 import stache from 'can-stache';
 import DefineMap from 'can-define/map/map';
 
 
-let TEMPLATES = {
-  text: '<text-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
-  select: '<select-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
-  file: '<file-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
-  json: '<json-field {properties}="properties" (change)="setField" {value}="getFieldValue(.)" />',
-  date: '<date-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />'
+const TEMPLATES = {
+    text: '<text-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
+    select: '<select-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
+    file: '<file-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
+    json: '<json-field {properties}="properties" (change)="setField" {value}="getFieldValue(.)" />',
+    date: '<date-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />'
 };
 
 //precompile templates
 for (var type in TEMPLATES) {
-  if (TEMPLATES.hasOwnProperty(type)) {
-    TEMPLATES[type] = stache(TEMPLATES[type]);
-  }
+    if (TEMPLATES.hasOwnProperty(type)) {
+        TEMPLATES[type] = stache(TEMPLATES[type]);
+    }
 }
 
-export { TEMPLATES };
+export {TEMPLATES};
 
 /**
  * @module util/field.Field FieldDefinition
  * @parent crud.types
  *
  */
-export const Field = DefineMap.extend("Field", {
+export const Field = DefineMap.extend('Field', {
   /**
    * The name of the property on the object, this field's name
    * @property {String} util/field.Field.name
    */
-  name: {
-    type: 'string'
-  },
+    name: {
+        type: 'string'
+    },
   /**
    * A friendly name for the field used to display to the user
    * The default is to capitalize the name and remove underscores
    * @property {String} util/field.Field.alias
    */
-  alias: {
-    type: 'string',
-    get(alias) {
-      if (alias) {
-        return alias;
-      }
-      return makeSentenceCase(this.name);
-    }
-  },
+    alias: {
+        type: 'string',
+        get (alias) {
+            if (alias) {
+                return alias;
+            }
+            return makeSentenceCase(this.name);
+        }
+    },
   /**
    * The type of the form field to use when editing this field. These types
    * are defined in the `util/field.TEMPLATES` constant
    * @property {String} util/field.Field.type
    */
-  fieldType: {
-    type: 'string',
-    value: 'text'
-  },
+    fieldType: {
+        type: 'string',
+        value: 'text'
+    },
   /**
    * The form field template to use when editing this field. This should be
    * a stache template renderer. By default, this value is set to the
    * template for the given `type` property.
    * @property {Renderer}
    */
-  formTemplate: {
-    get(template) {
-      if (template) {
-        return template;
-      }
-      let type = this.fieldType;
-      if (!TEMPLATES.hasOwnProperty(type)) {
-        console.warn('No template for the given field type', type);
-        return TEMPLATES.text;
-      }
-      return TEMPLATES[type];
-    }
-  },
+    formTemplate: {
+        get (template) {
+            if (template) {
+                return template;
+            }
+            const type = this.fieldType;
+            if (!TEMPLATES.hasOwnProperty(type)) {
+                console.warn('No template for the given field type', type);
+                return TEMPLATES.text;
+            }
+            return TEMPLATES[type];
+        }
+    },
   /**
    * Excludes this field from the list-table
    * @property {Boolean}
    */
-  excludeListTable: {
-    value: false
-  },
+    excludeListTable: {
+        value: false
+    },
   /**
    * Excludes this field from the property-table
    * @property {Boolean}
    */
-  excludePropertyTable: {
-    value: false
-  },
+    excludePropertyTable: {
+        value: false
+    },
   /**
    * Excludes this field from the form-widget
    * @property {Boolean}
    */
-  excludeForm: {
-    value: false
-  },
+    excludeForm: {
+        value: false
+    },
   /**
    * Formats the property when it is displayed in a property or list table
    * @property {Function}
    */
-  formatter: {
-    value: null
-  },
-  getFormattedValue(obj) {
-    return this.formatter ?
+    formatter: {
+        value: null
+    },
+    getFormattedValue (obj) {
+        return this.formatter ?
       this.formatter(obj[this.name], obj) : obj[this.name];
-  }
+    }
 });
 
 /**
@@ -121,22 +121,22 @@ export const Field = DefineMap.extend("Field", {
  * @param  {Constructor<DefineMap>} m The extended map/constructor to parse
  * @return {Array<Field>} The array of fields
  */
-export function mapToFields(m) {
-  if (!m) {
-    console.warn('map is undefined, so no fields will be generated');
-    return [];
-  }
-  let fields = [];
-  for (let prop in m) {
-    if (define.hasOwnProperty(prop)) {
-      fields.push(Object.assign({
-        name: prop,
-        type: 'string',
-        fieldType: 'text',
-      }, define[prop]));
+export function mapToFields (m) {
+    if (!m) {
+        console.warn('map is undefined, so no fields will be generated');
+        return [];
     }
-  }
-  return parseFieldArray(fields);
+    const fields = [];
+    for (const prop in m) {
+        if (m.hasOwnProperty(prop)) {
+            fields.push(Object.assign({
+                name: prop,
+                type: 'string',
+                fieldType: 'text'
+            }, m[prop]));
+        }
+    }
+    return parseFieldArray(fields);
 }
 
 /**
@@ -145,13 +145,13 @@ export function mapToFields(m) {
  * @param  {Array<Field | String>} fields An array of either strings or JSON like objects representing Field object properties
  * @return {Array<Field>} The array of fields
  */
-export function parseFieldArray(fields) {
-  return fields.map(f => {
-    if (typeof f === 'string') {
-      f = {
-        name: f
-      };
-    }
-    return new Field(f);
-  });
+export function parseFieldArray (fields) {
+    return fields.map((f) => {
+        if (typeof f === 'string') {
+            f = {
+                name: f
+            };
+        }
+        return new Field(f);
+    });
 }
