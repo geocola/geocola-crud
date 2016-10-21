@@ -20,7 +20,9 @@
   "author": "roemhildtg",
   "license": "MIT",
   "devDependencies": {
+    "babel-eslint": "^7.0.0",
     "documentjs": "^0.4.x",
+    "eslint": "^3.8.1",
     "jshint": "latest",
     "npm-watch": "^0.1.x",
     "steal-qunit": "^0.1.x",
@@ -33,6 +35,7 @@
     "can-connect": "^1.0.2",
     "can-define": "^1.0.0",
     "can-event": "^3.0.1",
+    "can-fixture": "^1.0.1",
     "can-set": "^0.5.x",
     "can-stache": "^3.0.1",
     "can-ui": "latest",
