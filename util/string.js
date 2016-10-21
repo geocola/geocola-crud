@@ -1,4 +1,4 @@
-import can from 'can/util/string/';
+import util from 'can-util';
 
 /**
  * Formats the field by replacing underscores with spaces and capitalizing the first letter
@@ -8,7 +8,7 @@ import can from 'can/util/string/';
  */
 export let makeSentenceCase = text => {
   text = String(text);
-  return can.capitalize(can.trim(
+  return util.string.capitalize(String.prototype.trim.call(
     text.split('_')
     .join(' ')
     .toLowerCase()

@@ -1,23 +1,39 @@
 <script type="text/stache" id="demo-html">
-  <h1>Property Table Demo</h1>
-  <property-table {object}="data" />
+    <h1>Property Table Demo</h1>
+    <property-table {object}="data" {fields}="fields" />
 </script>
+
 <script src="../node_modules/steal/steal.js" main="@empty" id="demo-source">
-  import 'bootstrap/dist/css/bootstrap.min.css!';
-  import 'bootstrap/dist/css/bootstrap-theme.min.css!';
-  import 'font-awesome/css/font-awesome.min.css';
-  import 'property-table/';
+    import 'bootstrap/dist/css/bootstrap.min.css!';
+    import 'bootstrap/dist/css/bootstrap-theme.min.css!';
+    import 'font-awesome/css/font-awesome.min.css';
+    import 'property-table/';
 
-  import can from 'can/view/';
-  import 'can/map/define/';
+    import DefineMap from 'can-define/map/map';
+    import stache from 'can-stache';
 
-  var frag = can.view('demo-html', {
-    data: new can.Map({
-      prop_1: 'This is a property',
-      another_property_value: 'Value here',
-      etc_or_misc: 'This is a value'
-    })
-  }, {});
+    var render = stache(document.getElementById('demo-html').innerHTML);
 
-  can.$('body').append(frag);
+    var viewModel = new DefineMap({
+        fields: [{
+          //fields can be specified using a detailed object
+          name: 'prop_1',
+          alias: 'Property 1',
+          // formatters can customize the look of the value
+          formatter(prop){
+            return `<strong>${prop}</strong>`;
+          }
+        },
+        //or a simple field name
+        'another_property_value', 'etc_or_misc'],
+        data: {
+            prop_1: 'This is a property',
+            another_property_value: 'Value here',
+            etc_or_misc: 'This is a value'
+        }
+    });
+
+    console.log(viewModel);
+
+    document.body.appendChild(render(viewModel));
 </script>

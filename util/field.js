@@ -2,12 +2,11 @@
  * field parsing and creating utilities
  */
 
-import CanMap from 'can/map/';
-import 'can/map/define/';
-import stache from 'can/view/stache/';
-import can from 'can/util/library';
-
+import { string } from 'can-util';
 import { makeSentenceCase } from './string';
+import stache from 'can-stache';
+import DefineMap from 'can-define/map/map';
+
 
 let TEMPLATES = {
   text: '<text-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
@@ -31,98 +30,95 @@ export { TEMPLATES };
  * @parent crud.types
  *
  */
-export const Field = CanMap.extend({
-  define: {
-    /**
-     * The name of the property on the object, this field's name
-     * @property {String} util/field.Field.name
-     */
-    name: {
-      type: 'string'
-    },
-    /**
-     * A friendly name for the field used to display to the user
-     * The default is to capitalize the name and remove underscores
-     * @property {String} util/field.Field.alias
-     */
-    alias: {
-      type: 'string',
-      get(alias) {
-        if (alias) {
-          return alias;
-        }
-        return makeSentenceCase(this.attr('name'));
+export const Field = DefineMap.extend("Field", {
+  /**
+   * The name of the property on the object, this field's name
+   * @property {String} util/field.Field.name
+   */
+  name: {
+    type: 'string'
+  },
+  /**
+   * A friendly name for the field used to display to the user
+   * The default is to capitalize the name and remove underscores
+   * @property {String} util/field.Field.alias
+   */
+  alias: {
+    type: 'string',
+    get(alias) {
+      if (alias) {
+        return alias;
       }
-    },
-    /**
-     * The type of the form field to use when editing this field. These types
-     * are defined in the `util/field.TEMPLATES` constant
-     * @property {String} util/field.Field.type
-     */
-    fieldType: {
-      type: 'string',
-      value: 'text'
-    },
-    /**
-     * The form field template to use when editing this field. This should be
-     * a can.stache template renderer. By default, this value is set to the
-     * template for the given `type` property.
-     * @property {can.view.Renderer}
-     */
-    formTemplate: {
-      get(template) {
-        if (template) {
-          return template;
-        }
-        let type = this.attr('fieldType');
-        if (!TEMPLATES.hasOwnProperty(type)) {
-          console.warn('No template for the given field type', type);
-          return TEMPLATES.text;
-        }
-        return TEMPLATES[type];
-      }
-    },
-    /**
-     * Excludes this field from the list-table
-     * @property {Boolean}
-     */
-    excludeListTable: {
-      value: false
-    },
-    /**
-     * Excludes this field from the property-table
-     * @property {Boolean}
-     */
-    excludePropertyTable: {
-      value: false
-    },
-    /**
-     * Excludes this field from the form-widget
-     * @property {Boolean}
-     */
-    excludeForm: {
-      value: false
-    },
-    /**
-     * Formats the property when it is displayed in a property or list table
-     * @property {Function}
-     */
-    formatter: {
-      value: null
+      return makeSentenceCase(this.name);
     }
   },
+  /**
+   * The type of the form field to use when editing this field. These types
+   * are defined in the `util/field.TEMPLATES` constant
+   * @property {String} util/field.Field.type
+   */
+  fieldType: {
+    type: 'string',
+    value: 'text'
+  },
+  /**
+   * The form field template to use when editing this field. This should be
+   * a stache template renderer. By default, this value is set to the
+   * template for the given `type` property.
+   * @property {Renderer}
+   */
+  formTemplate: {
+    get(template) {
+      if (template) {
+        return template;
+      }
+      let type = this.fieldType;
+      if (!TEMPLATES.hasOwnProperty(type)) {
+        console.warn('No template for the given field type', type);
+        return TEMPLATES.text;
+      }
+      return TEMPLATES[type];
+    }
+  },
+  /**
+   * Excludes this field from the list-table
+   * @property {Boolean}
+   */
+  excludeListTable: {
+    value: false
+  },
+  /**
+   * Excludes this field from the property-table
+   * @property {Boolean}
+   */
+  excludePropertyTable: {
+    value: false
+  },
+  /**
+   * Excludes this field from the form-widget
+   * @property {Boolean}
+   */
+  excludeForm: {
+    value: false
+  },
+  /**
+   * Formats the property when it is displayed in a property or list table
+   * @property {Function}
+   */
+  formatter: {
+    value: null
+  },
   getFormattedValue(obj) {
-    return this.attr('formatter') ?
-      this.attr('formatter')(obj.attr(this.attr('name')), obj) :
-      can.esc(obj.attr(this.attr('name')));
+    return this.formatter ?
+      this.formatter(obj[this.name], obj) : obj[this.name];
   }
 });
 
 /**
  * @function util/field.mapToFields
- * Converts a can.Map to an array of Field objects using the define
+ * Converts a DefineMap to an array of Field objects using the define
  * property or the keys
- * @param  {Constructor<can.Map>} m The extended map/constructor to parse
+ * @param  {Constructor<DefineMap>} m The extended map/constructor to parse
  * @return {Array<Field>} The array of fields
  */
 export function mapToFields(m) {
@@ -130,21 +126,15 @@ export function mapToFields(m) {
     console.warn('map is undefined, so no fields will be generated');
     return [];
   }
-  let define = m.define || m.prototype.define;
   let fields = [];
-  if (define) {
-    for (let prop in define) {
-      if (define.hasOwnProperty(prop)) {
-        fields.push(can.extend({
-          name: prop,
-          type: 'string',
-          fieldType: 'text',
-        }, define[prop]));
-      }
+  for (let prop in m) {
+    if (define.hasOwnProperty(prop)) {
+      fields.push(Object.assign({
+        name: prop,
+        type: 'string',
+        fieldType: 'text',
+      }, define[prop]));
     }
-  } else {
-    //we have a constructor so make a new map and get its keys
-    fields = CanMap.keys(new m());
   }
   return parseFieldArray(fields);
 }
