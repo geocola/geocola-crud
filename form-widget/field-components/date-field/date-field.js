@@ -7,7 +7,6 @@ import dateSelector from 'date-selector';
 
 import template from './date-field.stache!';
 import './date-field.less!';
-import {ViewModel as TextViewModel} from '../text-field/';
 
 /**
  * @constructor form-widget/field-components/date-field.ViewModel ViewModel
@@ -19,16 +18,16 @@ import {ViewModel as TextViewModel} from '../text-field/';
 export const ViewModel = DefineMap.extend('DateField', {
     properties: DefineMap,
     value: 'date',
-/**
- * Checks for the enter keypress and triggers a change event on the input
- * The enter key press triggers a submit event on the form, but before the
- * submit event, we need to trigger a change on the field value
- * @param  {domElement} element The form input element
- * @param  {KeyDownEvent} event
- */
+  /**
+   * Checks for the enter keypress and triggers a change event on the input
+   * The enter key press triggers a submit event on the form, but before the
+   * submit event, we need to trigger a change on the field value
+   * @param  {domElement} element The form input element
+   * @param  {KeyDownEvent} event
+   */
     beforeSubmit (element, event) {
         if (event.keyCode === 13) {
-            canEvent.trigger(element, 'change');
+            CanEvent.trigger(element, 'change');
         }
     },
     onBlur (element) {
@@ -44,7 +43,7 @@ Component.extend({
         inserted () {
             dateSelector();
         },
-        '{viewModel} value' (viewModel, event, newValue) {
+        '{ViewModel} value' (viewModel, event, newValue) {
             viewModel.dispatch('change', [newValue]);
         }
     }

@@ -10,12 +10,11 @@
   import 'font-awesome/css/font-awesome.min.css';
   import 'paginate-widget/';
 
-  import can from 'can/view/';
-  import 'can/map/define/';
+  import stache from 'can-stache';
 
-  var frag = can.view('demo-html', {
+  var frag = stache(document.getElementById('demo-html').innerHTML)({
     currentPage: 0
-  }, {});
+  });
 
-  can.$('body').append(frag);
+  document.body.appendChild(frag);
 </script>
