@@ -2,6 +2,7 @@ import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
 import Component from 'can-component';
 import template from './template.stache!';
+import assign from 'can-util/js/assign/assign';
 import './widget.less!';
 
 import '../list-table/';
@@ -83,7 +84,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
         set (view) {
         //if parameters are in the view, mix them in to the crud parameters
             if (view.parameters) {
-                Object.assign(this.parameters, view.parameters.serialize());
+                assign(this.parameters, view.parameters.serialize());
             }
             return view;
         }
@@ -167,42 +168,53 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @property {can.Deferred} crud-manager.ViewModel.props.objects
      * @parent crud-manager.ViewModel.props
      */
-    objects: {
+    objectsPromise: {
         get (prev, setAttr) {
             const params = this.parameters ? this.parameters.serialize() : {};
             const promise = this.view.connection.getListData(params);
-        //handle promise.fail for deferreds
-            const dummy = promise.fail ? promise.fail((err) => {
+
+          // handle promise.catch for local-storage deferreds...
+            promise.catch((err) => {
                 console.error('unable to complete objects request', err);
-            }) :
-          //and handle promise.catch for local-storage deferreds...
-          promise.catch((err) => {
-              console.error('unable to complete objects request', err);
-          });
+            });
+
+            // update the list data
+            promise.then((data) => {
+                this.objects = data;
+            });
+
             return promise;
         }
+    },
+    objects: {
+        Value: DefineList,
+        Type: DefineList
     },
     /**
      * A promise that resolves to the object retreived from a `can-connect.get` call
      * @property {can.Map} crud-manager.ViewModel.props.focusObject
      * @parent crud-manager.ViewModel.props
      */
-    focusObject: {
-        get (prev, setAttr) {
-            if (this.attr('viewId')) {
+    focusObjectPromise: {
+        get (prev) {
+            if (this.viewId) {
                 const params = {};
                 params[this.view.connection.idProp] = this.viewId;
                 const promise = this.view.connection.get(params);
-                const dummy = promise.fail ? promise.fail(function (err) {
+
+                promise.catch((err) => {
                     console.error('unable to complete focusObject request', err);
-                }) : promise.catch(function (err) {
-                    console.error('unable to complete focusObject request', err);
+                });
+
+                promise.then((data) => {
+                    this.focusObject = data;
                 });
                 return promise;
             }
             return null;
         }
     },
+    focusObject: DefineMap,
     /**
      * Buttons to use for the list table actions. If `view.disableEdit` is falsey
      * the buttons will include an edit and delete button. Otherwise, it will be
@@ -270,8 +282,9 @@ export const ViewModel = DefineMap.extend('CrudManager', {
             }
 
         //if that doesn't exist, use the objectTemplate or Map to create fields
-            const template = this.view.objectTemplate || this.view.connection.Map;
-            return mapToFields(template);
+            const Template = this.view.objectTemplate || this.view.connection.Map;
+            const keys = Object.keys((new Template()).serialize());
+            return parseFieldArray(keys);
         }
     },
     /**
