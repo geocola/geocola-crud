@@ -1,6 +1,7 @@
 import DefineMap from 'can-define/map/map';
 import Component from 'can-component';
 import template from './template.stache!';
+import './paginate-widget.less!';
 /**
  * @constructor paginate-widget.ViewModel ViewModel
  * @parent paginate-widget
