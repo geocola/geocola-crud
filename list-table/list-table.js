@@ -117,17 +117,6 @@ export const ViewModel = DefineMap.extend("ListTable", {
       };
     }
   },
-  contextLeft: 'number',
-  contextTop: 'number',
-
-  showContextMenu(scope, tr, event){
-    console.log(event);
-    this.contextLeft = event.x;
-    this.contextTop = event.y;
-    console.log(this.contextLeft);
-    event.preventDefault();
-    return false;
-  },
   /**
    * @function buttonClick
    * @static

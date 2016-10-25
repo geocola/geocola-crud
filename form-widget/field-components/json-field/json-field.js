@@ -16,7 +16,7 @@ export const ViewModel = DefineMap.extend('JSONField', {
     properties: DefineMap,
     jsonFormObject: {
         get: function () {
-            const Template = this.properties.objectTemplate;
+            const Template = this.properties.ObjectTemplate;
             const obj = this.value ? JSON.parse(this.value) : {};
             if (template) {
                 return new Template(obj);

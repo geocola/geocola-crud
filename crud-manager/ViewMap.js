@@ -35,7 +35,7 @@ export const ViewMap = DefineMap.extend('ViewMap', {
      * @link https://connect.canjs.com/doc/can-connect|constructor.html constructor
      * @property {can-connect} connection
      */
-    connection: {},
+    connection: '*',
     /**
      * A template for creating new objects. This should be an constructor of can.Map
      * created using can.Map.extend. This object defines the default properties, types,
@@ -48,10 +48,10 @@ export const ViewMap = DefineMap.extend('ViewMap', {
      * and can reused here also: `connection.Map`.
      *
      * @link https://canjs.com/docs/can.Map.prototype.define.html Define Plugin
-     * @signature `objectTemplate: can.Map.extend({prop: 'value'})`
-     * @property {Constructor<can.Map>} objectTemplate
+     * @signature `ObjectTemplate: can.Map.extend({prop: 'value'})`
+     * @property {Constructor<can.Map>} ObjectTemplate
      */
-    objectTemplate: {
+    ObjectTemplate: {
         get (obj) {
             if (!obj) {
                 return this.connection.Map;

@@ -32,12 +32,12 @@ how to format, filter, and display each field.
 
 ### New Object Template
 
-To create new objects, the `view.objectTemplate` property must be provided.
+To create new objects, the `view.ObjectTemplate` property must be provided.
 This is a `can.Map` or similar object. It defines the default values
 and the types of properties. The crud-manager supports the use of the define
 plugin to enable this functionality.
 
-**Note: If the `fields` property is not defined, `objectTemplate` is required.
+**Note: If the `fields` property is not defined, `ObjectTemplate` is required.
 The crud-manager falls back on this property to create fields.**
 
 ### Related Data

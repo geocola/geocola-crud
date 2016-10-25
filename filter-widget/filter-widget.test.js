@@ -79,15 +79,15 @@ test('fieldOptions get() with fields', assert => {
   assert.equal(vm.attr('fieldOptions').length, fields.length, 'when fields are provided, fieldOptions should be created from the value');
 });
 
-test('fieldOptions get() with objectTemplate', assert => {
+test('fieldOptions get() with ObjectTemplate', assert => {
   let template = can.Map.extend({
     test1: null,
     test2: null,
     test3: null
   });
   let len = can.Map.keys(new template()).length;
-  vm.attr('objectTemplate', template);
-  assert.equal(vm.attr('fieldOptions').length, len, 'when no fieldOptions are provided, but objectTemplate is, fieldOptions.length should be length of objectTemplate keys');
+  vm.attr('ObjectTemplate', template);
+  assert.equal(vm.attr('fieldOptions').length, len, 'when no fieldOptions are provided, but ObjectTemplate is, fieldOptions.length should be length of ObjectTemplate keys');
 });
 
 test('addFilter()', assert => {

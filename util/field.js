@@ -114,30 +114,6 @@ export const Field = DefineMap.extend('Field', {
     }
 });
 
-/**
- * @function util/field.mapToFields
- * Converts a DefineMap to an array of Field objects using the define
- * property or the keys
- * @param  {Constructor<DefineMap>} m The extended map/constructor to parse
- * @return {Array<Field>} The array of fields
- */
-export function mapToFields (m) {
-    if (!m) {
-        console.warn('map is undefined, so no fields will be generated');
-        return [];
-    }
-    const fields = [];
-    for (const prop in m) {
-        if (m.hasOwnProperty(prop)) {
-            fields.push(Object.assign({
-                name: prop,
-                type: 'string',
-                fieldType: 'text'
-            }, m[prop]));
-        }
-    }
-    return parseFieldArray(fields);
-}
 
 /**
  * @function util/field.parseFieldArray
@@ -154,4 +130,27 @@ export function parseFieldArray (fields) {
         }
         return new Field(f);
     });
+}
+
+/**
+ * @function util/field.mapToFields
+ * Converts a DefineMap to an array of Field objects using the define
+ * property or the keys
+ * @param  {Constructor<DefineMap>} m The extended map/constructor to parse
+ * @return {Array<Field>} The array of fields
+ */
+export function mapToFields (m) {
+    if (!m) {
+        console.warn('map is undefined, so no fields will be generated');
+        return [];
+    }
+    const fields = [];
+    m.forEach((value, propName) => {
+        fields.push(Object.assign({
+            name: propName,
+            type: 'string',
+            fieldType: 'text'
+        }, m[propName]));
+    });
+    return parseFieldArray(fields);
 }
