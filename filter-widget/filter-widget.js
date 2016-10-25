@@ -5,6 +5,7 @@ import batch from 'can-event/batch/batch';
 import {makeSentenceCase} from '../../util/string';
 
 import template from './template.stache!';
+import './filter-widget.less!';
 import '../list-table/';
 import '../form-widget/';
 import '../form-widget/field-components/text-field/';
@@ -24,6 +25,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
   /**
    * @prototype
    */
+    disableAdd: 'htmlbool',
     /**
      * A list of fields that will be used to create options in the field name
      * dropdown. Each field may have a property `filterFactory` which may return
@@ -109,7 +111,13 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 alias: 'Field Name',
                 placeholder: 'Enter fieldname'
             };
-            return parseFieldArray([nameField, {
+            return parseFieldArray([nameField, this.selectField, this.valueField]);
+        }
+    },
+    selectField: {
+        Type: DefineMap,
+        get () {
+            return {
                 name: 'operator',
                 alias: 'is',
                 placeholder: 'Choose an operator',
@@ -122,7 +130,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 properties: {
                     options: this.filterOptions
                 }
-            }, this.valueField]);
+            };
         }
     },
     /**
@@ -220,26 +228,13 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 }) : null;
         }
     },
-    /**
-     * If true, existing filters will be replaced rather than concatenated
-     * when the addFilter method is called
-     * @property {Boolean} filter-widget.ViewModel.replaceExisting
-     * @parent filter-widget.ViewModel.props
-     */
-    replaceExisting: {
-        value: false,
-        type: 'boolean'
-    },
   /**
    * @function removeFilter
    * Removes a filter from the list of filters
    * @signature
-   * @param  {can.Map} scope The stache scope
-   * @param  {event} dom   The dom event
-   * @param  {event} event The can event
    * @param  {crud.types.filterObject} obj   The object to remove. This is the only argument used by the function, the rest may be null.
    */
-    removeFilter (scope, dom, event, obj) {
+    removeFilter (obj) {
         const index = this.filters.indexOf(obj);
         this.filters.splice(index, 1);
     },
@@ -288,23 +283,15 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
             filters = [filterObj];
         }
 
-        if (this.replaceExisting) {
-            batch.start();
-            this.filters.replace(filters);
-            this.formObject = null;
-            batch.stop();
-        } else {
-
       //start batch process
       //concat array doesn't seem to update correctly
-            batch.start();
-            filters.forEach((f) => {
-                this.filters.push(f);
-            });
-            this.formObject = null;
+        batch.start();
+        filters.forEach((f) => {
+            this.filters.push(f);
+        });
+        this.formObject = null;
       //end batch process
-            batch.stop();
-        }
+        batch.stop();
         return false;
     }
 });

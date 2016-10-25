@@ -164,5 +164,6 @@ export const ViewModel = DefineMap.extend('FormWidget', {
 Component.extend({
     tag: 'form-widget',
     ViewModel: ViewModel,
-    view: template
+    view: template,
+    leakScope: true
 });
