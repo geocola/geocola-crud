@@ -2,6 +2,7 @@ import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
 import Component from 'can-component';
 import template from './template.stache!';
+import batch from 'can-event/batch/batch';
 import './widget.less!';
 
 import '../list-table/';
@@ -170,9 +171,11 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     objects: {
         get (prev, setAttr) {
             const params = this.parameters ? this.parameters.serialize() : {};
-            const promise = this.view.connection.getListData(params);
-        //handle promise.fail for deferreds
-            const dummy = promise.fail ? promise.fail((err) => {
+            const promise = this.view.connection.getList(params);
+
+
+        //handle promise.catch for deferreds
+            const dummy = promise.catch ? promise.catch((err) => {
                 console.error('unable to complete objects request', err);
             }) :
           //and handle promise.catch for local-storage deferreds...
@@ -189,11 +192,11 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      */
     focusObject: {
         get (prev, setAttr) {
-            if (this.attr('viewId')) {
+            if (this.viewId) {
                 const params = {};
                 params[this.view.connection.idProp] = this.viewId;
                 const promise = this.view.connection.get(params);
-                const dummy = promise.fail ? promise.fail(function (err) {
+                promise.catch ? promise.catch(function (err) {
                     console.error('unable to complete focusObject request', err);
                 }) : promise.catch(function (err) {
                     console.error('unable to complete focusObject request', err);
@@ -269,9 +272,9 @@ export const ViewModel = DefineMap.extend('CrudManager', {
                 return parseFieldArray(this.view.fields);
             }
 
-        //if that doesn't exist, use the objectTemplate or Map to create fields
-            const template = this.view.objectTemplate || this.view.connection.Map;
-            return mapToFields(template);
+        //if that doesn't exist, use the ObjectTemplate or Map to create fields
+            const Template = this.view.ObjectTemplate || this.view.connection.Map;
+            return mapToFields(new Template());
         }
     },
     /**
@@ -306,10 +309,10 @@ export const ViewModel = DefineMap.extend('CrudManager', {
    * @param {String} page The name of the page to switch to
    */
     setPage (page) {
-        this.attr({
-            'viewId': 0,
-            'page': page
-        });
+        batch.start();
+        this.viewId = 0;
+        this.page = page;
+        batch.stop();
     },
   /**
    * @function editObject
@@ -391,7 +394,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
 
     // halt save or create if the value returned is falsey
         if (!val) {
-            return;
+            return null;
         }
 
     //display a loader
@@ -417,13 +420,14 @@ export const ViewModel = DefineMap.extend('CrudManager', {
 
       //update the view id
       //set page to the details view by default
+            batch.start();
             this.viewId = result.id;
             this.page = 'details';
+            batch.end();
 
-        }).fail((e) => {
-            console.warn(e);
+        }).catch((e) => {
             PubSub.publish(TOPICS.ADD_MESSAGE, {
-                message: this.attr('view.saveFailMessage'),
+                message: this.view.saveFailMessage,
                 detail: e.statusText + ' : <small>' + e.responseText + '</small>',
                 level: 'danger',
                 timeout: 20000
@@ -434,18 +438,18 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     },
   /**
    * @function getNewObject
-   * Creates and returns a new object from the view's objectTemplate
+   * Creates and returns a new object from the view's ObjectTemplate
    * @signature
-   * @return {can.map} A new object created from the `view.objectTemplate`
+   * @return {DefineMap} A new object created from the `view.ObjectTemplate`
    */
     getNewObject () {
     //create a new empty object with the defaults provided
-    //from the objectTemplate property which is a map
+    //from the ObjectTemplate property which is a map
         const props = {};
-        if (this.attr('relatedField')) {
-            props[this.attr('relatedField')] = this.attr('relatedValue');
+        if (this.relatedField) {
+            props[this.relatedField] = this.relatedValue;
         }
-        return new(this.attr('view.objectTemplate'))(props);
+        return new (this.view.ObjectTemplate)(props);
     },
   /**
    * @function deleteObject
@@ -497,7 +501,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
                 this.onEvent(obj, 'afterDelete');
             });
 
-            deferred.fail((result) => {
+            deferred.catch((result) => {
         //add a message
                 PubSub.publish(TOPICS.ADD_MESSAGE, {
                     message: this.view.deleteFailMessage,
@@ -605,10 +609,10 @@ Component.extend({
     view: template,
     events: {
         '{ViewModel.parameters.filters} change' () {
-            this.viewModel.attr('parameters.page', 0);
+            this.viewModel.parameters.page = 0;
         },
         '{ViewModel.parameters.perPage} change' () {
-            this.viewModel.attr('parameters.page', 0);
+            this.viewModel.parameters.page = 0;
         }
     }
 });
