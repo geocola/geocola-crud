@@ -1,15 +1,14 @@
 import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
 export const Filter = DefineMap.extend('Filter', {
-    define: {
-        value: {},
-        name: {
-            type: 'string',
-            value: ''
-        },
-        operator: {
-            value: 'like'
-        }
+    value: {},
+    name: {
+        type: 'string',
+        value: ''
+    },
+    operator: {
+        type: 'string',
+        value: 'like'
     }
 });
 
