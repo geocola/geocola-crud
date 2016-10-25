@@ -29,7 +29,7 @@
 
 
     {{#case 'list'}}
-        {{#if objects.isPending}}
+        {{#if objectsPromise.isPending}}
             <div class="progress">
                 <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
                     <span>Refreshing Data...</span>

@@ -69,7 +69,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 return obj;
             }
             return new Filter({
-                name: this.fieldOptions ? this.fieldOptions[0].value : ''
+                name: this.fieldOptions && this.fieldOptions.length ? this.fieldOptions[0].value : ''
             });
         }
     },

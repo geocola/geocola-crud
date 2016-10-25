@@ -3,6 +3,7 @@ import DefineList from 'can-define/list/list';
 import Component from 'can-component';
 import template from './template.stache!';
 import batch from 'can-event/batch/batch';
+import assign from 'can-util/js/assign/assign';
 import './widget.less!';
 
 import '../list-table/';
@@ -84,7 +85,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
         set (view) {
         //if parameters are in the view, mix them in to the crud parameters
             if (view.parameters) {
-                Object.assign(this.parameters, view.parameters.serialize());
+                assign(this.parameters, view.parameters.serialize());
             }
             return view;
         }
@@ -168,44 +169,53 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @property {can.Deferred} crud-manager.ViewModel.props.objects
      * @parent crud-manager.ViewModel.props
      */
-    objects: {
+    objectsPromise: {
         get (prev, setAttr) {
             const params = this.parameters ? this.parameters.serialize() : {};
-            const promise = this.view.connection.getList(params);
+            const promise = this.view.connection.getListData(params);
 
-
-        //handle promise.catch for deferreds
-            const dummy = promise.catch ? promise.catch((err) => {
+          // handle promise.catch for local-storage deferreds...
+            promise.catch((err) => {
                 console.error('unable to complete objects request', err);
-            }) :
-          //and handle promise.catch for local-storage deferreds...
-          promise.catch((err) => {
-              console.error('unable to complete objects request', err);
-          });
+            });
+
+            // update the list data
+            promise.then((data) => {
+                this.objects = data;
+            });
+
             return promise;
         }
+    },
+    objects: {
+        Value: DefineList,
+        Type: DefineList
     },
     /**
      * A promise that resolves to the object retreived from a `can-connect.get` call
      * @property {can.Map} crud-manager.ViewModel.props.focusObject
      * @parent crud-manager.ViewModel.props
      */
-    focusObject: {
-        get (prev, setAttr) {
+    focusObjectPromise: {
+        get (prev) {
             if (this.viewId) {
                 const params = {};
                 params[this.view.connection.idProp] = this.viewId;
                 const promise = this.view.connection.get(params);
-                promise.catch ? promise.catch(function (err) {
+
+                promise.catch((err) => {
                     console.error('unable to complete focusObject request', err);
-                }) : promise.catch(function (err) {
-                    console.error('unable to complete focusObject request', err);
+                });
+
+                promise.then((data) => {
+                    this.focusObject = data;
                 });
                 return promise;
             }
             return null;
         }
     },
+    focusObject: DefineMap,
     /**
      * Buttons to use for the list table actions. If `view.disableEdit` is falsey
      * the buttons will include an edit and delete button. Otherwise, it will be
@@ -272,9 +282,10 @@ export const ViewModel = DefineMap.extend('CrudManager', {
                 return parseFieldArray(this.view.fields);
             }
 
-        //if that doesn't exist, use the ObjectTemplate or Map to create fields
-            const Template = this.view.ObjectTemplate || this.view.connection.Map;
-            return mapToFields(new Template());
+        //if that doesn't exist, use the objectTemplate or Map to create fields
+            const Template = this.view.objectTemplate || this.view.connection.Map;
+            const keys = Object.keys((new Template()).serialize());
+            return parseFieldArray(keys);
         }
     },
     /**

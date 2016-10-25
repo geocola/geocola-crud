@@ -95,7 +95,7 @@ export const ViewModel = DefineMap.extend("ListTable", {
       if (fields.length && !(fields[0] instanceof Field)) {
         fields = parseFieldArray(fields);
       }
-      if (!fields.length && this.objects) {
+      if (!fields.length && this.objects.length) {
         return parseFieldArray(Object.keys(this.objects[0]));
       }
       return fields.filter(f => {
