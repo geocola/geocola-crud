@@ -170,9 +170,9 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @parent crud-manager.ViewModel.props
      */
     objectsPromise: {
-        get (prev, setAttr) {
+        get () {
             const params = this.parameters ? this.parameters.serialize() : {};
-            const promise = this.view.connection.getListData(params);
+            const promise = this.view.connection.getList(params);
 
           // handle promise.catch for local-storage deferreds...
             promise.catch((err) => {
@@ -197,7 +197,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @parent crud-manager.ViewModel.props
      */
     focusObjectPromise: {
-        get (prev) {
+        get () {
             if (this.viewId) {
                 const params = {};
                 params[this.view.connection.idProp] = this.viewId;
@@ -320,6 +320,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
    * @param {String} page The name of the page to switch to
    */
     setPage (page) {
+        console.log(page);
         batch.start();
         this.viewId = 0;
         this.page = page;

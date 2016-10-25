@@ -5,6 +5,7 @@ import assign from 'can-util/js/assign/assign';
 
 
 //a mock ajax service
+fixture.delay = 1000;
 fixture({
     'GET /tasks' (params) {
         const perPage = params.data.perPage || 10;
@@ -39,9 +40,10 @@ fixture({
             });
         }
 
-    //pageinate it
-        tempData = tempData.slice(page * perPage, perPage + page * perPage);
+        //pageinate it
+        tempData = tempData.slice(page * perPage, (page + 1) * perPage - 1);
 
+        //return the serialized version
         return tempData.serialize();
     },
     'POST /tasks' (params, response) {
