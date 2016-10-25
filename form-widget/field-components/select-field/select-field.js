@@ -15,10 +15,11 @@ export const ViewModel = DefineMap.extend('SelectField', {
     properties: DefineMap,
     onChange (value) {
     //we could perform some other logic here
-        this.value = value;
         this.dispatch('change', [value]);
     },
     isSelected (value) {
+        //coerce check into this value type
+        //eslint-disable-next-line eqeqeq
         return value == this.value;
     }
 });
