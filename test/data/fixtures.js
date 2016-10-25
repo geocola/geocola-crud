@@ -1,6 +1,7 @@
 import data from './tasks.json';
 import fixture from 'can-fixture';
 import DefineList from 'can-define/list/list';
+import assign from 'can-util/js/assign/assign';
 
 
 //a mock ajax service
@@ -41,27 +42,29 @@ fixture({
     //pageinate it
         tempData = tempData.slice(page * perPage, perPage + page * perPage);
 
-        return tempData.attr();
+        return tempData.serialize();
     },
     'POST /tasks' (params, response) {
         const newId = data[data.length - 1].id + 1;
-        data.push(Object.assign({
+        data.push(assign({
             id: newId
         }, params.data));
         response(data[data.length - 1]);
     },
     'GET /tasks/{id}' (params, response) {
         const items = data.filter((item) => {
+          //eslint-disable-next-line eqeqeq
             return item.id == params.data.id;
         });
         if (!items.length) {
             response(404, 'Not Found');
-            return;
+            return null;
         }
         return items[0];
     },
     'PUT /tasks/{id}' (params, response) {
         let item = data.filter((i) => {
+          //eslint-disable-next-line eqeqeq
             return i.id == params.data.id;
         });
         if (!item.length) {

@@ -44,10 +44,10 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
      * An optional object template to derive field options from. If it is provided,
      * filter-widget will extract the field names and the field types and use that to create
      * filter options.
-     * @property {can.Map} filter-widget.ViewModel.objectTemplate
+     * @property {can.Map} filter-widget.ViewModel.ObjectTemplate
      * @parent filter-widget.ViewModel.props
      */
-    objectTemplate: {
+    ObjectTemplate: {
     },
     /**
      * A list of filterObjects currently used in this widget
@@ -177,10 +177,10 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 }
             }
 
-        //otherwise search the objectTemplate for a field type
+        //otherwise search the ObjectTemplate for a field type
         //if it doesn't exist or the property/type doesn't exist then
         //return the whole array
-            const map = this.objectTemplate;
+            const map = this.ObjectTemplate;
             if (!map ||
           !map.prototype.define ||
           !map.prototype.define[name] ||
@@ -195,7 +195,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
     },
     /**
      * An array of field options to display for the field selection dropdown. If not provided, the
-     * viewModel will look for the objectTemplate property and display its keys. If this property does
+     * viewModel will look for the ObjectTemplate property and display its keys. If this property does
      * not exist, the fieldOptions will be replaced with a simple text field.
      * @property {Array<crud.types.SelectOptionProperty>} filter-widget.ViewModel.fieldOptions
      * @parent filter-widget.ViewModel.props
@@ -211,8 +211,8 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                     };
                 });
             }
-            return this.objectTemplate ?
-                Object.keys(this.objectTemplate()).map((key) => {
+            return this.ObjectTemplate ?
+                Object.keys(this.ObjectTemplate()).map((key) => {
                     return {
                         value: key,
                         label: makeSentenceCase(key)

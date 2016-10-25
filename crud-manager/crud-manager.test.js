@@ -141,9 +141,9 @@ test('buttons get()', assert => {
 
 test('_fields get()', assert => {
   vm.attr('view', {
-    objectTemplate: TaskMap
+    ObjectTemplate: TaskMap
   });
-  assert.equal(vm.attr('_fields').length, 2, 'if no fields exist on the view, they should be created from the objectTemplate');
+  assert.equal(vm.attr('_fields').length, 2, 'if no fields exist on the view, they should be created from the ObjectTemplate');
 
   vm.attr('view', {
     fields: ['test1', 'test2', 'test3', 'test4']
@@ -269,7 +269,7 @@ test('setPage(page)', assert => {
 
 test('getNewObject()', assert => {
   vm.attr('view', {
-    objectTemplate: TaskMap
+    ObjectTemplate: TaskMap
   });
   assert.deepEqual(vm.getNewObject().attr(), new TaskMap().attr(), 'new object should be created');
 });
