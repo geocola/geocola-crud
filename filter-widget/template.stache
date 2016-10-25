@@ -1,19 +1,18 @@
 <div class="filter-widget container-fluid">
-  <h4>Add Filter</h4>
 
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" {($checked)}="replaceExisting"> Replace existing filters
-    </label>
-  </div>
-  
-  <form-widget inline="true" {fields}="formFields" {(form-object)}="formObject" (submit)="addFilter" />
-  {{#if filters.length}}
-    <h4>Current Filters
-      <button class="btn btn-default" ($click)="removeFilters">
-        <i class="fa fa-times"></i> Clear Filters
-      </button>
-    </h4>
-    <list-table {objects}="filters" {fields}="formFields" (delete)="removeFilter" {buttons}="buttons" />
-  {{/if}}
+    {{#unless disableAdd}}
+        <form-widget inline="true" {fields}="formFields" {(form-object)}="formObject" (submit)="addFilter" />
+    {{/unless}}
+
+    <br />
+
+    {{#each filters}}
+        <form class="form-horizontal">
+            <div class="form-group">
+                <button type="button" class="btn" ($click)="removeFilter(this)"><i class="fa fa-trash"></i> {{name}}</button>
+                <select-field {properties}="selectField.properties" {(value)}="operator" />
+                <text-field {(value)}="value" />
+            </div>
+        </form>
+    {{/each}}
 </div>

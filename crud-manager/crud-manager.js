@@ -402,7 +402,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
             val = this.onEvent(obj, 'beforeSave');
         }
 
-    // halt save or create if the value returned is falsey
+        // halt save or create if the value returned is falsey
         if (!val) {
             return;
         }

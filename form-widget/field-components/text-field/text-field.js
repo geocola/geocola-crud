@@ -21,7 +21,9 @@ export const ViewModel = DefineMap.extend('TextField', {
    */
     beforeSubmit (element, event) {
         if (event.keyCode === 13) {
+            console.log('submit');
             canEvent.trigger(element, 'change');
+            return true;
         }
     }
 });

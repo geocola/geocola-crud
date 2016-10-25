@@ -1,5 +1,6 @@
 <div id="demo-app"></div>
 
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectre.css/0.1.27/spectre.min.css" >
 <script type="text/stache" id="demo-html" can-autorender="can-autorender">
     <p>Current form values: </p>
     <ul>
@@ -14,8 +15,8 @@
     <form-widget {(form-object)}="formObject" {fields}="fields" (submit)="onSubmit" />
 </script>
 <script src="../node_modules/steal/steal.js" main="@empty" id="demo-source">
-    import 'bootstrap/dist/css/bootstrap.min.css!';
-    import 'bootstrap/dist/css/bootstrap-theme.min.css!';
+    // import 'bootstrap/dist/css/bootstrap.min.css!';
+    // import 'bootstrap/dist/css/bootstrap-theme.min.css!';
     import 'font-awesome/css/font-awesome.min.css';
 
     //import our form component
@@ -51,7 +52,12 @@
         field1: {value: 'test-value'},
         field2: {value: 'another value'},
         field3: {value: 1},
-        field4: {value: ''},
+        field4: {
+          value(){
+            var date = new Date('2010-10-11T00:00:00+05:30');
+            return (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+        }
+      },
         field5: {value: ''}
     });
 
@@ -86,7 +92,10 @@
         }, {
             name: 'field4',
             alias: 'A date field',
-            fieldType: 'date'
+            fieldType: 'text',
+            properties: {
+              type: 'date'
+            }
         }, {
             name: 'field5',
             alias: 'A file field',

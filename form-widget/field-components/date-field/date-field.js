@@ -2,8 +2,8 @@ import DefineMap from 'can-define/map/map';
 import Component from 'can-component';
 import CanEvent from 'can-event';
 
-import 'date-selector/less/datepicker.less!';
-import dateSelector from 'date-selector';
+// import 'date-selector/less/datepicker.less!';
+// import dateSelector from 'date-selector';
 
 import template from './date-field.stache!';
 import './date-field.less!';
@@ -41,7 +41,7 @@ Component.extend({
     ViewModel: ViewModel,
     events: {
         inserted () {
-            dateSelector();
+            // dateSelector();
         },
         '{ViewModel} value' (viewModel, event, newValue) {
             viewModel.dispatch('change', [newValue]);
