@@ -8,14 +8,24 @@ import template from './nav-container.stache!';
 import pageTemplate from './nav-page.stache!';
 import './nav-container.less!';
 
+
+let pageId = 0;
 export const PageViewModel = DefineMap.extend('NavPage', {
     active: {type: 'boolean', value: false},
-    label: 'string'
+    label: 'string',
+    loading: {type: 'htmlbool', value: false},
+    pageId: {
+        value: function () {
+            return 'page-' + pageId ++;
+        }
+    },
+    parent: '*'
 });
 
 export const PageList = DefineList.extend('NavPageList', {
     Map: PageViewModel
 });
+
 
 /**
  * @constructor tab-container.ViewModel ViewModel
@@ -29,6 +39,22 @@ export const ViewModel = DefineMap.extend('NavContainer', {
 	// tabs element.
     pages: {Value: PageList},
     activePage: DefineMap,
+    activeId: {
+        set (id) {
+            const pages = this.pages.filter((p) => {
+                return p.pageId === id;
+            });
+            if (pages.length) {
+                this.makeActive(pages[0]);
+            }
+        },
+        get (val) {
+            if (this.activePage) {
+                return this.activePage.pageId;
+            }
+            return null;
+        }
+    },
 	// When a `<page>` element is inserted into the document,
 	// it calls this method to add the page's scope to the
 	// pages array.
@@ -74,10 +100,16 @@ Component.extend({
     viewModel: PageViewModel,
     events: {
         inserted: function () {
-            viewModel(this.element.parentNode).addPage(this.viewModel);
+            this.viewModel.parent = viewModel(this.element.parentNode);
+            if (this.viewModel.parent && this.viewModel.parent.addPage) {
+                this.viewModel.parent.addPage(this.viewModel);
+            }
         },
         removed: function () {
-            viewModel(this.element.parentNode).removePage(this.viewModel);
+            if (this.viewModel.parent && this.viewModel.parent.removePage) {
+                this.viewModel.parent.removePage(this.viewModel);
+            }
+            this.viewModel.parent = null;
         }
     }
 });

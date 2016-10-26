@@ -103,9 +103,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 name: 'name',
                 alias: 'Field Name',
                 fieldType: 'select',
-                properties: {
-                    options: this.fieldOptions
-                }
+                options: this.fieldOptions
             } : {
                 name: 'name',
                 alias: 'Field Name',
@@ -127,9 +125,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                         return f.value === op;
                     })[0].label;
                 },
-                properties: {
-                    options: this.filterOptions
-                }
+                options: this.filterOptions
             };
         }
     },

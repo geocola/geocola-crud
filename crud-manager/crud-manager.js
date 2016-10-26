@@ -59,6 +59,13 @@ export const SortMap = DefineMap.extend('SortMap', {
     fieldName: null,
     type: 'asc'
 });
+
+export const ParameterMap = DefineMap.extend('ParameterMap', {
+    filters: {Type: FilterList, Value: FilterList},
+    perPage: {type: 'number', value: 10},
+    page: {type: 'number', value: 0},
+    sort: {Type: SortMap, Value: SortMap}
+});
 /**
  * @module crud-manager
  */
@@ -158,14 +165,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * the internal parameters object. This is prepopulated when view is set.
      * @type {Object}
      */
-    parameters: {
-        Value: DefineMap.extend({
-            filters: {Type: FilterList, Value: FilterList},
-            perPage: {type: 'number', value: 10},
-            page: {type: 'number', value: 0},
-            sort: {Type: SortMap, Value: SortMap}
-        })
-    },
+    parameters: {Value: ParameterMap, Type: ParameterMap},
     /**
      * A promise that resolves to the objects retrieved from a can-connect.getListData call
      * @property {can.Deferred} crud-manager.ViewModel.props.objects
@@ -212,15 +212,25 @@ export const ViewModel = DefineMap.extend('CrudManager', {
                     console.error('unable to complete focusObject request', err);
                 });
 
-                promise.then((data) => {
-                    this.focusObject = data;
-                });
                 return promise;
             }
             return null;
         }
     },
-    focusObject: DefineMap,
+    focusObject: {
+        get (val, setAttr) {
+            if (!this.focusObjectPromise) {
+                console.log('no promise');
+                return null;
+            }
+            console.log('theres a promise');
+            this.focusObjectPromise.then((data) => {
+                console.log('promise resolved', data);
+                setAttr(data);
+                console.log(this.focusObject);
+            });
+        }
+    },
     /**
      * Buttons to use for the list table actions. If `view.disableEdit` is falsey
      * the buttons will include an edit and delete button. Otherwise, it will be
@@ -269,10 +279,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @property {Boolean} crud-manager.ViewModel.props.buttons
      * @parent crud-manager.ViewModel.props
      */
-    filterVisible: {
-        type: 'boolean',
-        value: false
-    },
+    filterVisible: {type: 'boolean', value: false},
+    selectMenu: {type: 'boolean', value: false},
     /**
      * The internal field array that define the display of data and field types
      * for editing and filtering
@@ -298,7 +306,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @property {Array<can.Map>} crud-manager.ViewModel.props.selectedObjects
      * @parent crud-manager.ViewModel.props
      */
-    selectedObjects: {Value: DefineList},
+    selectedObjects: DefineList,
   /**
    * @function init
    * Initializes filters and other parameters
@@ -325,11 +333,10 @@ export const ViewModel = DefineMap.extend('CrudManager', {
    * @param {String} page The name of the page to switch to
    */
     setPage (page) {
-        console.log(page);
-        batch.start();
-        this.viewId = 0;
-        this.page = page;
-        batch.stop();
+        this.viewId = null;
+        setTimeout(() => {
+            this.page = page;
+        }, 100);
     },
   /**
    * @function editObject
@@ -350,7 +357,9 @@ export const ViewModel = DefineMap.extend('CrudManager', {
             obj = arguments[0];
         }
         this.viewId = this.view.connection.id(obj);
-        this.page = 'edit';
+        setTimeout(() => {
+            this.page = 'edit';
+        }, 100);
     },
   /**
    * @function viewObject
@@ -364,14 +373,16 @@ export const ViewModel = DefineMap.extend('CrudManager', {
    */
     viewObject () {
         let obj;
-    //accept 4 params from the template or just one
+        //accept 4 params from the template or just one
         if (arguments.length === 4) {
             obj = arguments[3];
         } else {
             obj = arguments[0];
         }
         this.viewId = this.view.connection.id(obj);
-        this.page = 'details';
+        setTimeout(() => {
+            this.page = 'details';
+        }, 100);
     },
   /**
    * @function saveObject
@@ -416,14 +427,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
 
         //save the object
         var deferred = this.view.connection.save(obj);
-        console.log(deferred);
         deferred.then((result) => {
-            console.log(result);
       //add a message
-            PubSub.publish(TOPICS.ADD_MESSAGE, {
-                message: this.view.saveSuccessMessage,
-                detail: 'ID: ' + this.view.connection.id(result)
-            });
 
             if (page === 'add') {
                 this.onEvent(obj, 'afterCreate');
@@ -433,18 +438,17 @@ export const ViewModel = DefineMap.extend('CrudManager', {
 
       //update the view id
       //set page to the details view by default
-            batch.start();
             this.viewId = result.id;
-            this.page = 'details';
-            batch.stop();
+            setTimeout(() => {
+                this.page = 'details';
+            }, 100);
+
 
         }).catch((e) => {
-            PubSub.publish(TOPICS.ADD_MESSAGE, {
-                message: this.view.saveFailMessage,
-                detail: e.statusText + ' : <small>' + e.responseText + '</small>',
-                level: 'danger',
-                timeout: 20000
-            });
+            this.onEvent({
+                obj: obj,
+                error: e
+            }, 'errorSave');
             console.warn(e);
         });
         return deferred;
@@ -567,11 +571,11 @@ export const ViewModel = DefineMap.extend('CrudManager', {
    * @signature
    * @param  {Boolean} val (Optional) whether or not to display the dialog
    */
-    toggleFilter (val) {
-        if (typeof val !== 'undefined') {
-            this.filterVisible = val;
+    toggle (val, visible) {
+        if (typeof visible !== 'undefined') {
+            this[val] = Boolean(visible);
         } else {
-            this.filterVisible = !this.filterVisible;
+            this[val] = !this[val];
         }
     },
   /**
@@ -621,10 +625,10 @@ Component.extend({
     ViewModel: ViewModel,
     view: template,
     events: {
-        '{ViewModel.parameters.filters} change' () {
+        '{ViewModel.parameters} filters' () {
             this.viewModel.parameters.page = 0;
         },
-        '{ViewModel.parameters.perPage} change' () {
+        '{ViewModel.parameters} perPage' () {
             this.viewModel.parameters.page = 0;
         }
     }

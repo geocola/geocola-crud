@@ -22,12 +22,15 @@
             {{#each objects}}
                 <tr {{#if isSelected(.)}} class="warning" {{/if}}>
                     <td class="tool-buttons">
-                        <div class="form-group">
+                        <div class="form-group inline-block">
                             <label class="form-checkbox">
                                 <input type="checkbox" ($change)="toggleSelected(.)" {($checked)}="isSelected(.)" />
                                 <i class="form-icon"></i>
                             </label>
                         </div>
+                        {{#each buttons}}
+                            <i class="{{iconClass}}" ($click)="buttonClick(eventName, ../.)"></i>&nbsp;&nbsp;
+                        {{/each}}
                     </td>
                     {{#each fields}}
                         {{! this passes the field name and the current object to getFieldValue }}

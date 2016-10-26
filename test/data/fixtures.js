@@ -20,13 +20,15 @@ fixture({
       //lets just handle one filter for testing
             const f = params.data.filters[0];
             console.log('only the first filter is going to be used!');
-            if (f.operator !== 'contains') {
-                console.log('operator not implemented, contains will be used instead');
+            if (f.operator !== 'like') {
+                console.log(f.operator, 'operator not implemented, like will be used instead');
             }
             tempData = tempData.filter((d) => {
                 return d[f.name].indexOf(f.value) !== -1;
             });
         }
+
+        console.log('found ' + tempData.length + ' items after filtering');
 
     //sort it
         if (sortInfo && sortInfo.fieldName) {
@@ -78,7 +80,7 @@ fixture({
         item = item[0];
         const idx = data.indexOf(item);
         if (idx !== -1) {
-            data[idx] = Object.assign(item, params.data);
+            data[idx] = assign(item, params.data);
             response(data);
         } else {
             response(404, 'Not Found');

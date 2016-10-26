@@ -125,7 +125,6 @@ export function parseFieldArray (fields) {
                 name: f
             };
         }
-        console.log(new Field(f));
         return new Field(f);
     });
 }

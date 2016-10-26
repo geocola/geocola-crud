@@ -3,6 +3,7 @@ import DefineList from 'can-define/list/list';
 import {Field} from '../util/field';
 
 import editTemplate from './templates/edit.stache!';
+import listTemplate from './templates/list.stache!';
 
 /**
  * @typedef {object} crud.types.relatedView RelatedView
@@ -94,7 +95,12 @@ export const ViewMap = DefineMap.extend('ViewMap', {
    * The template to render when editing and has permissions
    * @property {Renderer} editTemplate
    */
-    editTemplate: {value: editTemplate},
+    editTemplate: {value: editTemplate, type: '*'},
+  /**
+   * The template to render when editing and has permissions
+   * @property {Renderer} editTemplate
+   */
+    listTemplate: {value: listTemplate, type: '*'},
   /**
    * A flag to disable editing existing objects
    * @property {Boolean} disableEdit

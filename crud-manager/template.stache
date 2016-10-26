@@ -1,134 +1,53 @@
-
-<nav-container>
-  <nav-page label="List">
-    {{#if objectsPromise.isPending}}
-      <div class="loading"></div>
-    {{/if}}
-    <p>
-      <small class="text-primary">
-        {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. {{/if}}
-        Page {{pageNumber}} of {{totalPages}}
-      </small>
-    </p>
-
-    <list-table {objects}="objects" id-prop="{{view.connection.idProp}}"
-      {(selected-objects)}="selectedObjects" (edit)="editObject" (delete)="deleteObject"
-      (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields"  />
-
-
-      <div class="hidden-print">
-          {{#if showPaginate}}
-              <paginate-widget {(active-page-index)}="parameters.page" {pages}="totalPages" />
-          {{/if}}
-          {{#if perPageOptions.length}}
-              <div class="per-page-form">
-                  <div class="form-group">
-                      <label class="form-label perPageSelect">Items per page:</label>
-                      <select {($value)}="parameters.perPage" class="form-select form-control">
-                          {{#each perPageOptions}}
-                              <option value="{{.}}">{{.}}</option>
-                          {{/each}}
-                      </select>
-                  </div>
-              </div>
-          {{/if}}
-      </div>
-
-
-  </nav-page>
-
-  <nav-page label="Create">
-      {{#if view.disableAdd}}
-          <p>You do not have permission to add this data.</p>
-      {{else}}
-          <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
-      {{/if}}
-  </nav-page>
-</nav-container>
-
-<!--
-{{#switch page}}
-
-
-    {{#case 'edit'}}
-
-    {{/case}}
-
-
-
-
-    {{#case 'add'}}
-
-
-    {{/case}}
-
-
-
-
-
-    {{#case 'list'}}
-        {{#if objectsPromise.isPending}}
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                    <span>Refreshing Data...</span>
-                </div>
-            </div>
-        {{/if}}
-        <p>
-          <small class="text-primary">
-            {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. {{/if}}
-            Page {{pageNumber}} of {{totalPages}}
-          </small>
-        </p>
-
-        {{#if selectedObjects.length}}
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" title="Selection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Selected <span class="badge">{{selectedObjects.length}}</span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    {{#each view.manageButtons}}
-                        <li>
-                            <a title="{{text}}" ($click)="onClick(selectedObjects)">
-                                {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}
-                                {{#text}}<span class="{{textClass}}"> {{text}}</span>{{/text}}
-                            </a>
-                        </li>
-                    {{/each}}
-                    <li>
-                        <a title="View Selected" ($click)="setPage('selection')">
-                            <i class="fa fa-list"></i> View Selected
-                        </a>
+<nav-container {(active-id)}="page">
+    <nav-page label="List" page-id="list" {{#if objectsPromise.isPending}} loading {{/if}}>
+        <div class="object-metadata">
+            {{view.title}}:
+            {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. Page {{pageNumber}} of {{totalPages}}{{/if}}
+            | <a class="inline-block badge" ($click)="toggle('filterVisible')"><i class="fa fa-search"></i> Search</a>
+            {{#if selectedObjects.length}} |
+                <a class="inline-block selected-objects badge" data-badge="{{selectedObjects.length}}" ($click)="toggle('selectMenu')">
+            With Selected...
+                {{#selectMenu}}
+                <ul class="menu">
+                    {{#if view.manageButtons.length}}
+                    <!-- menu header -->
+                    <li class="menu-header">
+                        <span class="menu-header-text">
+                          Tasks
+                      </span>
                     </li>
-                    <li>
-                        <a title="Clear Selection" ($click)="clearSelection()">
-                            <i class="fa fa-ban"></i> Clear Selected
+                    {{#each view.mangeButtons}}
+                    <li class="menu-item">
+                        <a ($click)="onClick">
+                            <span class="{{iconClass}}"></span>{{text}}
                         </a>
-                    </li>
-
-                    {{#unless view.disableDelete}}
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a class="text-danger" title="Delete Selected" ($click)="deleteMultiple(false)">
-                                <span class="text-danger"><i class="fa fa-fw fa-trash"></i> Delete</span>
-                            </a>
-                        </li>
-                    {{/unless}}
-                </ul>
-            </div>
-        {{/if}}
-
-        <div class="{{^filterVisible}}hidden{{/filterVisible}}">
-            <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.ObjectTemplate" />
+                </li>
+                {{/each}}
+            {{/if}}
+            <!-- menu divider -->
+            <li class="divider"></li>
+            <li class="menu-header">
+                <span class="menu-header-text">
+                          Modify
+                      </span>
+            </li>
+            <li class="menu-item">
+                <a ($click)="deleteMultiple(false)">
+                    <span class="icon icon-link"></span> Delete
+                </a>
+            </li>
+            </ul>
+            {{/selectMenu}}
+            </a>
+            {{/if}}
         </div>
-        <list-table {objects}="objects" id-prop="{{view.connection.idProp}}"
-          {^selected-objects}="selectedObjects" (edit)="editObject" (delete)="deleteObject"
-          (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields"
-          {buttons}="buttons"
-              />
-        <hr />
+
+        {{#if filterVisible}}
+            <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.objectTemplate" />
+        {{/if}}
+
+        <list-table {objects}="objects" {buttons}="buttons" id-prop="{{view.connection.idProp}}" {(selected-objects)}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" />
+
 
         <div class="hidden-print">
             {{#if showPaginate}}
@@ -136,70 +55,37 @@
             {{/if}}
             {{#if perPageOptions.length}}
                 <div class="per-page-form">
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <label for="perPageSelect">Items per page:</label>
-                            <select {($value)}="parameters.perPage" class="form-control">
-                                {{#each perPageOptions}}
-                                    <option value="{{.}}">{{.}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <label class="form-label perPageSelect">Items per page:</label>
+                        <select {($value)}="parameters.perPage" class="form-select form-control">
+                            {{#each perPageOptions}}
+                                <option value="{{.}}">{{.}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
                 </div>
             {{/if}}
         </div>
-    {{/case}}
+    </nav-page>
 
+    <nav-page label="Create" page-id="add">
+        {{#if view.disableAdd}}
+            <p>You do not have permission to add this data.</p>
+        {{else}}
+            <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
+        {{/if}}
+    </nav-page>
 
-
-
-
-
-
-    {{#case 'details'}}
-        {{#if focusObject.isResolved}}
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-{{#if view.relatedViews}}4{{else}}12{{/if}}">
-                        <h3>{{view.title}}: {{view.connection.id(focusObject.value)}}</h3>
-                        <property-table {object}="focusObject.value" {fields}="_fields" />
-                        <div class="btn btn-group hidden-print" role="group" aria-label="Management Buttons">
-                            <button class="btn btn-default" ($click)="setPage('list')">
-                                <i class="fa fa-arrow-left"></i> {{view.title}}
-                            </button>
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-wrench"></i> Manage <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                {{#each view.manageButtons}}
-                                    <li>
-                                        <a title="{{text}}" ($click)="manageObject(focusObject.value, .)">
-                                    {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}
-                                    {{#text}}<span class="{{textClass}}"> {{text}}</span>{{/text}}
-                                </a>
-                                    </li>
-                                {{/each}}
-                                {{#unless view.disableEdit}}
-                                    <li>
-                                        <a title="{{text}}" ($click)="editObject(focusObject.value)">
-                                            <i class="fa fa-pencil"></i> Edit
-                                        </a>
-                                    </li>
-                                {{/unless}}
-                                {{#unless view.disableDelete}}
-                                    <li>
-                                        <a title="{{text}}" ($click)="deleteObject(focusObject.value)">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </a>
-                                    </li>
-                                {{/unless}}
-                            </ul>
-                        </div>
+    {{#if viewId}}
+        <nav-page label="Details" page-id="details" {{#if focusObjectPromise.isPending}} loading {{/if}}>
+            {{#if focusObjectPromise.isResolved}}
+                <div class="container">
+                    <div class="col-{{#if view.relatedViews}}3{{else}}12{{/if}}">
+                        <h3>{{view.title}}: {{view.connection.id(focusObject)}}</h3>
+                        <property-table {object}="focusObject" {fields}="_fields" />
                     </div>
                     {{#if view.relatedViews}}
-                        <div class="col-lg-8">
+                        <div class="col-9">
                             <h3>Related Data</h3>
                             <tab-container>
                                 {{#each view.relatedViews}}
@@ -211,71 +97,51 @@
                         </div>
                     {{/if}}
                 </div>
-            </div>
+            {{/if}}
+        </nav-page>
+    {{/if}}
 
-        {{/if}}{{!focusObject.isResolved}}
-    {{/case}}
-
-
-    {{#case 'selection'}}
-        <button class="btn btn-default" ($click)="setPage('list')">
-            <i class="fa fa-arrow-left"></i> {{view.title}}
-        </button>
-        {{#if selectedObjects.length}}
-            {{#each selectedObjects}}
-                <h3>{{view.title}}: {{view.connection.id(.)}}</h3>
-                <div class="row">
-                    <div class="col-lg-{{#if view.relatedViews}}4{{else}}12{{/if}}">
-                        <property-table {object}="." {fields}="_fields" />
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-wrench"></i> Manage <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            {{#each view.manageButtons}}
-                                <li>
-                                    <a title="{{text}}" ($click)="manageObject(../., .)">
-                                    {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}
-                                    {{#text}}<span class="{{textClass}}"> {{text}}</span>{{/text}}
+    <nav-page label="Testing">
+        <button ($click)="toggleFilter()" class="btn" type="button"><i class="fa fa-search"></i> Search
+            {{#filterVisible}}
+                <ul class="menu">
+                    {{#if view.manageButtons.length}}
+                        <!-- menu header -->
+                        <li class="menu-header">
+                            <span class="menu-header-text">
+                          Tasks
+                      </span>
+                        </li>
+                        {{#each view.mangeButtons}}
+                            <li class="menu-item">
+                                <a ($click)="onClick">
+                                    <span class="{{iconClass}}"></span> text
                                 </a>
-                                </li>
-                            {{/each}}
-                            {{#unless view.disableEdit}}
-                                <li>
-                                    <a title="{{text}}" ($click)="editObject(.)">
-                                        <i class="fa fa-pencil"></i> Edit
-                                    </a>
-                                </li>
-                            {{/unless}}
-                            {{#unless view.disableDelete}}
-                                <li>
-                                    <a title="{{text}}" ($click)="deleteObject(.)">
-                                        <i class="fa fa-trash"></i> Delete
-                                    </a>
-                                </li>
-                            {{/unless}}
-                        </ul>
-                    </div>
-                    {{#if view.relatedViews}}
-                        <div class="col-md-8">
-                            <h3>Related Data</h3>
-                            <tab-container>
-                                {{#each ../view.relatedViews}}
-                                    <panel-container title="{{./view.title}}" collapsible="false">
-                                        <crud-manager {view}="../view" related-field="{{../referenceKey}}" related-value="{{getRelatedValue(../foreignKey, ../../../.)}}" />
-                                    </panel-container>
-                                {{/each}}
-                            </tab-container>
-                        </div>
+                            </li>
+                        {{/each}}
                     {{/if}}
-                </div>
+                    <!-- menu divider -->
+                    <li class="divider"></li>
+                    <li class="menu-header">
+                        <span class="menu-header-text">
+                          Modify
+                      </span>
+                    </li>
+                    <li class="menu-item">
+                        <a>
+                            <span class="icon icon-link"></span> Delete
+                        </a>
+                    </li>
+                </ul>
+            {{/filterVisible}}
+        </button>
+        <p>more content</p>
 
-                <hr />
+    </nav-page>
 
-            {{/each}}
-        {{else}}
-            <p>No objects were selected.</p>
-        {{/if}}
-    {{/case}}
-{{/switch}}
--->
+    {{#if focusObject}}
+        <nav-page label="Edit" page-id="edit">
+            <form-widget {form-object}="focusObject" (submit)="saveObject" {fields}="_fields" (cancel)="setPage('list')" />
+        </nav-page>
+    {{/if}}
+</nav-container>
