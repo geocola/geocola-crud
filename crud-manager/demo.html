@@ -20,10 +20,12 @@
     import 'test/data/fixtures';
     import stache from 'can-stache';
 
+    // additional field proeprties can be included here to customize the
+    // tables and forms for this object
     const TaskMap = DefineMap.extend({
-      'id': 'number',
-      "name": { value: "name of task" },
-      "description": { value: "description of task" },
+      'id': {type: 'number', excludeForm: true},
+      "name": { value: '' },
+      "description": { value: '', placeholder: 'Enter a descripton'},
       "completed": { value: false, type: 'boolean' }
     });
 

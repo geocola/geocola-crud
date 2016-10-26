@@ -19,7 +19,7 @@ import '../nav-container/';
 // import 'can-ui/panel-container/';
 
 import {FilterList} from '../filter-widget/Filter';
-import {parseFieldArray} from '../util/field';
+import {parseFieldArray, mapToFields} from '../util/field';
 import PubSub from 'pubsub-js';
 import {ViewMap} from './ViewMap';
 
@@ -295,8 +295,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
 
         //if that doesn't exist, use the objectTemplate or Map to create fields
             const Template = this.view.objectTemplate || this.view.connection.Map;
-            const keys = Object.keys((new Template()).serialize());
-            return parseFieldArray(keys);
+            return mapToFields(Template);
         }
     },
     /**

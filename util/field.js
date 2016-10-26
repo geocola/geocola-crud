@@ -5,6 +5,7 @@
 import {makeSentenceCase} from './string';
 import stache from 'can-stache';
 import DefineMap from 'can-define/map/map';
+import assign from 'can-util/js/assign/assign';
 
 
 const TEMPLATES = {
@@ -136,18 +137,22 @@ export function parseFieldArray (fields) {
  * @param  {Constructor<DefineMap>} m The extended map/constructor to parse
  * @return {Array<Field>} The array of fields
  */
-export function mapToFields (m) {
-    if (!m) {
+export function mapToFields (defineMap) {
+    if (!defineMap) {
         console.warn('map is undefined, so no fields will be generated');
         return [];
     }
+    const define = assign({}, (defineMap._define || defineMap.prototype._define).definitions);
+    console.log(define);
     const fields = [];
-    m.forEach((value, propName) => {
-        fields.push(Object.assign({
-            name: propName,
-            type: 'string',
-            fieldType: 'text'
-        }, m[propName]));
-    });
+    for (var prop in define) {
+        if (define.hasOwnProperty(prop)) {
+            fields.push(assign({
+                name: prop,
+                type: 'string',
+                fieldType: 'text'
+            }, define[prop]));
+        }
+    }
     return parseFieldArray(fields);
 }
