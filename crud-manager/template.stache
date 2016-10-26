@@ -16,13 +16,15 @@
                           Tasks
                       </span>
                     </li>
-                    {{#each view.mangeButtons}}
-                    <li class="menu-item">
-                        <a ($click)="onClick">
-                            <span class="{{iconClass}}"></span>{{text}}
-                        </a>
-                </li>
-                {{/each}}
+                    {{#each view.manageButtons}}
+                      {{#unless disabled}}
+                        <li class="menu-item">
+                            <a ($click)="onClick(selectedObjects)">
+                                <span class="{{iconClass}}"></span>{{text}}
+                            </a>
+                        </li>
+                      {{/unless}}
+                    {{/each}}
             {{/if}}
             <!-- menu divider -->
             <li class="divider"></li>
@@ -68,13 +70,15 @@
         </div>
     </nav-page>
 
-    <nav-page label="Create" page-id="add">
-        {{#if view.disableAdd}}
-            <p>You do not have permission to add this data.</p>
-        {{else}}
-            <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
-        {{/if}}
-    </nav-page>
+    {{#unless view.disableCreate}}
+        <nav-page label="Create" page-id="add">
+            {{#if view.disableAdd}}
+                <p>You do not have permission to add this data.</p>
+            {{else}}
+                <form-widget {form-object}="getNewObject()" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
+            {{/if}}
+        </nav-page>
+    {{/unless}}
 
     {{#if viewId}}
         <nav-page label="Details" page-id="details" {{#if focusObjectPromise.isPending}} loading {{/if}}>
@@ -101,47 +105,11 @@
         </nav-page>
     {{/if}}
 
-    <nav-page label="Testing">
-        <button ($click)="toggleFilter()" class="btn" type="button"><i class="fa fa-search"></i> Search
-            {{#filterVisible}}
-                <ul class="menu">
-                    {{#if view.manageButtons.length}}
-                        <!-- menu header -->
-                        <li class="menu-header">
-                            <span class="menu-header-text">
-                          Tasks
-                      </span>
-                        </li>
-                        {{#each view.mangeButtons}}
-                            <li class="menu-item">
-                                <a ($click)="onClick">
-                                    <span class="{{iconClass}}"></span> text
-                                </a>
-                            </li>
-                        {{/each}}
-                    {{/if}}
-                    <!-- menu divider -->
-                    <li class="divider"></li>
-                    <li class="menu-header">
-                        <span class="menu-header-text">
-                          Modify
-                      </span>
-                    </li>
-                    <li class="menu-item">
-                        <a>
-                            <span class="icon icon-link"></span> Delete
-                        </a>
-                    </li>
-                </ul>
-            {{/filterVisible}}
-        </button>
-        <p>more content</p>
-
-    </nav-page>
-
-    {{#if focusObject}}
-        <nav-page label="Edit" page-id="edit">
-            <form-widget {form-object}="focusObject" (submit)="saveObject" {fields}="_fields" (cancel)="setPage('list')" />
-        </nav-page>
-    {{/if}}
+    {{#unless view.disableEdit}}
+        {{#if focusObject}}
+            <nav-page label="Edit" page-id="edit">
+                <form-widget {form-object}="focusObject" (submit)="saveObject" {fields}="_fields" (cancel)="setPage('list')" />
+            </nav-page>
+        {{/if}}
+    {{/unless}}
 </nav-container>
