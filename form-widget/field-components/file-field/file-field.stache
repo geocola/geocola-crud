@@ -1,7 +1,7 @@
 <div class="form-group">
   <div class="input-group">
-    <label {{#inline}}class="sr-only" {{/inline}}for="{{name}}">{{alias}}</label>
-    <input ($change)="onChange(%element)" type="file" class="form-control" id="{{name}}" name="{{name}}" {{#if properties.multiple}} multiple {{/if}} />
+    <label {{#inline}}class="sr-only" {{/inline}}for="{{properties.name}}">{{properties.alias}}</label>
+    <input ($change)="onChange(%element)" type="file" class="form-control" id="{{properties.name}}" name="{{properties.name}}" {{#if properties.multiple}} multiple {{/if}} />
   </div>
 
   {{#if state.isPending}}

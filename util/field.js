@@ -2,18 +2,17 @@
  * field parsing and creating utilities
  */
 
-import {string} from 'can-util';
 import {makeSentenceCase} from './string';
 import stache from 'can-stache';
 import DefineMap from 'can-define/map/map';
 
 
 const TEMPLATES = {
-    text: '<text-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
-    select: '<select-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
-    file: '<file-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />',
-    json: '<json-field {properties}="properties" (change)="setField" {value}="getFieldValue(.)" />',
-    date: '<date-field {properties}="properties" (change)="setField" value="{{getFieldValue(.)}}" />'
+    text: '<text-field {properties}="." (change)="setField" value="{{getFieldValue(.)}}" />',
+    select: '<select-field {properties}="." (change)="setField" value="{{getFieldValue(.)}}" />',
+    file: '<file-field {properties}="." (change)="setField" value="{{getFieldValue(.)}}" />',
+    json: '<json-field {properties}="." (change)="setField" {value}="getFieldValue(.)" />',
+    date: '<date-field {properties}="." (change)="setField" value="{{getFieldValue(.)}}" />'
 };
 
 //precompile templates
@@ -35,9 +34,7 @@ export const Field = DefineMap.extend('Field', {
    * The name of the property on the object, this field's name
    * @property {String} util/field.Field.name
    */
-    name: {
-        type: 'string'
-    },
+    name: 'string',
   /**
    * A friendly name for the field used to display to the user
    * The default is to capitalize the name and remove underscores
@@ -128,6 +125,7 @@ export function parseFieldArray (fields) {
                 name: f
             };
         }
+        console.log(new Field(f));
         return new Field(f);
     });
 }

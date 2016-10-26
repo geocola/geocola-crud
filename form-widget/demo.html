@@ -80,29 +80,23 @@
             name: 'field3',
             alias: 'A select dropdown',
             fieldType: 'select',
-            properties: {
-                options: [{
-                    value: 1,
-                    label: 'Option 1'
-                }, {
-                    value: 2,
-                    label: 'Option 2'
-                }]
-            }
+            options: [{
+                value: 1,
+                label: 'Option 1'
+            }, {
+                value: 2,
+                label: 'Option 2'
+            }]
         }, {
             name: 'field4',
             alias: 'A date field',
             fieldType: 'text',
-            properties: {
-              type: 'date'
-            }
+            textType: 'date'
         }, {
             name: 'field5',
             alias: 'A file field',
             fieldType: 'file',
-            properties: {
-                url: '/upload'
-            }
+            url: '/upload'
         }]
     });
 
