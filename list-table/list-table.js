@@ -7,6 +7,7 @@ import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
 import CanEvent from 'can-event';
 import CanBatch from 'can-event/batch/batch';
+import assign from 'can-util/js/assign/assign';
 
 /**
  * @constructor list-table.ViewModel ViewModel
@@ -197,7 +198,7 @@ export const ViewModel = DefineMap.extend("ListTable", {
     return field.getFormattedValue(obj);
   }
 });
-Object.assign(ViewModel.prototype, CanEvent);
+assign(ViewModel.prototype, CanEvent);
 
 export default Component.extend({
   tag: 'list-table',

@@ -218,16 +218,14 @@ export const ViewModel = DefineMap.extend('CrudManager', {
         }
     },
     focusObject: {
+        // async getter
+        // eslint-disable-next-line consistent-return
         get (val, setAttr) {
             if (!this.focusObjectPromise) {
-                console.log('no promise');
                 return null;
             }
-            console.log('theres a promise');
             this.focusObjectPromise.then((data) => {
-                console.log('promise resolved', data);
                 setAttr(data);
-                console.log(this.focusObject);
             });
         }
     },
