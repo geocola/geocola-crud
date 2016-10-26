@@ -1,2 +1,3 @@
 
-<form-widget {form-object}="focusObject.value" (submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />
+<form-widget {form-object}="focusObject.value"
+(submit)="saveObject" (cancel)="setPage('list')" {fields}="_fields" />

@@ -4,6 +4,8 @@ import DefineList from 'can-define/list/list';
 import assign from 'can-util/js/assign/assign';
 
 
+let index = 1000;
+
 //a mock ajax service
 fixture.delay = 1000;
 fixture({
@@ -47,10 +49,10 @@ fixture({
         return tempData.serialize();
     },
     'POST /tasks' (params, response) {
-        const newId = data[data.length - 1].id + 1;
-        data.push(assign({
-            id: newId
-        }, params.data));
+        const newId = index ++;
+        params.data.id = index ++;
+        data.push(params.data);
+
         response(data[data.length - 1]);
     },
     'GET /tasks/{id}' (params, response) {
@@ -74,9 +76,9 @@ fixture({
             return;
         }
         item = item[0];
-        const index = data.indexOf(item);
-        if (index !== -1) {
-            data[index] = Object.assign(item, params.data);
+        const idx = data.indexOf(item);
+        if (idx !== -1) {
+            data[idx] = Object.assign(item, params.data);
             response(data);
         } else {
             response(404, 'Not Found');

@@ -11,13 +11,15 @@ import '../property-table/';
 import '../form-widget/';
 import '../filter-widget/';
 import '../paginate-widget/';
+import '../nav-container/';
+
 
 // import 'can-ui/modal-container/';
 // import 'can-ui/tab-container/';
 // import 'can-ui/panel-container/';
 
 import {FilterList} from '../filter-widget/Filter';
-import {mapToFields, parseFieldArray} from '../util/field';
+import {parseFieldArray} from '../util/field';
 import PubSub from 'pubsub-js';
 import {ViewMap} from './ViewMap';
 
@@ -174,22 +176,25 @@ export const ViewModel = DefineMap.extend('CrudManager', {
             const params = this.parameters ? this.parameters.serialize() : {};
             const promise = this.view.connection.getList(params);
 
-          // handle promise.catch for local-storage deferreds...
-            promise.catch((err) => {
-                console.error('unable to complete objects request', err);
-            });
-
-            // update the list data
-            promise.then((data) => {
-                this.objects = data;
-            });
-
             return promise;
         }
     },
     objects: {
         Value: DefineList,
-        Type: DefineList
+        Type: DefineList,
+        get (val, setAttr) {
+            const promise = this.objectsPromise;
+
+        // handle promise.catch for local-storage deferreds...
+            promise.catch((err) => {
+                console.error('unable to complete objects request', err);
+            });
+
+          // update the list data
+            promise.then((data) => {
+                setAttr(data);
+            });
+        }
     },
     /**
      * A promise that resolves to the object retreived from a `can-connect.get` call
@@ -293,7 +298,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @property {Array<can.Map>} crud-manager.ViewModel.props.selectedObjects
      * @parent crud-manager.ViewModel.props
      */
-    selectedObjects: DefineList,
+    selectedObjects: {Value: DefineList},
   /**
    * @function init
    * Initializes filters and other parameters
@@ -409,15 +414,11 @@ export const ViewModel = DefineMap.extend('CrudManager', {
             return null;
         }
 
-    //display a loader
-    //TODO: add loading progress?
-        this.progress = 100;
-        this.page = 'loading';
-
-    //save the object
+        //save the object
         var deferred = this.view.connection.save(obj);
+        console.log(deferred);
         deferred.then((result) => {
-
+            console.log(result);
       //add a message
             PubSub.publish(TOPICS.ADD_MESSAGE, {
                 message: this.view.saveSuccessMessage,
@@ -435,7 +436,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
             batch.start();
             this.viewId = result.id;
             this.page = 'details';
-            batch.end();
+            batch.stop();
 
         }).catch((e) => {
             PubSub.publish(TOPICS.ADD_MESSAGE, {
@@ -444,7 +445,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
                 level: 'danger',
                 timeout: 20000
             });
-            this.page = page;
+            console.warn(e);
         });
         return deferred;
     },
