@@ -25,6 +25,11 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
   /**
    * @prototype
    */
+   /**
+    * Disabled the add new form if true
+     * @property {Boolean} filter-widget.ViewModel.disableAdd
+     * @parent filter-widget.ViewModel.props
+    */
     disableAdd: 'htmlbool',
     /**
      * A list of fields that will be used to create options in the field name
