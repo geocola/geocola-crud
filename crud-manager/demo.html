@@ -67,7 +67,7 @@
     })
 
 
-    let frag = stache(document.getElementById('demo-html').innerHTML)(viewModel);
+    let frag = stache.from('demo-html')(viewModel);
 
     document.body.appendChild(frag);
 </script>

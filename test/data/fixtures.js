@@ -52,9 +52,8 @@ fixture({
     },
     'POST /tasks' (params, response) {
         const newId = index ++;
-        params.data.id = index ++;
-        data.push(params.data);
-
+        const newObj = assign({id: newId }, params.data);
+        data.push(newObj);
         response(data[data.length - 1]);
     },
     'GET /tasks/{id}' (params, response) {

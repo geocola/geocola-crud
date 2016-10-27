@@ -30,7 +30,6 @@
     "testee": "^0.3.0-pre.2"
   },
   "dependencies": {
-    "bootstrap": "^3.3.x",
     "can-component": "^3.0.1",
     "can-connect": "^1.0.4",
     "can-define": "^1.0.0",
@@ -38,7 +37,6 @@
     "can-fixture": "^1.0.1",
     "can-set": "^0.5.x",
     "can-stache": "^3.0.1",
-    "can-ui": "latest",
     "can-util": "^3.0.1",
     "can-view-model": "^3.0.0",
     "date-selector": "^2.0.x",

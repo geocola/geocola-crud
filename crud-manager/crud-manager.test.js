@@ -70,7 +70,7 @@ test('perPageOptions get()', (assert) => {
 });
 
 test('showPaginate get()', (assert) => {
-    vm.view.conneciton.metadata.total = 10;
+    vm.view.connection.metadata.total = 10;
     vm.parameters.perPage = 25;
     assert.equal(vm.showPaginate, false, 'pagination should not be shown with one page');
 
@@ -211,14 +211,18 @@ test('beforeCreate and afterCreate events', (assert) => {
 });
 
 test('setPage(page)', (assert) => {
+    let done = assert.async();
     assign(vm, {
-        'page': 'edit',
+        page: 'edit',
         viewId: 999
     });
 
     vm.setPage('list');
-    assert.equal(vm.page, 'list', 'page should be set correctly');
-    assert.equal(vm.viewId, 0, 'viewId should be reset');
+    setTimeout(() => {
+        assert.equal(vm.page, 'list', 'page should be set correctly');
+        assert.notOk(vm.viewId, 'viewId should be reset');
+        done();
+    }, 500);
 });
 
 test('getNewObject()', (assert) => {
@@ -280,21 +284,21 @@ test('deleteMmultiple()', (assert) => {
         def.then((r) => {
             assert.ok(r, 'then is resolved');
             done();
-        }).fail((r) => {
-            assert.ok(r, 'fail is resolved');
+        }).catch((r) => {
+            assert.ok(r, 'catch is resolved');
             done();
         });
     });
 });
 
-test('toggleFilter(val)', (assert) => {
-    vm.toggleFilter();
+test('toggle(prop, val)', (assert) => {
+    vm.toggle('filterVisible');
     assert.ok(vm.filterVisible, 'filter should be visible after toggling');
 
-    vm.toggleFilter();
+    vm.toggle('filterVisible');
     assert.notOk(vm.filterVisible, 'filter should not be visible after toggling again');
 
-    vm.toggleFilter(false);
+    vm.toggle('filterVisible', false);
     assert.notOk(vm.filterVisible, 'filter should not be visible after toggling to false');
 });
 

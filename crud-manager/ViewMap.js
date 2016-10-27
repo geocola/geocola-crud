@@ -37,6 +37,7 @@ export const ViewMap = DefineMap.extend('ViewMap', {
      * @property {can-connect} connection
      */
     connection: '*',
+    parameters: {Type: DefineMap, Value: DefineMap},
     /**
      * A template for creating new objects. This should be an constructor of can.Map
      * created using can.Map.extend. This object defines the default properties, types,

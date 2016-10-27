@@ -14,10 +14,14 @@ export const TaskList = DefineList.extend({
     map: TaskMap
 });
 
-export const Connection = superMap({
+const C = superMap({
     idProp: 'id',
     Map: TaskMap,
     List: TaskList,
     url: '/tasks',
     name: 'task'
 });
+
+C.metadata = {};
+
+export const Connection = C;

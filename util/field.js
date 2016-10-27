@@ -143,7 +143,6 @@ export function mapToFields (defineMap) {
         return [];
     }
     const define = assign({}, (defineMap._define || defineMap.prototype._define).definitions);
-    console.log(define);
     const fields = [];
     for (var prop in define) {
         if (define.hasOwnProperty(prop)) {

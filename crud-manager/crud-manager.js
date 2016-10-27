@@ -20,7 +20,6 @@ import '../nav-container/';
 
 import {FilterList} from '../filter-widget/Filter';
 import {parseFieldArray, mapToFields} from '../util/field';
-import PubSub from 'pubsub-js';
 import {ViewMap} from './ViewMap';
 
 export const TOPICS = {
@@ -90,14 +89,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * @parent crud-manager.ViewModel.props
      */
     view: {
-        Type: ViewMap,
-        set (view) {
-        //if parameters are in the view, mix them in to the crud parameters
-            if (view.parameters) {
-                assign(this.parameters, view.parameters.serialize());
-            }
-            return view;
-        }
+        Type: ViewMap
     },
     /**
      * The current page to display in this view. Options include:
@@ -165,7 +157,15 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * the internal parameters object. This is prepopulated when view is set.
      * @type {Object}
      */
-    parameters: {Value: ParameterMap, Type: ParameterMap},
+    parameters: {
+        Value: ParameterMap, 
+        Type: ParameterMap,
+        set(params){
+            if(this.view.parameters){
+                assign(params, this.view.parameters);
+            }
+        }
+    },
     /**
      * A promise that resolves to the objects retrieved from a can-connect.getListData call
      * @property {can.Deferred} crud-manager.ViewModel.props.objects
@@ -387,8 +387,6 @@ export const ViewModel = DefineMap.extend('CrudManager', {
    * id once it is returned. We then switch the page to the detail view to
    * display the created or updated object.
    *
-   * This method also adds notifications once the object is saved using PubSub.
-   *
    * @signature `saveObject(obj)`
    * @param  {can.Map} obj   The object to save
    *
@@ -406,12 +404,11 @@ export const ViewModel = DefineMap.extend('CrudManager', {
         } else {
             obj = arguments[0];
         }
-        const page = this.page;
+        const isNew = obj.isNew();
 
     // trigger events beforeCreate/beforeSave depending on if we're adding or
     // updating an object
-        let val = true;
-        if (page === 'add') {
+        if (isNew) {
             val = this.onEvent(obj, 'beforeCreate');
         } else {
             val = this.onEvent(obj, 'beforeSave');
@@ -425,9 +422,9 @@ export const ViewModel = DefineMap.extend('CrudManager', {
         //save the object
         var deferred = this.view.connection.save(obj);
         deferred.then((result) => {
-      //add a message
-
-            if (page === 'add') {
+            
+            // if event handlers
+            if (isNew) {
                 this.onEvent(obj, 'afterCreate');
             } else {
                 this.onEvent(obj, 'afterSave');
@@ -446,7 +443,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
                 obj: obj,
                 error: e
             }, 'errorSave');
-            console.warn(e);
+            console.error(e);
         });
         return deferred;
     },
@@ -468,7 +465,6 @@ export const ViewModel = DefineMap.extend('CrudManager', {
   /**
    * @function deleteObject
    * Displays a confirm dialog box and if confirmed, deletes the object provided.
-   * Once the object is deleted, a message is published using PubSub.
    *
    * @signature `deleteObject(obj, skipConfirm)`
    * @param  {can.Map} obj   The object to delete
@@ -504,25 +500,15 @@ export const ViewModel = DefineMap.extend('CrudManager', {
       //destroy the object using the connection
             const deferred = this.view.connection.destroy(obj);
             deferred.then((result) => {
-
-        //add a message
-                PubSub.publish(TOPICS.ADD_MESSAGE, {
-                    message: this.view.deleteSuccessMessage,
-                    detail: 'ID: ' + this.view.connection.id(result)
-                });
-
-        //afterDelete handler
+                
+                //afterDelete handler
                 this.onEvent(obj, 'afterDelete');
             });
 
             deferred.catch((result) => {
-        //add a message
-                PubSub.publish(TOPICS.ADD_MESSAGE, {
-                    message: this.view.deleteFailMessage,
-                    detail: result.statusText + ' : <small>' + result.responseText + '</small>',
-                    level: 'danger',
-                    timeout: 20000
-                });
+                //add a message
+                this.onEvent(result, 'failDelete');
+                console.error(result);
             });
             return deferred;
         }
