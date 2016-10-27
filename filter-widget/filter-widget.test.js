@@ -1,7 +1,8 @@
 import { ViewModel } from './filter-widget';
 import { Filter } from './Filter';
-import CanMap from 'can/map/';
+
 import q from 'steal-qunit';
+import DefineMap from 'can-define/map/map';
 
 var vm, filter;
 
@@ -27,43 +28,42 @@ test('fields get()', assert => {
   }, {
     name: 'test2'
   }];
-  vm.attr('fields', fields);
-  assert.equal(vm.attr('fields').length, 1, 'With excludeFilter true, only one field should be retreived from the getter');
+  vm.fields = fields;
+  assert.equal(vm.fields.length, 1, 'With excludeFilter true, only one field should be retreived from the getter');
 });
 
 test('formObject get()', assert => {
-  vm.attr('fields', [{ name: 'test', label: 'alias' }]);
-  assert.equal(vm.attr('formObject.name'), 'test', 'formobject should default to the first fields name');
+  vm.fields = [{ name: 'test', label: 'alias' }];
+  assert.equal(vm.formObject.name, 'test', 'formobject should default to the first fields name');
 });
 
 test('formFields get()', assert => {
-  assert.equal(vm.attr('formFields')[0].fieldType, 'text', 'name field fieldType should be text by default');
+  assert.equal(vm.formFields[0].fieldType, 'text', 'name field fieldType should be text by default');
 
   let field = {
     name: 'test',
     alias: 'Test'
   };
-  vm.attr('fields', [field]);
-  assert.equal(vm.attr('formFields')[0].fieldType, 'select', 'name field fieldType should be select when there are fieldOptions');
+  vm.fields = [field];
+  assert.equal(vm.formFields[0].fieldType, 'select', 'name field fieldType should be select when there are fieldOptions');
 });
 
 test('valueField get()', assert => {
-  console.log(vm.attr('valueField'));
-  assert.equal(vm.attr('valueField').fieldType, 'text', 'default valueField fieldType should be text');
+  assert.equal(vm.valueField.fieldType, 'text', 'default valueField fieldType should be text');
 
-  let obj = vm.attr('formObject');
-  obj.attr('operator', 'after');
-  vm.attr('formObject', obj);
-  assert.equal(vm.attr('valueField').fieldType, 'date', 'when using a date operator, valueField fieldType should be date');
+  let obj = vm.formObject;
+  obj.operator = 'after';
+  vm.formObject = obj;
+  assert.equal(vm.valueField.fieldType, 'date', 'when using a date operator, valueField fieldType should be date');
 });
 
 test('filterOptions get()', assert => {
-  let obj = vm.attr('formObject');
-  obj.attr('name', 'test');
-  vm.attr('formObject', obj);
+  let obj = vm.formObject;
+  obj.name = 'test';
+  vm.formObject = obj;
 
-  vm.attr('fields', [{name: 'test', label: 'test', type: 'date'}]);
-  vm.attr('filterOptions').forEach(f => {
+  vm.fields = [{name: 'test', label: 'test', type: 'date'}];
+  vm.filterOptions.forEach(f => {
     assert.ok(f.types.indexOf('date') !== -1 , 'each filter should have fieldType date');
   });
 
@@ -75,38 +75,38 @@ test('fieldOptions get() with fields', assert => {
     name: 'test',
     alias: 'Other'
   }];
-  vm.attr('fields', fields);
-  assert.equal(vm.attr('fieldOptions').length, fields.length, 'when fields are provided, fieldOptions should be created from the value');
+  vm.fields = fields;
+  assert.equal(vm.fieldOptions.length, fields.length, 'when fields are provided, fieldOptions should be created from the value');
 });
 
 test('fieldOptions get() with ObjectTemplate', assert => {
-  let template = can.Map.extend({
+  let template = DefineMap.extend({
     test1: null,
     test2: null,
     test3: null
   });
-  let len = can.Map.keys(new template()).length;
-  vm.attr('ObjectTemplate', template);
-  assert.equal(vm.attr('fieldOptions').length, len, 'when no fieldOptions are provided, but ObjectTemplate is, fieldOptions.length should be length of ObjectTemplate keys');
+  let len = Object.keys((new template()).serialize()).length;
+  vm.ObjectTemplate = template;
+  assert.equal(vm.fieldOptions.length, len, 'when no fieldOptions are provided, but ObjectTemplate is, fieldOptions.length should be length of ObjectTemplate keys');
 });
 
 test('addFilter()', assert => {
   vm.addFilter(null, null, null, filter);
-  assert.equal(vm.attr('filters').length, 1, 'filters should been added');
+  assert.equal(vm.filters.length, 1, 'filters should been added');
 });
 
 test('addFilter() with replaceExisting', assert => {
   vm.addFilter(null, null, null, filter);
   vm.addFilter(null, null, null, filter);
-  assert.equal(vm.attr('filters').length, 2, 'filters should been added');
+  assert.equal(vm.filters.length, 2, 'filters should been added');
 
-  vm.attr('replaceExisting', true);
+  vm.replaceExisting = true;
   vm.addFilter(null, null, null, filter);
-  assert.equal(vm.attr('filters').length, 1, 'filters should been replaced');
+  assert.equal(vm.filters.length, 1, 'filters should been replaced');
 });
 
 test('addFilter() with filterFactory', assert => {
-  vm.attr('fields', [{
+  vm.fields, [{
     name: 'test',
     filterFactory(filter) {
       return [new Filter({
@@ -119,15 +119,15 @@ test('addFilter() with filterFactory', assert => {
         val: 'test'
       })];
     }
-  }]);
+  }];
   vm.addFilter(null, null, null, filter);
-  assert.equal(vm.attr('filters').length, 2, 'factoryFunction should be called and two filters should be created');
+  assert.equal(vm.filters.length, 2, 'factoryFunction should be called and two filters should be created');
 });
 
 test('removeFilter()', assert => {
   vm.addFilter(null, null, null, filter);
   vm.removeFilter(null, null, null, filter);
-  assert.equal(vm.attr('filters').length, 0, 'filters should have been removed');
+  assert.equal(vm.filters.length, 0, 'filters should have been removed');
 });
 
 q.module('filter-widget.Filter', {
