@@ -3,33 +3,33 @@ import can from 'can';
 
 import {Field} from './field';
 
-let cases = [{
-  name: 'one'
+const cases = [{
+    name: 'one'
 }, {
-  name: 'two',
-  fieldType: 'date'
+    name: 'two',
+    fieldType: 'date'
 }, {
-  name: 'three',
-  alias: 'Custom'
+    name: 'three',
+    alias: 'Custom'
 }, {
-  name: 'four',
-  formatter(val, other){
-    return val + other.attr('two');
-  }
+    name: 'four',
+    formatter (val, other) {
+        return val + other.attr('two');
+    }
 }];
 let fields;
 
 q.module('.ViewModel', {
-  beforeEach: () => {
-    let fields = cases.map(c => {
-      return new Field(c);
-    });
-  },
-  afterEach: () => {
-    field = null;
-  }
+    beforeEach: () => {
+        const fields = cases.map((c) => {
+            return new Field(c);
+        });
+    },
+    afterEach: () => {
+        field = null;
+    }
 });
 
-test('Field.alias default', assert => {
+test('Field.alias default', (assert) => {
 
 });

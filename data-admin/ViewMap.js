@@ -11,14 +11,14 @@ import listTemplate from './templates/list.stache!';
  * //TODO this seems wrong, the foreignKey should probably be switched to the child
  * @option {String} foreignKey - The property to lookup a value for on the parent view's selected object
  * @option {String} referenceKey - The property on child view's objects to filter on
- * @option {crud.types.viewMap} view - The view object to pass to the related crud-manager
+ * @option {crud.types.viewMap} view - The view object to pass to the related data-admin
  */
 
 /**
  * @module {Object} crud.types.viewMap ViewMap
  * @parent crud.types
  * A view object that controls the display and management of data in the
- * crud-manager and other data components.
+ * data-admin and other data components.
  */
 export const ViewMap = DefineMap.extend('ViewMap', {
     /**

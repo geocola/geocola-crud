@@ -52,7 +52,7 @@ fixture({
     },
     'POST /tasks' (params, response) {
         const newId = index ++;
-        const newObj = assign({id: newId }, params.data);
+        const newObj = assign({id: newId}, params.data);
         data.push(newObj);
         response(data[data.length - 1]);
     },

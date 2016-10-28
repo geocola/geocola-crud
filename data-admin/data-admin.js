@@ -26,15 +26,15 @@ export const TOPICS = {
   /**
    * Topic to add a new message when an object is modified or deleted. The topic
    * published is `addMessage`
-   * @property {String} crud-manager.ViewModel.topics.ADD_MESSAGE
-   * @parent crud-manager.ViewModel.topics
+   * @property {String} data-admin.ViewModel.topics.ADD_MESSAGE
+   * @parent data-admin.ViewModel.topics
    */
     ADD_MESSAGE: 'addMessage',
   /**
    * topic to clear existing messages. The topic
    * published is `clearMessages`
-   * @property {String} crud-manager.ViewModel.topics.CLEAR_MESSAGES
-   * @parent crud-manager.ViewModel.topics
+   * @property {String} data-admin.ViewModel.topics.CLEAR_MESSAGES
+   * @parent data-admin.ViewModel.topics
    */
     CLEAR_MESSAGES: 'clearMessages'
 };
@@ -66,27 +66,27 @@ export const ParameterMap = DefineMap.extend('ParameterMap', {
     sort: {Type: SortMap, Value: SortMap}
 });
 /**
- * @module crud-manager
+ * @module data-admin
  */
 
 /**
- * @constructor crud-manager.ViewModel ViewModel
- * @parent crud-manager
- * @group crud-manager.ViewModel.props Properties
- * @group crud-manager.ViewModel.topics Topics
+ * @constructor data-admin.ViewModel ViewModel
+ * @parent data-admin
+ * @group data-admin.ViewModel.props Properties
+ * @group data-admin.ViewModel.topics Topics
  *
- * @description A `<crud-manager />` component's ViewModel
+ * @description A `<data-admin />` component's ViewModel
  */
-export const ViewModel = DefineMap.extend('CrudManager', {
+export const ViewModel = DefineMap.extend('DataAdmin', {
   /**
    * @prototype
    */
     /**
-     * The view object that controls the entire setup of the crud-manager.
+     * The view object that controls the entire setup of the data-admin.
      * Properties on the view control how each field is formatted, default values,
      * interactions, etc.
-     * @property {crud.types.viewMap} crud-manager.ViewModel.props.view
-     * @parent crud-manager.ViewModel.props
+     * @property {crud.types.viewMap} data-admin.ViewModel.props.view
+     * @parent data-admin.ViewModel.props
      */
     view: {
         Type: ViewMap
@@ -96,8 +96,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * * `list`: The list table page that displays all records
      * * `details`: The individual view page that shows one detailed record
      * * `edit`: The editing view that allows editing of an individual record using a form
-     * @property {String} crud-manager.ViewModel.props.page
-     * @parent crud-manager.ViewModel.props
+     * @property {String} data-admin.ViewModel.props.page
+     * @parent data-admin.ViewModel.props
      */
     page: {
         value: 'list',
@@ -107,8 +107,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * A virtual property that calculates the number of total pages to show
      * on the list page. This controls the paginator widget. It uses the property
      * `view.connectionProperties.total`  and `queryPerPage` to perform this calculation.
-     * @property {String} crud-manager.ViewModel.props.totalPages
-     * @parent crud-manager.ViewModel.props
+     * @property {String} data-admin.ViewModel.props.totalPages
+     * @parent data-admin.ViewModel.props
      */
     totalPages: {
         get () {
@@ -128,8 +128,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * step below is less than the total count. Example, if there are
      * 30 total items, the default list returned will be 10, 20, and 50.
      * If no options are returned the per page switcher is hidden.
-     * @property {Array<Number>} crud-manager.ViewModel.props.perPageOptions
-     * @parent crud-manager.ViewModel.props
+     * @property {Array<Number>} data-admin.ViewModel.props.perPageOptions
+     * @parent data-admin.ViewModel.props
      */
     perPageOptions: {
         Value () {
@@ -144,8 +144,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     /**
      * A helper to show or hide the paginate-widget. If totalPages is less than
      * 2, the paginate widget will not be shown.
-     * @property {Boolean} crud-manager.ViewModel.props.showPaginate
-     * @parent crud-manager.ViewModel.props
+     * @property {Boolean} data-admin.ViewModel.props.showPaginate
+     * @parent data-admin.ViewModel.props
      */
     showPaginate: {
         type: 'boolean',
@@ -160,16 +160,16 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     parameters: {
         Value: ParameterMap, 
         Type: ParameterMap,
-        set(params){
-            if(this.view.parameters){
+        set (params) {
+            if (this.view.parameters) {
                 assign(params, this.view.parameters);
             }
         }
     },
     /**
      * A promise that resolves to the objects retrieved from a can-connect.getListData call
-     * @property {can.Deferred} crud-manager.ViewModel.props.objects
-     * @parent crud-manager.ViewModel.props
+     * @property {can.Deferred} data-admin.ViewModel.props.objects
+     * @parent data-admin.ViewModel.props
      */
     objectsPromise: {
         get () {
@@ -198,8 +198,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     },
     /**
      * A promise that resolves to the object retreived from a `can-connect.get` call
-     * @property {can.Map} crud-manager.ViewModel.props.focusObject
-     * @parent crud-manager.ViewModel.props
+     * @property {can.Map} data-admin.ViewModel.props.focusObject
+     * @parent data-admin.ViewModel.props
      */
     focusObjectPromise: {
         get () {
@@ -233,8 +233,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
      * Buttons to use for the list table actions. If `view.disableEdit` is falsey
      * the buttons will include an edit and delete button. Otherwise, it will be
      * a simple view details button.
-     * @property {Array<crud.types.TableButtonObject>} crud-manager.ViewModel.props.buttons
-     * @parent crud-manager.ViewModel.props
+     * @property {Array<crud.types.TableButtonObject>} data-admin.ViewModel.props.buttons
+     * @parent data-admin.ViewModel.props
      */
     buttons: {
         type: '*',
@@ -244,8 +244,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     },
     /**
      * The page number, this is calculated by incrementing the queryPage by one.
-     * @property {Number}  crud-manager.ViewModel.props.pageNumber
-     * @parent crud-manager.ViewModel.props
+     * @property {Number}  data-admin.ViewModel.props.pageNumber
+     * @parent data-admin.ViewModel.props
      */
     pageNumber: {
         get () {
@@ -255,8 +255,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     /**
      * The current id number of the object that is being viewed in the property
      * table or edited in the form widget.
-     * @property {Number}  crud-manager.ViewModel.props.buttons
-     * @parent crud-manager.ViewModel.props
+     * @property {Number}  data-admin.ViewModel.props.buttons
+     * @parent data-admin.ViewModel.props
      */
     viewId: {
         type: 'number',
@@ -265,8 +265,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     /**
      * Current loading progress. NOT IMPLEMENTED
      * TODO: implement loading progress on lengthy processes like multi delete
-     * @property {Number}  crud-manager.ViewModel.props.progress
-     * @parent crud-manager.ViewModel.props
+     * @property {Number}  data-admin.ViewModel.props.progress
+     * @parent data-admin.ViewModel.props
      */
     progress: {
         type: 'number',
@@ -274,16 +274,16 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     },
     /**
      * Whether or not the filter popup is visible
-     * @property {Boolean} crud-manager.ViewModel.props.buttons
-     * @parent crud-manager.ViewModel.props
+     * @property {Boolean} data-admin.ViewModel.props.buttons
+     * @parent data-admin.ViewModel.props
      */
     filterVisible: {type: 'boolean', value: false},
     selectMenu: {type: 'boolean', value: false},
     /**
      * The internal field array that define the display of data and field types
      * for editing and filtering
-     * @property {Array<Field>} crud-manager.ViewModel.props._fields
-     * @parent crud-manager.ViewModel.props
+     * @property {Array<Field>} data-admin.ViewModel.props._fields
+     * @parent data-admin.ViewModel.props
      */
     _fields: {
         get () {
@@ -300,8 +300,8 @@ export const ViewModel = DefineMap.extend('CrudManager', {
     },
     /**
      * An array of currently selected objects in the list-table
-     * @property {Array<can.Map>} crud-manager.ViewModel.props.selectedObjects
-     * @parent crud-manager.ViewModel.props
+     * @property {Array<can.Map>} data-admin.ViewModel.props.selectedObjects
+     * @parent data-admin.ViewModel.props
      */
     selectedObjects: DefineList,
   /**
@@ -604,7 +604,7 @@ export const ViewModel = DefineMap.extend('CrudManager', {
 });
 
 Component.extend({
-    tag: 'crud-manager',
+    tag: 'data-admin',
     ViewModel: ViewModel,
     view: template,
     events: {

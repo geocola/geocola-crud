@@ -1,8 +1,8 @@
 import q from 'steal-qunit';
 
-import {ViewModel} from './crud-manager';
+import {ViewModel} from './data-admin';
 import {Connection, TaskMap} from '../../test/data/connection';
-import {TOPICS} from './crud-manager';
+import {TOPICS} from './data-admin';
 import PubSub from 'pubsub-js';
 import assign from 'can-util/js/assign/assign';
 let vm;
@@ -11,7 +11,7 @@ import DefineList from 'can-define/list/list';
 
 q.config.testTimeout = 10000;
 
-q.module('crud-manager.ViewModel', {
+q.module('data-admin.ViewModel', {
     beforeEach: () => {
         localStorage.clear();
         vm = new ViewModel({
@@ -211,7 +211,7 @@ test('beforeCreate and afterCreate events', (assert) => {
 });
 
 test('setPage(page)', (assert) => {
-    let done = assert.async();
+    const done = assert.async();
     assign(vm, {
         page: 'edit',
         viewId: 999
