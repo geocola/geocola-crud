@@ -1,4 +1,4 @@
-<div class="modal{{#active}} active{{/active}}">
+<div class="modal{{#active}} active{{/active}}{{#small}} modal-sm{{/small}}">
     <div class="modal-overlay"></div>
     <div class="modal-container">
 

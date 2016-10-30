@@ -6,6 +6,7 @@ import template from './modal-dialog.stache!';
 export const ViewModel = DefineMap.extend('ModalDialog', {
     active: {value: false, type: 'htmlbool'},
     customBody: {value: false, type: 'htmlbool'},
+    small: {value: false, type: 'htmlbool'},
     show () {
         this.active = true;
     },
