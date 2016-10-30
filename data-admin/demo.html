@@ -16,37 +16,37 @@
     import SuperMap from 'can-connect/can/super-map/';
     import DefineMap from 'can-define/map/map';
     import DefineList from 'can-define/list/list';
-    import data from 'test/data/tasks.json';
-    import 'test/data/fixtures';
+    // import data from 'test/data/posts.json';
+    // import 'test/data/fixtures';
     import stache from 'can-stache';
 
     // additional field proeprties can be included here to customize the
     // tables and forms for this object
-    const TaskMap = DefineMap.extend({
+    const PostMap = DefineMap.extend({
       'id': {type: 'number', excludeForm: true},
-      "name": { value: '' },
-      "description": { value: '', placeholder: 'Enter a descripton'},
-      "completed": { value: false, type: 'boolean' }
+      userId: 'number',
+      title: 'string',
+      body: 'string'
     });
 
-    const TaskList = DefineList.extend({
-        map: TaskMap
+    const PostList = DefineList.extend({
+        map: PostMap
     });
 
     const Connection = SuperMap({
         idProp: "id",
-        Map: TaskMap,
-        List: TaskList,
-        url: "/tasks",
-        name: "task",
+        Map: PostMap,
+        List: PostList,
+        url: "http://jsonplaceholder.typicode.com/posts",
+        name: "post",
         metadata: {
-          total: data.length
+          // total: data.length
         }
     });
 
     let viewModel = new DefineMap({
         view: {
-            title: 'Tasks',
+            title: 'Posts',
             connection: Connection,
             manageButtons: [{
                 textClass: 'text-success',
