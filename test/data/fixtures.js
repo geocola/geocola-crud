@@ -26,9 +26,9 @@ fixture({
             tempData = tempData.filter((d) => {
                 return d[f.name].indexOf(f.value) !== -1;
             });
+            console.log('found ' + tempData.length + ' items after filtering');
         }
 
-        console.log('found ' + tempData.length + ' items after filtering');
 
     //sort it
         if (sortInfo && sortInfo.fieldName) {
@@ -45,7 +45,7 @@ fixture({
         }
 
         //pageinate it
-        tempData = tempData.slice(page * perPage, (page + 1) * perPage - 1);
+        tempData = tempData.slice(page * perPage, (page + 1) * perPage);
 
         //return the serialized version
         return tempData.serialize();
