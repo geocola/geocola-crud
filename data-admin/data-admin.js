@@ -6,12 +6,14 @@ import batch from 'can-event/batch/batch';
 import assign from 'can-util/js/assign/assign';
 import './widget.less!';
 
+import vm from 'can-view-model';
+window.vm = vm;
 import '../list-table/';
 import '../property-table/';
 import '../form-widget/';
 import '../filter-widget/';
 import '../paginate-widget/';
-import '../nav-container/';
+import '../nav-container/nav-container';
 
 
 // import 'can-ui/modal-container/';
@@ -158,7 +160,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
      * @type {Object}
      */
     parameters: {
-        Value: ParameterMap, 
+        Value: ParameterMap,
         Type: ParameterMap,
         set (params) {
             if (this.view.parameters) {
@@ -187,7 +189,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
 
         // handle promise.catch for local-storage deferreds...
             promise.catch((err) => {
-                console.error('unable to complete objects request', err);
+                console.warn('unable to complete objects request', err);
             });
 
           // update the list data
@@ -330,10 +332,14 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
    * @param {String} page The name of the page to switch to
    */
     setPage (page) {
-        this.viewId = null;
-        setTimeout(() => {
-            this.page = page;
-        }, 100);
+        this.set({
+            viewId: null,
+            page: page
+        });
+        // this.viewId = null;
+        // setTimeout(() => {
+        //     this.page = page;
+        // }, 100);
     },
   /**
    * @function editObject
@@ -422,7 +428,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
         //save the object
         var deferred = this.view.connection.save(obj);
         deferred.then((result) => {
-            
+
             // if event handlers
             if (isNew) {
                 this.onEvent(obj, 'afterCreate');
@@ -500,7 +506,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
       //destroy the object using the connection
             const deferred = this.view.connection.destroy(obj);
             deferred.then((result) => {
-                
+
                 //afterDelete handler
                 this.onEvent(obj, 'afterDelete');
             });

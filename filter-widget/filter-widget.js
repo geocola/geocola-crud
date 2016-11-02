@@ -266,7 +266,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
    * @param  {event} event The can event
    * @param  {filterObject} filterObj The object to add. This is the only argument used by the function, the rest may be null.
    */
-    addFilter (scope, dom, event, filterObj) {
+    addFilter (filterObj) {
         const name = filterObj.name;
         let filters;
         if (!name || !filterObj.value) {
@@ -301,6 +301,9 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
         this.formObject = null;
       //end batch process
         batch.stop();
+    },
+    noOp (vm, form, event) {
+        event.preventDefault();
         return false;
     }
 });

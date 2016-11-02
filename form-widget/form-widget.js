@@ -132,7 +132,8 @@ export const ViewModel = DefineMap.extend('FormWidget', {
    * Called when the form is submitted. The object is updated by calling it's `save` method. The event `submit` is dispatched.
    * @signature
    */
-    submitForm () {
+    submitForm (vm, form, event) {
+        event.preventDefault();
         if (this.showSaving) {
             this.isSaving = true;
         }

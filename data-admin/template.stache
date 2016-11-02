@@ -43,8 +43,9 @@
             </a>
             {{/if}}
         </div>
-
-        <filter-widget {{#unless filterVisible}}disable-add{{/unless}} {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.ObjectTemplate" />
+        <div class="col-6">
+          <filter-widget {{#unless filterVisible}}disable-add{{/unless}} {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.ObjectTemplate" />
+        </div>
 
 
         <list-table {objects}="objects" {buttons}="buttons" id-prop="{{view.connection.idProp}}" {(selected-objects)}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" />
