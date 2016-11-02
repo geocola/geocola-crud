@@ -1,5 +1,8 @@
 <div class="form-group">
+  <div class="col-4">
     <label class="form-label" {{#inline}}class="sr-only" {{/inline}}for="{{name}}">{{properties.alias}}</label>
+  </div>
+  <div class="col-8">
     {{#if properties.textarea}}
       <textarea ($keydown)="beforeSubmit(%element, %event)" placeholder="{{properties.placeholder}}"
         id="{{properties.name}}" class="form-control form-input" name="{{name}}"
@@ -9,4 +12,5 @@
         type="{{#if properties.textType}}{{properties.textType}}{{else}}text{{/if}}"
         class="form-control form-input" id="{{name}}" name="{{name}}" {($value)}="value" />
     {{/if}}
+  </div>
 </div>
