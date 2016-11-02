@@ -1,0 +1,12 @@
+
+<div class="toasts">
+    {{#each toasts}}
+        <toast-item (hide)="removeToast(.)"
+          severity="{{severity}}"
+          visible="{{visible}}"
+          heading="{{heading}}"
+          use-content-tag="false"
+          body="{{body}}"
+          dismissable="{{dismissable}}" />
+    {{/each}}
+</div>
