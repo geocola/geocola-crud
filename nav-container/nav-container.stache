@@ -7,5 +7,4 @@
       </li>
     {{/each}}
 </ul>
-{{pages.0.label}}{{active.label}}
 <content />
