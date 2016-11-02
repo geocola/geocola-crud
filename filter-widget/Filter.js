@@ -46,13 +46,11 @@ export const FilterOptions = [{
     }
 }, {
     label: 'Exactly equal to',
-    value: 'equals',
-    types: ['string', 'number', 'boolean', 'date']
+    value: 'equals'
 }, {
     label: 'Not exactly equal to',
     operator: 'not_equal_to',
-    value: 'not_equal_to',
-    types: ['string', 'number', 'boolean', 'date']
+    value: 'not_equal_to'
 }, {
     label: 'Greater Than',
     value: 'greater_than',

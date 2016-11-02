@@ -102,7 +102,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
      * @parent filter-widget.ViewModel.props
      */
     formFields: {
-        get (fields) {
+        get () {
             const nameField = this.fieldOptions ? {
                 formatter: makeSentenceCase,
                 name: 'name',
@@ -114,10 +114,15 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 alias: 'Field Name',
                 placeholder: 'Enter fieldname'
             };
-            return parseFieldArray([nameField, this.selectField, this.valueField]);
+            return parseFieldArray([nameField, this.operatorField, this.valueField]);
         }
     },
-    selectField: {
+    /**
+     * The operator field properties
+     * @property {Array.<formFieldObject>} filter-widget.ViewModel.fields
+     * @parent filter-widget.ViewModel.props
+     */
+    operatorField: {
         Type: DefineMap,
         get () {
             return {
@@ -169,26 +174,25 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
      */
     filterOptions: {
         get () {
-        //get the name of the selected field
+            //get the name of the selected field
             const name = this.formObject.name;
-            const fields = this.fields;
 
-        //if we have fields search them for a type matching the name
-        //of the selected field name
-            if (fields) {
-                const field = fields.filter((f) => {
+            //if we have fields search them for a type matching the name
+            //of the selected field name
+            if (this.fields && this.fields.length) {
+                const field = this.fields.filter((f) => {
                     return f.name === name;
                 })[0];
                 if (field && field.type) {
                     return FilterOptions.filter((f) => {
-                        return f.types.indexOf(field.type) !== -1;
+                        return !f.types || f.types.indexOf(field.type) !== -1;
                     });
                 }
             }
 
-        //otherwise search the ObjectTemplate for a field type
-        //if it doesn't exist or the property/type doesn't exist then
-        //return the whole array
+            //otherwise search the ObjectTemplate for a field type
+            //if it doesn't exist or the property/type doesn't exist then
+            //return the whole array
             const Template = this.ObjectTemplate;
             if (!Template) {
                 return FilterOptions;

@@ -51,6 +51,15 @@ export const Field = DefineMap.extend('Field', {
         }
     },
   /**
+   * A friendly name for the field used to display to the user
+   * The default is to capitalize the name and remove underscores
+   * @property {String} util/field.Field.alias
+   */
+    type: {
+        type: 'string',
+        value: 'string'
+    },
+  /**
    * The type of the form field to use when editing this field. These types
    * are defined in the `util/field.TEMPLATES` constant
    * @property {String} util/field.Field.type
@@ -146,12 +155,15 @@ export function mapToFields (defineMap) {
     const fields = [];
     for (var prop in define) {
         if (define.hasOwnProperty(prop)) {
-            fields.push(assign({
+            const type = typeof define[prop].type === 'function' ? define[prop].type.name : define[prop].type;
+            fields.push(Object.assign({}, {
                 name: prop,
                 type: 'string',
                 fieldType: 'text'
-            }, define[prop]));
+            }, define[prop], {type: type}
+          ));
         }
     }
+    console.log(fields);
     return parseFieldArray(fields);
 }

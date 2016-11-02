@@ -91,6 +91,16 @@ export const ViewModel = DefineMap.extend('FormWidget', {
         }
     },
     /**
+     * If set to true, the form will go into a saving/loading state
+     * when the submit button is clicked
+     * @property {Boolean} form-widget.ViewModel.props.showSaving
+     * @parent form-widget.ViewModel.props
+     */
+    showSaving: {
+        type: 'boolean',
+        value: false
+    },
+    /**
      * This property is set to true when the save button is clicked.
      * It sets the save button to a loading state
      * @property {Boolean} form-widget.ViewModel.props.isSaving
@@ -123,7 +133,9 @@ export const ViewModel = DefineMap.extend('FormWidget', {
    * @signature
    */
     submitForm () {
-        this.isSaving = true;
+        if (this.showSaving) {
+            this.isSaving = true;
+        }
         const formObject = this.formObject;
         this.dispatch('submit', [formObject]);
         return false;
