@@ -55,6 +55,12 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
      * @parent filter-widget.ViewModel.props
      */
     ObjectTemplate: {
+        get (t) {
+            if (t) {
+                return t;
+            }
+            return this.connection.Map;
+        }
     },
     /**
      * A list of filterObjects currently used in this widget
@@ -75,9 +81,10 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
             if (obj) {
                 return obj;
             }
-            return new Filter({
+            const filter = new Filter({
                 name: this.fieldOptions && this.fieldOptions.length ? this.fieldOptions[0].value : ''
             });
+            return filter;
         }
     },
     /**
@@ -193,11 +200,10 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
             //otherwise search the ObjectTemplate for a field type
             //if it doesn't exist or the property/type doesn't exist then
             //return the whole array
-            const Template = this.ObjectTemplate;
             if (!Template) {
                 return FilterOptions;
             }
-            const define = (Template._define || Template.prototype._define).definitions;
+            const define = (ObjectTemplate._define || ObjectTemplate.prototype._define).definitions;
             if (!define) {
                 return FilterOptions;
             }

@@ -7,7 +7,6 @@ import assign from 'can-util/js/assign/assign';
 import './widget.less!';
 
 import vm from 'can-view-model';
-window.vm = vm;
 import '../list-table/';
 import '../property-table/';
 import '../form-widget/';
@@ -183,7 +182,6 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
     },
     objects: {
         Value: DefineList,
-        Type: DefineList,
         get (val, setAttr) {
             const promise = this.objectsPromise;
 

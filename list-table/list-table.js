@@ -40,7 +40,9 @@ export const ViewModel = DefineMap.extend('ListTable', {
    * @parent list-table.ViewModel.props
    * @property {Array.<can.Model | can.Map | Object>} list-table.ViewModel.props.objects
    */
-    objects: DefineList,
+    objects: {
+        Value: DefineList
+    },
   /**
    * Id property name for the rows of objects. The default is `id`. This value
    * is used to determine whether objects are selected or not.

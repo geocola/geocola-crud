@@ -164,6 +164,5 @@ export function mapToFields (defineMap) {
           ));
         }
     }
-    console.log(fields);
     return parseFieldArray(fields);
 }
