@@ -1,34 +1,38 @@
 <div class="object-metadata">
+    <span class="text-bold">{{view.title}}</span>:
     {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. Page {{pageNumber}} of {{totalPages}}{{/if}}
-    {{#if selectedObjects.length}}|
+    | <a class="inline-block badge" ($click)="toggle('filterVisible')"><i class="fa fa-search"></i> Search</a>
+    {{#if selectedObjects.length}} |
         <a class="inline-block selected-objects badge" data-badge="{{selectedObjects.length}}" ($click)="toggle('selectMenu')">
-      With Selected...
-          {{#selectMenu}}
-          <ul class="menu">
-              {{#if view.manageButtons.length}}
-              <!-- menu header -->
-              <li class="menu-header">
-                  <span class="menu-header-text">
-                    Tasks
-                </span>
-              </li>
-              {{#each view.mangeButtons}}
-              <li class="menu-item">
-                  <a ($click)="onClick">
-                      <span class="{{iconClass}}"></span>{{text}}
-                  </a>
+    With Selected...
+        {{#selectMenu}}
+        <ul class="menu">
+            {{#if view.manageButtons.length}}
+            <!-- menu header -->
+            <li class="menu-header">
+                <span class="menu-header-text">
+                  Tasks
+              </span>
+            </li>
+            {{#each view.manageButtons}}
+              {{#unless disabled}}
+                <li class="menu-item">
+                    <a ($click)="onClick(selectedObjects)">
+                        <span class="{{iconClass}}"></span>{{text}}
+                    </a>
         </li>
+        {{/unless}}
         {{/each}}
     {{/if}}
     <!-- menu divider -->
     <li class="divider"></li>
     <li class="menu-header">
         <span class="menu-header-text">
-                    Modify
-                </span>
+                  Modify
+              </span>
     </li>
     <li class="menu-item">
-        <a ($click)="deleteMultiple">
+        <a ($click)="deleteMultiple(false)">
             <span class="icon icon-link"></span> Delete
         </a>
     </li>
@@ -38,8 +42,19 @@
     {{/if}}
 </div>
 
-<list-table {objects}="objects" {buttons}="buttons" id-prop="{{view.connection.idProp}}" {(selected-objects)}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" />
+{{#filterVisible}}
+    <div class="column col-lg-8">
+        <filter-widget {(filters)}="parameters.filters" {fields}="_fields" {object-template}="view.ObjectTemplate" />
+    </div>
+{{/filterVisible}}
 
+{{#if objects.length}}
+    <list-table {objects}="objects" {buttons}="buttons" id-prop="{{view.connection.idProp}}" {(selected-objects)}="selectedObjects" (edit)="editObject" (delete)="deleteObject" (view)="viewObject" {(current-sort)}="parameters.sort" {fields}="_fields" />
+{{else}}
+    {{#unless objectsPromise.isPending}}
+        <p>{{view.noDataMessage}}</p>
+    {{/unless}}
+{{/if}}
 
 <div class="hidden-print">
     {{#if showPaginate}}

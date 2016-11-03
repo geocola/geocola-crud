@@ -4,6 +4,8 @@ import {Field} from '../util/field';
 
 import editTemplate from './templates/edit.stache!';
 import listTemplate from './templates/list.stache!';
+import detailsTemplate from './templates/details.stache!';
+import addTemplate from './templates/add.stache!';
 
 /**
  * @typedef {object} crud.types.relatedView RelatedView
@@ -87,21 +89,21 @@ export const ViewMap = DefineMap.extend('ViewMap', {
    * @property {String} deleteFailMessage
    */
     deleteFailMessage: {value: 'Object could not be removed.'},
+    /**
+     * The message to display when adding new items is disabled
+     * @property {String} deleteFailMessage
+     */
+    addDisabledMessage: {value: 'You do not have permission to add this data.'},
   /**
    * The message to display when a user does not have permissions to edit
    * @property {String} editDisabledMessage
    */
     editDisabledMessage: {value: 'You do not have permission to edit this data.'},
-  /**
-   * The template to render when editing and has permissions
-   * @property {Renderer} editTemplate
-   */
-    editTemplate: {value: editTemplate, type: '*'},
-  /**
-   * The template to render when editing and has permissions
-   * @property {Renderer} editTemplate
-   */
-    listTemplate: {value: listTemplate, type: '*'},
+    /**
+     * The message to display when no data is found in the list
+     * @property {String} noDataMessage
+     */
+    noDataMessage: {value: 'No rows found.'},
   /**
    * A flag to disable editing existing objects
    * @property {Boolean} disableEdit
@@ -174,5 +176,53 @@ export const ViewMap = DefineMap.extend('ViewMap', {
      }],
      ```
    */
-    manageButtons: {value: undefined}
+    manageButtons: {value: undefined},
+    /**
+     * The template to render when editing and has permissions
+     * @property {Renderer} editTemplate
+     */
+    editTemplate: {
+        get (template) {
+            if (!template) {
+                template = editTemplate;
+            }
+            return template;
+        }
+    },
+    /**
+     * The template to render when editing and has permissions
+     * @property {Renderer} editTemplate
+     */
+    listTemplate: {
+        get (template) {
+            if (!template) {
+                template = listTemplate;
+            }
+            return template;
+        }
+    },
+      /**
+       * The template to render when editing and has permissions
+       * @property {Renderer} editTemplate
+       */
+    addTemplate: {
+        get (template) {
+            if (!template) {
+                template = addTemplate;
+            }
+            return template;
+        }
+    },
+      /**
+       * The template to render when editing and has permissions
+       * @property {Renderer} editTemplate
+       */
+    detailsTemplate: {
+        get (template) {
+            if (!template) {
+                template = detailsTemplate;
+            }
+            return template;
+        }
+    }
 });
