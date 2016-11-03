@@ -200,10 +200,10 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
             //otherwise search the ObjectTemplate for a field type
             //if it doesn't exist or the property/type doesn't exist then
             //return the whole array
-            if (!Template) {
+            if (!this.ObjecTemplate) {
                 return FilterOptions;
             }
-            const define = (ObjectTemplate._define || ObjectTemplate.prototype._define).definitions;
+            const define = (this.ObjectTemplate._define || this.ObjectTemplate.prototype._define).definitions;
             if (!define) {
                 return FilterOptions;
             }
