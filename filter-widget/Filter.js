@@ -9,6 +9,9 @@ export const Filter = DefineMap.extend('Filter', {
     operator: {
         type: 'string',
         value: 'like'
+    },
+    opField: {
+        serialize: false
     }
 });
 

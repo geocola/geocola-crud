@@ -10,7 +10,7 @@
         <form class="form-horizontal" ($submit)="noOp">
             <div class="form-group">
                 <button type="button" class="btn" ($click)="removeFilter(this)"><i class="fa fa-trash"></i> {{name}}</button>
-                <select-field {properties}="operatorField" {(value)}="operator" />
+                <select-field {properties}="opField" {(value)}="operator" />
                 <text-field {(value)}="value" />
             </div>
         </form>

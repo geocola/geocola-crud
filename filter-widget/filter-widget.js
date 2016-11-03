@@ -2,6 +2,7 @@ import DefineList from 'can-define/list/list';
 import DefineMap from 'can-define/map/map';
 import Component from 'can-component';
 import batch from 'can-event/batch/batch';
+import deepAssign from 'can-util/js/deep-assign/deep-assign';
 import {makeSentenceCase} from '../../util/string';
 
 import template from './template.stache!';
@@ -273,6 +274,8 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
    * @param  {filterObject} filterObj The object to add. This is the only argument used by the function, the rest may be null.
    */
     addFilter (filterObj) {
+        console.log(this.operatorField);
+        filterObj.opField = deepAssign({}, this.operatorField);
         const name = filterObj.name;
         let filters;
         if (!name || !filterObj.value) {
