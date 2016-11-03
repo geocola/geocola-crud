@@ -2,11 +2,9 @@ import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
 import Component from 'can-component';
 import template from './template.stache!';
-import batch from 'can-event/batch/batch';
 import assign from 'can-util/js/assign/assign';
 import './widget.less!';
 
-import vm from 'can-view-model';
 import '../list-table/';
 import '../property-table/';
 import '../form-widget/';
@@ -14,49 +12,10 @@ import '../filter-widget/';
 import '../paginate-widget/';
 import '../nav-container/nav-container';
 
-
-// import 'can-ui/modal-container/';
-// import 'can-ui/tab-container/';
-// import 'can-ui/panel-container/';
-
+import {VIEW_BUTTON, EDIT_BUTTON, DELETE_BUTTON} from './buttons';
 import {FilterList} from '../filter-widget/Filter';
 import {parseFieldArray, mapToFields} from '../util/field';
 import {ViewMap} from './ViewMap';
-
-export const TOPICS = {
-  /**
-   * Topic to add a new message when an object is modified or deleted. The topic
-   * published is `addMessage`
-   * @property {String} data-admin.ViewModel.topics.ADD_MESSAGE
-   * @parent data-admin.ViewModel.topics
-   */
-    ADD_MESSAGE: 'addMessage',
-  /**
-   * topic to clear existing messages. The topic
-   * published is `clearMessages`
-   * @property {String} data-admin.ViewModel.topics.CLEAR_MESSAGES
-   * @parent data-admin.ViewModel.topics
-   */
-    CLEAR_MESSAGES: 'clearMessages'
-};
-
-const DEFAULT_BUTTON = {
-    iconClass: 'fa fa-list-ul',
-    eventName: 'view',
-    title: 'View Row Details'
-};
-
-const EDIT_BUTTON = {
-    iconClass: 'fa fa-pencil',
-    eventName: 'edit',
-    title: 'Edit Row'
-};
-
-const DELETE_BUTTON = {
-    iconClass: 'fa fa-trash',
-    eventName: 'delete',
-    title: 'Remove Row'
-};
 
 export const SortMap = DefineMap.extend('SortMap', {
     fieldName: null,
@@ -176,6 +135,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
             if (this.view.parameters) {
                 assign(params, this.view.parameters);
             }
+            return params;
         }
     },
     refreshCount: {
@@ -259,7 +219,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
             if (buttons && buttons.length) {
                 return buttons;
             }
-            var buttons = [DEFAULT_BUTTON];
+            buttons = [VIEW_BUTTON];
             if (!this.view.disableEdit) {
                 buttons.push(EDIT_BUTTON);
             }
