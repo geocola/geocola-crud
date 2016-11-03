@@ -19,22 +19,22 @@
             </tr>
         </thead>
         <tbody>
-            {{#each objects}}
-                <tr {{#if isSelected(.)}} class="warning" {{/if}}>
+            {{#each objects as row}}
+                <tr {{#if isSelected(row)}} class="warning" {{/if}}>
                     <td class="tool-buttons">
                         <div class="form-group inline-block">
                             <label class="form-checkbox">
-                                <input type="checkbox" ($change)="toggleSelected(.)" {($checked)}="isSelected(.)" />
+                                <input type="checkbox" ($change)="toggleSelected(row)" {($checked)}="isSelected(row)" />
                                 <i class="form-icon"></i>
                             </label>
                         </div>
                         {{#each buttons}}
-                            <i class="{{iconClass}}" ($click)="buttonClick(eventName, ../.)"></i>&nbsp;&nbsp;
+                            <i class="{{iconClass}}" ($click)="buttonClick(eventName, row)"></i>&nbsp;&nbsp;
                         {{/each}}
                     </td>
-                    {{#each fields}}
+                    {{#each fields as field}}
                         {{! this passes the field name and the current object to getFieldValue }}
-                        <td>{{{getFieldValue(., ../.)}}}</td>
+                        <td>{{{getFieldValue(field, row)}}}</td>
                     {{/each}}
                 </tr>
             {{/each}}

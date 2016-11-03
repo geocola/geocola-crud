@@ -131,7 +131,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
     parameters: {
         Value: ParameterMap,
         Type: ParameterMap,
-        set (params) {
+        get (params) {
             if (this.view.parameters) {
                 assign(params, this.view.parameters);
             }
@@ -334,14 +334,17 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
    */
     editObject () {
         let obj;
-    //accept 4 params from the template or just one
+        //accept 4 params from the template or just one
         if (arguments.length === 4) {
             obj = arguments[3];
         } else {
             obj = arguments[0];
         }
-        this.viewId = this.view.connection.id(obj);
-        this.page = 'edit';
+
+        this.set({
+            viewId: this.view.connection.id(obj),
+            page: 'edit'
+        });
     },
   /**
    * @function viewObject
@@ -361,8 +364,11 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
         } else {
             obj = arguments[0];
         }
-        this.viewId = this.view.connection.id(obj);
-        this.page = 'details';
+
+        this.set({
+            viewId: this.view.connection.id(obj),
+            page: 'details'
+        });
     },
   /**
    * @function saveObject
