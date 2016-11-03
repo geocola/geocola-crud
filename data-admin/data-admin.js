@@ -40,20 +40,23 @@ export const TOPICS = {
     CLEAR_MESSAGES: 'clearMessages'
 };
 
-const DEFAULT_BUTTONS = [{
+const DEFAULT_BUTTON = {
     iconClass: 'fa fa-list-ul',
     eventName: 'view',
     title: 'View Row Details'
-}];
-const EDIT_BUTTONS = DEFAULT_BUTTONS.concat([{
+};
+
+const EDIT_BUTTON = {
     iconClass: 'fa fa-pencil',
     eventName: 'edit',
     title: 'Edit Row'
-}, {
+};
+
+const DELETE_BUTTON = {
     iconClass: 'fa fa-trash',
     eventName: 'delete',
     title: 'Remove Row'
-}]);
+};
 
 export const SortMap = DefineMap.extend('SortMap', {
     fieldName: null,
@@ -105,6 +108,19 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
         type: 'string'
     },
     /**
+     * A total items number representing a count of the available items
+     * @property {Number} data-admin.ViewModel.props.totalItems
+     */
+    totalItems: {
+        get (total) {
+            total = this.view.connection.metadata ? this.view.connection.metadata.total : total;
+            if (!total) {
+                return 0;
+            }
+            return total;
+        }
+    },
+    /**
      * A virtual property that calculates the number of total pages to show
      * on the list page. This controls the paginator widget. It uses the property
      * `view.connectionProperties.total`  and `queryPerPage` to perform this calculation.
@@ -113,13 +129,8 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
      */
     totalPages: {
         get () {
-            const total = this.view.connection.metadata.total;
-            if (!total) {
-                return 0;
-            }
-
         //round up to the nearest integer
-            return Math.ceil(total /
+            return Math.ceil(this.totalItems /
           this.parameters.perPage);
         }
     },
@@ -138,7 +149,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
         },
         get (counts) {
             return counts.filter((c, index) => {
-                return counts[index ? index - 1 : index] < this.view.connection.metadata.total;
+                return counts[index ? index - 1 : index] < this.totalItems;
             });
         }
     },
@@ -167,6 +178,10 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
             }
         }
     },
+    refreshCount: {
+        value: 0,
+        type: 'number'
+    },
     /**
      * A promise that resolves to the objects retrieved from a can-connect.getListData call
      * @property {can.Deferred} data-admin.ViewModel.props.objects
@@ -174,6 +189,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
      */
     objectsPromise: {
         get () {
+            this.get('refreshCount');
             const params = this.parameters ? this.parameters.serialize() : {};
             const promise = this.view.connection.getList(params);
 
@@ -183,14 +199,15 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
     objects: {
         Value: DefineList,
         get (val, setAttr) {
+
             const promise = this.objectsPromise;
 
-        // handle promise.catch for local-storage deferreds...
+            // handle promise.catch for local-storage deferreds...
             promise.catch((err) => {
                 console.warn('unable to complete objects request', err);
             });
 
-          // update the list data
+              // update the list data
             promise.then((data) => {
                 setAttr(data);
             });
@@ -238,8 +255,18 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
      */
     buttons: {
         type: '*',
-        get () {
-            return this.view.disableEdit ? DEFAULT_BUTTONS : EDIT_BUTTONS;
+        get (buttons) {
+            if (buttons && buttons.length) {
+                return buttons;
+            }
+            var buttons = [DEFAULT_BUTTON];
+            if (!this.view.disableEdit) {
+                buttons.push(EDIT_BUTTON);
+            }
+            if (!this.view.disableDelete) {
+                buttons.push(DELETE_BUTTON);
+            }
+            return buttons;
         }
     },
     /**
@@ -334,10 +361,6 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
             viewId: null,
             page: page
         });
-        // this.viewId = null;
-        // setTimeout(() => {
-        //     this.page = page;
-        // }, 100);
     },
   /**
    * @function editObject
@@ -358,9 +381,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
             obj = arguments[0];
         }
         this.viewId = this.view.connection.id(obj);
-        setTimeout(() => {
-            this.page = 'edit';
-        }, 100);
+        this.page = 'edit';
     },
   /**
    * @function viewObject
@@ -381,9 +402,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
             obj = arguments[0];
         }
         this.viewId = this.view.connection.id(obj);
-        setTimeout(() => {
-            this.page = 'details';
-        }, 100);
+        this.page = 'details';
     },
   /**
    * @function saveObject
@@ -437,9 +456,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
       //update the view id
       //set page to the details view by default
             this.viewId = result.id;
-            setTimeout(() => {
-                this.page = 'details';
-            }, 100);
+            this.page = 'details';
 
 
         }).catch((e) => {
@@ -545,12 +562,25 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
         this.selectedObjects.replace([]);
     },
   /**
-   * passes an array of objects to the on click handler
+   * passes an array of objects to the on click handler of a manageButton
    * @param  {object} obj     A single object
    * @param  {Function} onClick The function to pass array of objects to
    */
     manageObject (obj, button) {
-        button.onClick([obj]);
+        this.manageObjects([obj], button);
+    },
+  /**
+   * passes an array of objects to the on click handler of a manageButton
+   * @param  {object} objects     A single object
+   * @param  {Function} onClick The function to pass array of objects to
+   */
+    manageObjects (objects, button) {
+        const defs = button.onClick(objects);
+        if (defs) {
+            Promise.all(defs).then(() => {
+                this.refreshCount ++;
+            });
+        }
     },
   /**
    * @function toggleFilter
@@ -585,22 +615,22 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
    */
     onEvent (obj, eventName) {
 
-    //get the view method
+        //get the view method
         const prop = this.view[eventName];
 
-    //if it is a function, call it passing the object
+        //if it is a function, call it passing the object
         let returnVal = true;
         if (typeof prop === 'function') {
             returnVal = prop(obj);
 
-      // Only return falsey value if a value is returned.
-      // Otherwise the execution of the event will be halted unintentionally
+            // Only return falsey value if a value is returned.
+            // Otherwise the execution of the event will be halted unintentionally
             if (typeof returnVal === 'undefined') {
                 returnVal = true;
             }
         }
 
-    //dispatch an event
+        //dispatch an event
         this.dispatch(eventName, [obj]);
 
         return returnVal;
