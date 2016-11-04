@@ -191,7 +191,7 @@ export const ViewMap = DefineMap.extend('ViewMap', {
     },
     /**
      * The template to render when editing and has permissions
-     * @property {Renderer} editTemplate
+     * @property {Renderer} listTemplate
      */
     listTemplate: {
         get (template) {
@@ -203,7 +203,7 @@ export const ViewMap = DefineMap.extend('ViewMap', {
     },
       /**
        * The template to render when editing and has permissions
-       * @property {Renderer} editTemplate
+       * @property {Renderer} addTemplate
        */
     addTemplate: {
         get (template) {

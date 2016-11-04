@@ -97,7 +97,7 @@ export const ViewModel = DefineMap.extend('FormWidget', {
      * @parent form-widget.ViewModel.props
      */
     showSaving: {
-        type: 'boolean',
+        type: 'htmlbool',
         value: false
     },
     /**

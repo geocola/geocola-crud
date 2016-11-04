@@ -160,9 +160,7 @@ export const ViewModel = DefineMap.extend('FilterWidget', {
                 name: 'value',
                 alias: 'Value',
                 fieldType: 'text',
-                properties: {
-                    placeholder: 'Enter a filter value'
-                }
+                placeholder: 'Enter a filter value'
             };
             // return FilterOptions.filter((f) => {
             //     return f.value === this.formObject.operator;
