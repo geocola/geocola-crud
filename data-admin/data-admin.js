@@ -138,7 +138,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
             return params;
         }
     },
-    refreshCount: {
+    objectsRefreshCount: {
         value: 0,
         type: 'number'
     },
@@ -149,7 +149,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
      */
     objectsPromise: {
         get () {
-            this.get('refreshCount');
+            this.get('objectsRefreshCount');
             const params = this.parameters ? this.parameters.serialize() : {};
             const promise = this.view.connection.getList(params);
 
@@ -317,6 +317,9 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
    * @param {String} page The name of the page to switch to
    */
     setPage (page) {
+        if (page === 'list') {
+            this.objectsRefreshCount ++;
+        }
         this.set({
             viewId: null,
             page: page
@@ -419,10 +422,13 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
                 this.onEvent(obj, 'afterSave');
             }
 
-      //update the view id
-      //set page to the details view by default
-            this.viewId = result.id;
-            this.page = 'details';
+            //update the view id
+            //set page to the details view by default
+            this.set({
+                viewId: this.view.connection.id(result),
+                page: 'details',
+                objectsRefreshCount: this.objectsRefreshCount + 1
+            });
 
 
         }).catch((e) => {
@@ -490,6 +496,8 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
 
                 //afterDelete handler
                 this.onEvent(obj, 'afterDelete');
+
+                this.objectsRefreshCount ++;
             });
 
             deferred.catch((result) => {
@@ -544,7 +552,7 @@ export const ViewModel = DefineMap.extend('DataAdmin', {
         const defs = button.onClick(objects);
         if (defs) {
             Promise.all(defs).then(() => {
-                this.refreshCount ++;
+                this.objectsRefreshCount ++;
             });
         }
     },
