@@ -1,12 +1,12 @@
 <div class="columns col-multiline">
     {{#if focusObject}}
-        <div class="column {{#if view.relatedViews}}col-xs-12 col-4{{else}}col-12{{/if}}">
+        <div class="column {{#if view.relatedViews}}col-sm-12 col-4{{else}}col-12{{/if}}">
             <h3>{{view.title}}: {{viewId}}</h3>
             <property-table {object}="focusObject" {fields}="_fields" />
         </div>
         {{#if view.relatedViews}}
-            <div class="column col-xs-12 col-8">
-                <h3>Related Data</h3>
+            <div class="column col-sm-12 col-8">
+                <h4>Related Data</h4>
                 <nav-container>
                     {{#each view.relatedViews as relView}}
                         <nav-page label="{{#if relView.title}}relView.title{{else}}{{relView.view.title}}{{/if}}">
@@ -16,5 +16,7 @@
                 </nav-container>
             </div>
         {{/if}}
+    {{else}}
+      <p>Please click the <i class="fa fa-list"></i> Details button on the list page to view a row.</p>
     {{/if}}
 </div>

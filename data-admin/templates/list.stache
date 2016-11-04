@@ -1,13 +1,13 @@
 <div class="object-metadata">
     <span class="text-bold">{{view.title}}</span>:
     {{#if view.connection.metadata.total}}{{view.connection.metadata.total}} rows found. Page {{pageNumber}} of {{totalPages}}{{/if}}
-    | <a class="inline-block badge" ($click)="toggle('filterVisible')"><i class="fa fa-search"></i> Search</a>
-    {{#if selectedObjects.length}} |
+    | <a class="inline-block badge" ($click)="toggle('filterVisible')"><i class="fa fa-search"></i> Search</a> |
+    {{#if selectedObjects.length}}
         <a class="inline-block selected-objects badge" data-badge="{{selectedObjects.length}}" ($click)="toggle('selectMenu')">
     With Selected...
         {{#selectMenu}}
         <ul class="menu">
-            {{#if view.manageButtons.length}}
+          {{#if view.manageButtons.length}}
             <!-- menu header -->
             <li class="menu-header">
                 <span class="menu-header-text">
@@ -17,13 +17,11 @@
             {{#each view.manageButtons}}
               {{#unless disabled}}
                 <li class="menu-item">
-                    <a ($click)="onClick(selectedObjects)">
-                        <span class="{{iconClass}}"></span>{{text}}
-                    </a>
-        </li>
-        {{/unless}}
-        {{/each}}
-    {{/if}}
+                    <a ($click)="onClick(selectedObjects)"><span class="{{iconClass}}"></span>{{text}}</a>
+                </li>
+              {{/unless}}
+            {{/each}}
+          {{/if}}
     <!-- menu divider -->
     <li class="divider"></li>
     <li class="menu-header">
@@ -38,8 +36,9 @@
     </li>
     </ul>
     {{/selectMenu}}
-    </a>
+  </a> |
     {{/if}}
+    <a ($click)="setPage('list')"><i title="Refresh Data" class="fa fa-refresh"></i></a>
 </div>
 
 {{#filterVisible}}

@@ -15,7 +15,7 @@
 
     {{#unless view.disableEdit}}
         <nav-page label="Edit" page-id="edit">
-                {{view.editTemplate}}
+                {{>view.editTemplate}}
         </nav-page>
     {{/unless}}
 </nav-container>
