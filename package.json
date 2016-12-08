@@ -25,7 +25,7 @@
     "npm-watch": "^0.1.x",
     "steal-qunit": "^0.1.x",
     "steal-tools": "^0.16.x",
-    "testee": "^0.2.x"
+    "testee": "^0.3.0"
   },
   "dependencies": {
     "bootstrap": "^3.3.x",
